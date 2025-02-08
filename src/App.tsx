@@ -7,6 +7,7 @@ import SignUp from './components/SignUp.tsx';
 import PasswordReset from './components/PasswordReset.tsx';
 import Main from './components/Main.tsx';
 import AboutUs from './components/AboutUs.tsx';
+import ShoppingCart from './components/ShoppingCart.tsx';
 import './styles/styles.css';
 
 const App: React.FC = () => {
@@ -21,6 +22,7 @@ const App: React.FC = () => {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/reset-password" element={<PasswordReset />} />
           <Route path="/about" element={<AboutUs />} />
+          <Route path="/shoppinglist" element={<ShoppingCart />} />
         </Routes>
       </div>
     </Router>
