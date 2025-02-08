@@ -1,0 +1,72 @@
+.App {
+    text-align: center;
+    font-family: Arial, sans-serif;
+  }
+  
+  .recipe-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+  
+  .recipe-card {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin: 10px;
+    max-width: 300px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .recipe-card h2 {
+    font-size: 1.5rem;
+  }
+  
+  .recipe-form input,
+  .recipe-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .recipe-form button {
+    padding: 10px 15px;
+    margin-top: 10px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .recipe-form button:hover {
+    background-color: #45a049;
+  }
+  
+  /* styles.css */
+.app {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+.shopping-list {
+  margin-top: 20px;
+}
+
+.shopping-list-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.shopping-list-item button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.shopping-list-item button:hover {
+  background-color: #d32f2f;
+}
