@@ -16,7 +16,7 @@ jobs:
       run: docker build --tag frontend .
 
     - name: Run app
-      run: docker run -p 3000:3000 frontend 
+      run: docker run -d -p 3000:3000 frontend 
 
     - name: Test app
       run: |
