@@ -1,5 +1,5 @@
 name: Docker Image CI
-#Test 8/2/2025 -2
+
 on:
   push:
     branches: [ "prod" ]
@@ -20,10 +20,9 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag frontend:$(date +%s)
-
-    - name: Tag the Docker image
-      run: docker tag frontend:$(date +%s) henry071190/frontend:latest
+      run: docker build . --file Dockerfile --tag frontend:${{ github.sha }} --tag frontend:latest
 
     - name: Push the Docker image to Docker Hub
-      run: docker push henry071190/frontend:latest
+      run: |
+        docker push henry071190/frontend:${{ github.sha }}
+        docker push henry071190/frontend:latest
