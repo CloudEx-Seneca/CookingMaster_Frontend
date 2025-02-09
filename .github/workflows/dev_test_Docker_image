@@ -1,0 +1,25 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "dev" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build the Docker image
+      run: docker build --tag frontend .
+
+    - name: Run app
+      run: docker run -p 3000:3000 frontend 
+
+    - name: Test app
+      run: |
+        docker ps
+        curl localhost:3000
