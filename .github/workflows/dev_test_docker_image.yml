@@ -21,4 +21,5 @@ jobs:
     - name: Test app
       run: |
         docker ps
+        sleep 30
         curl localhost:3000
