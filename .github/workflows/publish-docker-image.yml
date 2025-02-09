@@ -20,12 +20,11 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag frontend:${{ github.sha }} --tag frontend:latest
+      run: docker build --tag henry071190/frontend:${{ github.run_number }} .
 
     - name: List Docker images
       run: docker images
 
     - name: Push the Docker image to Docker Hub
       run: |
-        docker push henry071190/frontend:${{ github.sha }}
-        docker push henry071190/frontend:latest
+        docker push henry071190/frontend:${{ github.run_number }}
