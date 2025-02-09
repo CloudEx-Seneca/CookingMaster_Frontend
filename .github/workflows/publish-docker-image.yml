@@ -22,7 +22,10 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag frontend:${{ github.sha }} --tag frontend:latest
 
+    - name: List Docker images
+      run: docker images
+
     - name: Push the Docker image to Docker Hub
       run: |
-        docker push henry071190/frontend:${{ github.sha }}
-        docker push henry071190/frontend:latest
+        docker push <your-dockerhub-username>/frontend:${{ github.sha }}
+        docker push <your-dockerhub-username>/frontend:latest
