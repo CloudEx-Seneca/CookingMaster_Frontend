@@ -1,68 +1,89 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+
+interface RegistrationFormData {
+  email: string;
+  password: string;
+}
 
 const SignUp: React.FC = () => {
-  const [firstname, setFirstName] = useState('');
-  const [lastname, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState<RegistrationFormData>({
+    email: '',
+    password: '',
+  });
 
-  const handleSignUp = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean>(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+  
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    console.log('Signing up with', email, password);
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+    
+    try {
+      const response = await axios.post(
+        'http://localhost:8888/usercenter/v1/user/register',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        }
+      );
+      setLoading(false);
+      setSuccess(true);
+      console.log(response.data); // Handle the successful registration
+    } catch (err) {
+      setLoading(false);
+      setError('Failed to register. Please try again.');
+      console.error(err);
+    }
   };
 
   return (
     <div>
-      <h2>Sign Up</h2>
-      <form onSubmit={handleSignUp}>
-      <div>
-          <label>First Name:</label>
-          <input
-            type="firstname"
-            value={firstname}
-            onChange={(e) => setFirstName(e.target.value)}
-            // required
-          />
-        </div>
+      <h2>Register</h2>
+      <form onSubmit={handleSubmit}>
         <div>
-          <label>Last Name:</label>
-          <input
-            type="lastname"
-            value={lastname}
-            onChange={(e) => setLastName(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Email:</label>
+          <label>Email</label>
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
             required
           />
         </div>
+
         <div>
-          <label>Password:</label>
+          <label>Password</label>
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
             required
           />
         </div>
-        <div>
-          <label>Confirm Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)} // How to create check for confirm password
-            required
-          />
-        </div>
-        <button type="submit">Sign Up</button>
+
+        <button type="submit" disabled={loading}>
+          {loading ? 'Registering...' : 'Register'}
+        </button>
       </form>
+
+      {error && <div style={{ color: 'red' }}>{error}</div>}
+      {success && <div style={{ color: 'green' }}>Registration successful!</div>}
     </div>
   );
 };
