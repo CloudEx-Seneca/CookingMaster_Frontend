@@ -36,3 +36,48 @@
     transform: rotate(360deg);
   }
 }
+
+/* General styles for the navigation bar */
+.navbar {
+  background-color: #333; /* Dark background color */
+  padding: 1rem; /* Add some padding */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+}
+
+/* Styles for the unordered list inside the navbar */
+.nav-list {
+  list-style-type: none; /* Remove bullet points */
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+  display: flex; /* Display list items in a row */
+  justify-content: center; /* Center the list items */
+  gap: 2rem; /* Add space between list items */
+}
+
+/* Styles for each navigation item */
+.nav-item {
+  margin: 0; /* Remove default margin */
+}
+
+/* Styles for the navigation links */
+.nav-link {
+  color: white; /* White text color */
+  text-decoration: none; /* Remove underline */
+  font-size: 1.2rem; /* Increase font size */
+  font-weight: 500; /* Medium font weight */
+  padding: 0.5rem 1rem; /* Add padding */
+  border-radius: 4px; /* Rounded corners */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+/* Hover effect for navigation links */
+.nav-link:hover {
+  background-color: #61dafb; /* Light blue background on hover */
+  color: #333; /* Dark text color on hover */
+}
+
+/* Active link style (optional) */
+.nav-link.active {
+  background-color: #61dafb; /* Light blue background for active link */
+  color: #333; /* Dark text color for active link */
+}
