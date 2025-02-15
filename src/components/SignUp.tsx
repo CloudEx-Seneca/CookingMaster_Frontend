@@ -30,6 +30,12 @@ const SignUp: React.FC = () => {
     setLoading(true);
     setError(null);
     setSuccess(false);
+
+    if (!formData.email || !formData.password) {
+      setError('Email and password are required.');
+      setLoading(false);
+      return;
+    }
     
     try {
       const response = await axios.post(
