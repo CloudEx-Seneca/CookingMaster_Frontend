@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
 
 interface RegistrationFormData {
   email: string;
@@ -38,8 +39,9 @@ const SignUp: React.FC = () => {
     }
     
     try {
+      const apiUrl = getApiBaseUrl();
       const response = await axios.post(
-        'http://localhost:8888/usercenter/v1/user/register',
+        `${apiUrl}/usercenter/v1/user/register`,
         formData,
         {
           headers: {

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store/authSlice.tsx';  // Import the logout action
 import { RootState } from '../store/store.tsx';
 import { useNavigate } from 'react-router-dom';
+import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
 import axios from 'axios';  // Make sure axios is imported
 
 const NavBar: React.FC = () => {
@@ -20,8 +21,9 @@ const NavBar: React.FC = () => {
       const refreshToken = localStorage.getItem('refreshToken');
 
       // If the refresh token exists, make the API call to log the user out
+      const apiUrl = getApiBaseUrl();
       if (refreshToken) {
-        await axios.post('http://localhost:8888/usercenter/v1/user/logout', { refresh_token: refreshToken });
+        await axios.post(`${apiUrl}/usercenter/v1/user/logout`, { refresh_token: refreshToken });
       }
 
       // Clear the user data from Redux

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loginSuccess, loginFailure } from '../store/authSlice.tsx';
 import { RootState } from '../store/store.tsx';
 import { useNavigate } from 'react-router-dom';
+import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -19,7 +20,8 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8888/usercenter/v1/user/login', { email, password });
+      const apiUrl = getApiBaseUrl();
+      const response = await axios.post(`${apiUrl}/usercenter/v1/user/login`, { email, password });
 
       // Assuming the response contains the tokens on successful login
       const { access_token, refresh_token, access_expire, refresh_after } = response.data.data;
