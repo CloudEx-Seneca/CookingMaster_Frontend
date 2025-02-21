@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { withNavRoutes, withoutNavRoutes } from './routes/routes.tsx'
 import store from './store/store.tsx';
 import './styles/styles.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App: React.FC = () => {
   return (

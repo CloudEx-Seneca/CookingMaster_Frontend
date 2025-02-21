@@ -17,7 +17,7 @@ import Profile from '../components/Profile.tsx';
 
 export const withNavRoutes: JSX.Element[] = [
     <Route element={<WithNav />}>
-        <Route path="/home" element={<Main />} key="home" />,
+        <Route path="/" element={<Main />} key="home" />,
         <Route path="/recipes" element={<RecipeList />} key="recipes" />,
         <Route path="/recipes/add" element={<RecipeForm />} key="recipe-add" />,
         <Route path="/reset-password" element={<PasswordReset />} key="reset-password" />,
@@ -30,7 +30,7 @@ export const withNavRoutes: JSX.Element[] = [
 
 export const withoutNavRoutes: JSX.Element[] = [
     <Route element={<WithoutNav />}>
-        <Route path="/" element={<Login />} key="login" />,
+        <Route path="/login" element={<Login />} key="login" />,
         <Route path="/signup" element={<SignUp />} key="signup" />
     </Route>
 ];
