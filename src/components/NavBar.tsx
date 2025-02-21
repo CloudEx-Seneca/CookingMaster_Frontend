@@ -34,7 +34,7 @@ const NavBar: React.FC = () => {
       localStorage.removeItem('refreshToken');
 
       // Redirect to the login page
-      navigate('/login');
+      navigate('');
     } catch (err) {
       console.error('Logout failed:', err);
     }
