@@ -18,6 +18,7 @@ import Profile from '../components/Profile.tsx';
 export const withNavRoutes: JSX.Element[] = [
     <Route element={<WithNav />}>
         <Route path="/" element={<Main />} key="home" />,
+        <Route path="/home" element={<Main />} key="home-alt" />
         <Route path="/recipes" element={<RecipeList />} key="recipes" />,
         <Route path="/recipes/add" element={<RecipeForm />} key="recipe-add" />,
         <Route path="/reset-password" element={<PasswordReset />} key="reset-password" />,

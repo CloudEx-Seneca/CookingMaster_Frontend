@@ -41,26 +41,38 @@ const NavBar: React.FC = () => {
   };
 
   return (
-    <nav className="navbar">
-      <ul className="nav-list">
-        <li className="nav-item">
-          <Link to="/home" className="nav-link">Home</Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/about" className="nav-link">About</Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/recipes" className="nav-link">Recipes</Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/shoppinglist" className="nav-link">Shopping Cart</Link>
-        </li>
-        {token && (
-          <li className="nav-item">
-            <button className="nav-link" onClick={handleLogout}>Logout</button>
-          </li>
-        )}
-      </ul>
+    <nav className="navbar bg-primary navbar-expand-lg">
+      <div className="container-fluid">
+        <Link to="/home" className="navbar-brand text-white">Cooking Master</Link>
+        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="navbar-nav ms-auto">
+            <li className="nav-item">
+              <Link to="/home" className="nav-link text-white">Home</Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/about" className="nav-link text-white">About</Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/recipes" className="nav-link text-white">Recipes</Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/shoppinglist" className="nav-link text-white">Shopping Cart</Link>
+            </li>
+            {!token ? (
+              <li className="nav-item">
+                <Link to="/login" className="btn btn-outline-dark">Login</Link>
+              </li>
+            ) : (
+              <li className="nav-item">
+                <button className="btn btn-outline-dark" onClick={handleLogout}>Logout</button>
+              </li>
+            )}
+          </ul>
+        </div>
+      </div>
     </nav>
   );
 };
