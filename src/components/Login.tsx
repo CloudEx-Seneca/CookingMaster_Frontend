@@ -117,7 +117,7 @@ const Login: React.FC = () => {
           <div className="text-center text-white shadow-lg p-4 rounded" style={styles.welcomeText}>
             <h1 className="display-4 font-weight-bold">Welcome to Cooking Master</h1>
             <p className="lead mt-3">A place to share and try out new recipes!</p>
-            <p className="text-light mt-3">Sign up to explore thousands of delicious dishes.</p>
+            <p className="text-light mt-3">Sign in to explore thousands of delicious dishes.</p>
           </div>
         </div>
       </div>
