@@ -1,11 +1,5 @@
 import React from 'react';
-
-interface Recipe {
-  id: number;
-  title: string;
-  ingredients: string[];
-  instructions: string;
-}
+import { Recipe } from '../types/Recipe.tsx';
 
 interface RecipeCardProps {
   recipe: Recipe;

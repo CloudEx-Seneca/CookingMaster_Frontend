@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { JSX } from 'react';
 import { Route } from 'react-router-dom';
 
 import WithNav from './WithNav.tsx';

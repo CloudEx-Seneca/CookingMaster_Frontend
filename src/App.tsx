@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { withNavRoutes, withoutNavRoutes } from './routes/routes.tsx'
 import store from './store/store.tsx';
