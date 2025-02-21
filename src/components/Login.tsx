@@ -21,14 +21,17 @@ const Login: React.FC = () => {
     try {
       const response = await axios.post('http://localhost:8888/usercenter/v1/user/login', { email, password });
 
-      // Assuming the response contains a token on successful login
-      const token = response.data.token;
+      // Assuming the response contains the tokens on successful login
+      const { access_token, refresh_token, access_expire, refresh_after } = response.data.data;
 
-      // Dispatch the login success action with the token
-      dispatch(loginSuccess(token));
+      // Dispatch the login success action with the access token
+      dispatch(loginSuccess(access_token));
 
-      // Optionally, store the token in localStorage
-      localStorage.setItem('authToken', token);
+      // Store both access_token and refresh_token in localStorage
+      localStorage.setItem('authToken', access_token);
+      localStorage.setItem('refreshToken', refresh_token);
+      localStorage.setItem('accessExpire', access_expire.toString());
+      localStorage.setItem('refreshAfter', refresh_after.toString());
 
       // Clear the form and stop loading
       setEmail('');
@@ -36,7 +39,7 @@ const Login: React.FC = () => {
       setLoading(false);
 
       // Redirect to the /home page after successful login
-      navigate('/home');  // Redirects to the home page
+      navigate('/home');
     } catch (err) {
       setLoading(false);
 
