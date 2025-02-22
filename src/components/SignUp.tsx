@@ -55,8 +55,16 @@ const SignUp: React.FC = () => {
       console.log(response.data); // Handle the successful registration
     } catch (err) {
       setLoading(false);
-      setError('Failed to register. Please try again.');
-      console.error(err);
+      
+      // Check if the error has a response object, which means the error is from the API
+      if (err.response) {
+        // You can access the error message from the response object
+        setError(err.response.data.msg || 'An error occurred. Please try again.');
+        console.error(err.response.data); // Log the full error response from the API
+      } else {
+        setError('Failed to register. Please try again.');
+        console.error(err); // Log the error if it's not from the API
+      }
     }
   };
 

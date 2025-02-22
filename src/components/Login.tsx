@@ -41,13 +41,13 @@ const Login: React.FC = () => {
       setLoading(false);
 
       // Redirect to the /home page after successful login
-      navigate('/');
+      navigate('/home');
     } catch (err) {
       setLoading(false);
 
       if (err.response) {
         // Dispatch the login failure action with an error message
-        dispatch(loginFailure(err.response.data.message || 'Login failed'));
+        dispatch(loginFailure(err.response.data.msg || 'Login failed'));
       } else {
         dispatch(loginFailure('Network error. Please try again later.'));
       }
