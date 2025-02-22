@@ -68,7 +68,7 @@ const NavBar: React.FC = () => {
               <Link to="/recipes" className="nav-link text-white">Recipes</Link>
             </li>
             <li className="nav-item">
-              <Link to="/shoppinglist" className="nav-link text-white">Shopping Cart</Link>
+              <Link to="/shoppinglist" className="nav-link text-white">Shopping List</Link>
             </li>
             <li className="nav-item">
               <Link to="/recipes/add" className="nav-link text-white">New Recipe</Link>
