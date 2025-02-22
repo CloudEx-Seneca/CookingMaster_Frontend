@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../store/authSlice.tsx';  // Import the logout action
+import { logout } from '../store/authSlice.tsx'; // Import the logout action
 import { RootState } from '../store/store.tsx';
 import { useNavigate } from 'react-router-dom';
 import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
-import axios from 'axios';  // Make sure axios is imported
+import axios from 'axios'; // Make sure axios is imported
 
 const NavBar: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Check if the user is logged in by looking at the token in Redux
   const token = useSelector((state: RootState) => state.auth.token);
@@ -40,36 +41,58 @@ const NavBar: React.FC = () => {
     }
   };
 
+  // Handle the search input change
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+    // You can handle search functionality here, e.g., filtering recipes
+  };
+
   return (
     <nav className="navbar bg-primary navbar-expand-lg">
       <div className="container-fluid">
         <Link to="/home" className="navbar-brand text-white">Cooking Master</Link>
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
-              <Link to="/home" className="nav-link text-white">Home</Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/about" className="nav-link text-white">About</Link>
-            </li>
             <li className="nav-item">
               <Link to="/recipes" className="nav-link text-white">Recipes</Link>
             </li>
             <li className="nav-item">
               <Link to="/shoppinglist" className="nav-link text-white">Shopping Cart</Link>
             </li>
-            {!token ? (
-              <li className="nav-item">
-                <Link to="/login" className="btn btn-outline-dark">Login</Link>
-              </li>
-            ) : (
-              <li className="nav-item">
-                <button className="btn btn-outline-dark" onClick={handleLogout}>Logout</button>
-              </li>
-            )}
+            <li className="nav-item">
+              <Link to="/recipes/add" className="nav-link text-white">New Recipe</Link>
+            </li>
+            {/* Search bar */}
+            <li className="nav-item">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search Recipe"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                style={{ maxWidth: '250px' }} // Optional: make the search bar width smaller
+              />
+            </li>
+
+            {/* Space between logout and search */}
+            <li className="nav-item ms-3">
+              {!token ? (
+                <Link to="/login" className="btn btn-outline-light">Login</Link>
+              ) : (
+                <button className="btn btn-outline-light logout-btn" onClick={handleLogout}>Logout</button>
+              )}
+            </li>
           </ul>
         </div>
       </div>
