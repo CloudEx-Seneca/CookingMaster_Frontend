@@ -41,7 +41,7 @@ const Login: React.FC = () => {
       setLoading(false);
 
       // Redirect to the /home page after successful login
-      navigate('/home');
+      navigate('/recipes');
     } catch (err) {
       setLoading(false);
 
