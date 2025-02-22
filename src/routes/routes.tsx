@@ -11,7 +11,7 @@ import SignUp from '../components/SignUp.tsx';
 import PasswordReset from '../components/PasswordReset.tsx';
 import Main from '../components/Main.tsx';
 import AboutUs from '../components/AboutUs.tsx';
-import ShoppingCart from '../components/ShoppingCart.tsx';
+import ShoppingList from '../components/ShoppingList.tsx';
 import Profile from '../components/Profile.tsx';
 
 export const withNavRoutes: JSX.Element[] = [
@@ -21,7 +21,7 @@ export const withNavRoutes: JSX.Element[] = [
         <Route path="/recipes/add" element={<RecipeForm />} key="recipe-add" />,
         <Route path="/reset-password" element={<PasswordReset />} key="reset-password" />,
         <Route path="/about" element={<AboutUs />} key="about" />,
-        <Route path="/shoppinglist" element={<ShoppingCart />} key="shoppinglist" />,
+        <Route path="/shoppinglist" element={<ShoppingList />} key="shoppinglist" />,
         <Route path="/profile" element={<Profile />} key="profile" />
     </Route>
 ];
