@@ -1,9 +1,9 @@
-FROM node:16-alpine
+# Stage 1: Build
+FROM node:16-alpine AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy package.json and package-lock.json first (to leverage caching)
 COPY package*.json ./
 
 # Install dependencies
@@ -12,11 +12,27 @@ RUN npm install --production
 # Copy the entire project
 COPY . .
 
-# Expose the port the app runs on
+# Build the frontend
+RUN npm run build
+
+# Stage 2: Runtime
+FROM node:16-alpine AS runtime
+
+WORKDIR /app
+
+# Copy only necessary files from the builder stage
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/build ./build
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/src ./src
+
+#RUN npm install -g serve
+RUN npm install -g serve
+
+# Expose port
 EXPOSE 3000
 
-# Build the frontend if needed (useful for React or similar frameworks)
-#RUN npm run build
-
-# Run the application
-CMD ["npm", "start"]
+# Start the app
+#CMD ["npm", "run", "deploy"]
+CMD ["serve", "-s", "build", "-l", "3000"]
