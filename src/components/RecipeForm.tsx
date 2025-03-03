@@ -37,7 +37,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4">Add New Recipe</h2>
+      <h2 className="mb-4">Adding a New Recipe</h2>
       <div className="card shadow-sm">
         <div className="card-body">
           <div className="mb-3">
@@ -46,7 +46,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
               id="recipeTitle"
               type="text"
               className="form-control"
-              placeholder="Enter recipe title"
+              placeholder="Enter the name of the recipe here"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
@@ -82,7 +82,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
               id="instructions"
               className="form-control"
               rows={4}
-              placeholder="Enter cooking instructions"
+              placeholder="Enter your cooking preparation instructions"
               value={instructions}
               onChange={(e) => setInstructions(e.target.value)}
             />
