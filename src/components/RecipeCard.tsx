@@ -11,33 +11,32 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
   const secondHalf = recipe.ingredients.slice(half);
 
   return (
-    <div className="card shadow-sm h-100">
+    <div style={styles.card}>
       {/* Uniform image size */}
       <img 
         src={recipe.image} 
         alt={recipe.title} 
-        className="card-img-top" 
-        style={{ height: '200px', objectFit: 'cover' }} 
+        style={styles.cardImage}
       />
-      <div className="card-body">
-        <h5 className="card-title">{recipe.title}</h5>
+      <div style={styles.cardBody}>
+        <h5 style={styles.cardTitle}>{recipe.title}</h5>
 
         {/* Ingredients section in two columns */}
-        <div className="row">
-          <div className="col-6">
-            <ul className="list-unstyled">
+        <div style={styles.ingredientsContainer}>
+          <div style={styles.ingredientsColumn}>
+            <ul style={styles.ingredientList}>
               {firstHalf.map((ingredient, index) => (
-                <li key={index}>
-                  <span className="badge bg-info">{ingredient}</span>
+                <li key={index} style={styles.ingredientItem}>
+                  <span style={styles.ingredientBadge}>{ingredient}</span>
                 </li>
               ))}
             </ul>
           </div>
-          <div className="col-6">
-            <ul className="list-unstyled">
+          <div style={styles.ingredientsColumn}>
+            <ul style={styles.ingredientList}>
               {secondHalf.map((ingredient, index) => (
-                <li key={index}>
-                  <span className="badge bg-info">{ingredient}</span>
+                <li key={index} style={styles.ingredientItem}>
+                  <span style={styles.ingredientBadge}>{ingredient}</span>
                 </li>
               ))}
             </ul>
@@ -45,13 +44,75 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
         </div>
 
         {/* Recipe Instructions */}
-        <p className="card-text">{recipe.instructions}</p>
+        <p style={styles.cardText}>{recipe.instructions}</p>
 
         {/* Author Info */}
-        <p className="text-muted">By: {recipe.author}</p>
+        <p style={styles.cardAuthor}>By: {recipe.author}</p>
       </div>
     </div>
   );
+};
+
+// Inline styles
+const styles = {
+  card: {
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    borderRadius: '8px',
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  cardImage: {
+    height: '200px',
+    objectFit: 'cover',
+    width: '100%',
+  },
+  cardBody: {
+    padding: '1rem',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    flexGrow: 1,
+  },
+  cardTitle: {
+    fontSize: '1.25rem',
+    fontWeight: 'bold',
+    marginBottom: '0.75rem',
+  },
+  ingredientsContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  ingredientsColumn: {
+    width: '48%',
+  },
+  ingredientList: {
+    listStyleType: 'none',
+    paddingLeft: 0,
+  },
+  ingredientItem: {
+    marginBottom: '0.5rem',
+  },
+  ingredientBadge: {
+    display: 'inline-block',
+    padding: '0.25rem 0.5rem',  // Smaller padding
+    backgroundColor: '#FF7A47', // Lighter orange shade
+    color: '#fff',
+    borderRadius: '20px',
+    fontSize: '0.75rem',  // Smaller font size
+  },
+  cardText: {
+    marginTop: '1rem',
+    fontSize: '1rem',
+    color: '#333',
+  },
+  cardAuthor: {
+    marginTop: '0.75rem',
+    fontSize: '0.875rem',
+    color: '#777',
+  },
 };
 
 export default RecipeCard;

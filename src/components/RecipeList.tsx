@@ -61,11 +61,29 @@ const RecipeList: React.FC = () => {
     setRecipes(fetchedRecipes);
   }, []);
 
+  const styles = {
+    container: {
+      maxWidth: '1200px',
+      margin: '0 auto',
+      padding: '2rem 1rem',
+    },
+    grid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(5, 1fr)',
+      gap: '1.5rem',
+    },
+    cardWrapper: {
+      display: 'flex',
+      justifyContent: 'center',
+    },
+  };
+  
+
   return (
-    <div className="container my-5">
-      <div className="row">
+    <div style={styles.container}>
+      <div style={styles.grid}>
         {recipes.map((recipe) => (
-          <div key={recipe.id} className="col-sm-12 col-md-6 col-lg-4 mb-4">
+          <div key={recipe.id} style={styles.cardWrapper}>
             <RecipeCard recipe={recipe} />
           </div>
         ))}
