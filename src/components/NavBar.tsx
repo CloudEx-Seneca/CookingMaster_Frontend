@@ -1,96 +1,164 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../store/authSlice.tsx'; // Import the logout action
+import { logout } from '../store/authSlice.tsx';
 import { RootState } from '../store/store.tsx';
 import { useNavigate } from 'react-router-dom';
 import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
-import axios from 'axios'; // Make sure axios is imported
+import axios from 'axios';
 
 const NavBar: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Check if the user is logged in by looking at the token in Redux
   const token = useSelector((state: RootState) => state.auth.token);
 
-  // Handle logout
   const handleLogout = async () => {
     try {
-      // Get the refresh token from localStorage
       const refreshToken = localStorage.getItem('refreshToken');
-
-      // If the refresh token exists, make the API call to log the user out
       const apiUrl = getApiBaseUrl();
       if (refreshToken) {
         await axios.post(`${apiUrl}/usercenter/v1/user/logout`, { refresh_token: refreshToken });
       }
 
-      // Clear the user data from Redux
       dispatch(logout());
-
-      // Remove tokens from localStorage
       localStorage.removeItem('authToken');
       localStorage.removeItem('refreshToken');
 
-      // Redirect to the login page
       navigate('/login');
     } catch (err) {
       console.error('Logout failed:', err);
     }
   };
 
-  // Handle the search input change
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
-    // You can handle search functionality here, e.g., filtering recipes
+  };
+
+  // Styles as a constant
+  const styles = {
+    navbar: {
+      backgroundColor: '#E73927',
+      padding: '1rem 2rem',
+    },
+    container: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      maxWidth: '1200px',
+      margin: '0 auto',
+    },
+    brand: {
+      color: 'white',
+      fontSize: '24px',
+      textDecoration: 'none',
+      fontWeight: 'bold',
+    },
+    navItems: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+    navLinks: {
+      listStyleType: 'none',
+      margin: 0,
+      padding: 0,
+      display: 'flex',
+      gap: '20px',
+    },
+    navItem: {
+      display: 'inline',
+    },
+    navLink: {
+      color: 'white',
+      textDecoration: 'none',
+      fontSize: '16px',
+    },
+    navLinkHover: {
+      textDecoration: 'underline',
+    },
+    searchInput: {
+      padding: '8px',
+      fontSize: '16px',
+      marginLeft: '15px',
+      border: 'none',
+      borderRadius: '4px',
+      maxWidth: '250px',
+    },
+    searchInputFocus: {
+      outline: 'none',
+    },
+    loginBtn: {
+      padding: '8px 16px',
+      color: '#E73927',
+      backgroundColor: 'white',
+      border: '1px solid #E73927',
+      borderRadius: '4px',
+      textDecoration: 'none',
+    },
+    loginBtnHover: {
+      backgroundColor: '#E73927',
+      color: 'white',
+    },
+    logoutBtn: {
+      padding: '8px 16px',
+      color: '#E73927',
+      backgroundColor: 'white',
+      border: '1px solid #E73927',
+      borderRadius: '4px',
+      cursor: 'pointer',
+    },
+    logoutBtnHover: {
+      backgroundColor: '#E73927',
+      color: 'white',
+    },
+    // Responsive styles
+    responsive: {
+      '@media (max-width: 768px)': {
+        navItems: {
+          display: 'block',
+        },
+        navLinks: {
+          display: 'block',
+          textAlign: 'center',
+        },
+        searchInput: {
+          marginTop: '10px',
+          width: '100%',
+        },
+      },
+    },
   };
 
   return (
-    <nav className="navbar bg-primary navbar-expand-lg">
-      <div className="container-fluid">
-        <Link to="/home" className="navbar-brand text-white">Cooking Master</Link>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
-              <Link to="/recipes" className="nav-link text-white">Recipes</Link>
+    <nav style={styles.navbar}>
+      <div style={styles.container}>
+        <Link to="/home" style={styles.brand}>Cooking Master</Link>
+        <div style={styles.navItems}>
+          <ul style={styles.navLinks}>
+            <li style={styles.navItem}>
+              <Link to="/recipes" style={styles.navLink}>Recipes</Link>
             </li>
-            <li className="nav-item">
-              <Link to="/shoppinglist" className="nav-link text-white">Shopping List</Link>
+            <li style={styles.navItem}>
+              <Link to="/shoppinglist" style={styles.navLink}>Shopping List</Link>
             </li>
-            <li className="nav-item">
-              <Link to="/recipes/add" className="nav-link text-white">New Recipe</Link>
+            <li style={styles.navItem}>
+              <Link to="/recipes/add" style={styles.navLink}>New Recipe</Link>
             </li>
-            {/* Search bar */}
-            <li className="nav-item">
+            <li style={styles.navItem}>
               <input
                 type="text"
-                className="form-control"
+                style={styles.searchInput}
                 placeholder="Search Recipe"
                 value={searchQuery}
                 onChange={handleSearchChange}
-                style={{ maxWidth: '250px' }} // Optional: make the search bar width smaller
               />
             </li>
-
-            {/* Space between logout and search */}
-            <li className="nav-item ms-3">
+            <li style={styles.navItem}>
               {!token ? (
-                <Link to="/login" className="btn btn-outline-light">Login</Link>
+                <Link to="/login" style={styles.loginBtn}>Login</Link>
               ) : (
-                <button className="btn btn-outline-light logout-btn" onClick={handleLogout}>Logout</button>
+                <button style={styles.logoutBtn} onClick={handleLogout}>Logout</button>
               )}
             </li>
           </ul>
