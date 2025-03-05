@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Recipe } from '../types/Recipe';
+import { Link } from 'react-router-dom';
 import RecipeCard from './RecipeCard.tsx';
 
 const RecipeList: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
 
   useEffect(() => {
-    // You could fetch recipes from an API here
     const fetchedRecipes: Recipe[] = [
       {
         id: 1,
@@ -76,15 +76,20 @@ const RecipeList: React.FC = () => {
       display: 'flex',
       justifyContent: 'center',
     },
+    linkStyle: {
+      textDecoration: 'none', // Remove underline
+    },
   };
-  
 
   return (
     <div style={styles.container}>
       <div style={styles.grid}>
         {recipes.map((recipe) => (
           <div key={recipe.id} style={styles.cardWrapper}>
-            <RecipeCard recipe={recipe} />
+            {/* Apply the link style */}
+            <Link to={`/recipes/${recipe.id}`} style={styles.linkStyle}>
+              <RecipeCard recipe={recipe} />
+            </Link>
           </div>
         ))}
       </div>

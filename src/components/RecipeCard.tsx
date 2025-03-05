@@ -19,6 +19,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
         style={styles.cardImage}
       />
       <div style={styles.cardBody}>
+        {/* Apply the orange color to the title */}
         <h5 style={styles.cardTitle}>{recipe.title}</h5>
 
         {/* Ingredients section in two columns */}
@@ -80,6 +81,7 @@ const styles = {
     fontSize: '1.25rem',
     fontWeight: 'bold',
     marginBottom: '0.75rem',
+    color: '#E73927',  // Recipe title in your custom orange color
   },
   ingredientsContainer: {
     display: 'flex',
@@ -98,7 +100,7 @@ const styles = {
   ingredientBadge: {
     display: 'inline-block',
     padding: '0.25rem 0.5rem',  // Smaller padding
-    backgroundColor: '#FF7A47', // Lighter orange shade
+    backgroundColor: '#FF7A47', // Light orange shade for badges
     color: '#fff',
     borderRadius: '20px',
     fontSize: '0.75rem',  // Smaller font size

@@ -1,22 +1,101 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom'; // For accessing the URL parameters
 import { Recipe } from '../types/Recipe';
 
-interface RecipeDetailProps {
-  recipe: Recipe;
-}
+const RecipeDetail: React.FC = () => {
+  const { id } = useParams<{ id: string }>(); // Get the id parameter from the URL
+  const [recipe, setRecipe] = useState<Recipe | null>(null);
 
-const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe }) => {
+  useEffect(() => {
+    // Simulate fetching recipe details by id
+    const fetchedRecipe: Recipe = {
+      id: Number(id), // Assuming id is a number
+      title: 'Spaghetti Carbonara',
+      ingredients: ['Spaghetti', 'Eggs', 'Parmesan', 'Bacon', 'Garlic'],
+      instructions: 'Boil pasta. Cook bacon. Mix eggs and cheese...',
+      image: '/img/carbonara.jpeg',
+      author: 'Chef John',
+    };
+
+    setRecipe(fetchedRecipe);
+  }, [id]);
+
+  if (!recipe) return <div>Loading...</div>; // Loading state
+
   return (
-    <div className="recipe-detail">
-      <h2>{recipe.title}</h2>
-      <ul>
+    <div style={styles.container}>
+      <h2 style={styles.title}>{recipe.title}</h2>
+      <div style={styles.imageWrapper}>
+        <img src={recipe.image} alt={recipe.title} style={styles.image} />
+      </div>
+
+      <h4 style={styles.sectionTitle}>Ingredients:</h4>
+      <ul style={styles.ingredientList}>
         {recipe.ingredients.map((ingredient, index) => (
-          <li key={index}>{ingredient}</li>
+          <li key={index} style={styles.ingredientItem}>
+            {ingredient}
+          </li>
         ))}
       </ul>
-      <p>{recipe.instructions}</p>
+
+      <h4 style={styles.sectionTitle}>Instructions:</h4>
+      <p style={styles.instructions}>{recipe.instructions}</p>
+
+      <p style={styles.author}>By: {recipe.author}</p>
     </div>
   );
+};
+
+// Inline styles
+const styles = {
+  container: {
+    maxWidth: '900px',
+    margin: '0 auto',
+    padding: '2rem',
+    fontFamily: 'Arial, sans-serif',
+    backgroundColor: '#fff',
+    borderRadius: '8px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+  },
+  title: {
+    fontSize: '2rem',
+    fontWeight: 'bold',
+    color: '#FF7A47', // The orange color you requested
+    marginBottom: '1rem',
+  },
+  imageWrapper: {
+    marginBottom: '2rem',
+  },
+  image: {
+    width: '100%',
+    height: 'auto',
+    borderRadius: '8px',
+  },
+  sectionTitle: {
+    fontSize: '1.25rem',
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: '0.5rem',
+  },
+  ingredientList: {
+    listStyleType: 'none',
+    paddingLeft: '0',
+    marginBottom: '1rem',
+  },
+  ingredientItem: {
+    fontSize: '1rem',
+    color: '#555',
+    marginBottom: '0.5rem',
+  },
+  instructions: {
+    fontSize: '1rem',
+    color: '#333',
+    marginBottom: '1.5rem',
+  },
+  author: {
+    fontSize: '0.875rem',
+    color: '#777',
+  },
 };
 
 export default RecipeDetail;
