@@ -1,13 +1,20 @@
 import _ from 'lodash';
 
-// Fetch API environment URL from environment variable
-const API_ENV = process.env.REACT_APP_API_URL;
-console.log(API_ENV);
+declare global {
+  interface Window {
+    env?: {
+      API_URL?: string;
+    };
+  }
+}
 
-// Fallback to local API URL if the environment variable is not set
-const LOCAL_API = 'http://localhost:8888'; 
-
-// Function to get the API base URL
-export const getApiBaseUrl = (): string => {
-  return _.isEmpty(API_ENV) ? LOCAL_API : API_ENV;
+// Function to fetch env.js if not loaded yet
+const getApiUrl = (): string => {
+  if (!window.env || !window.env.API_URL) {
+    console.warn("env.js not loaded yet, retrying...");
+    return 'http://localhost:8888';  // Fallback
+  }
+  return window.env.API_URL;
 };
+
+export const getApiBaseUrl = (): string => getApiUrl();

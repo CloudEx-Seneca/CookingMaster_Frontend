@@ -16,23 +16,19 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Runtime
-FROM node:16-alpine AS runtime
+FROM nginx:alpine AS runtime
 
-WORKDIR /app
+WORKDIR /usr/share/nginx/html
 
-# Copy only necessary files from the builder stage
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/build ./build
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/src ./src
+# Copy the built React app from the builder stage
+COPY --from=builder /app/build/. /usr/share/nginx/html
 
-#RUN npm install -g serve
-RUN npm install -g serve
+# Copy the Nginx config and entrypoint script
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY entrypoint.sh /entrypoint.sh
 
-# Expose port
-EXPOSE 3000
+# Make the script executable
+RUN chmod +x /entrypoint.sh
 
-# Start the app
-#CMD ["npm", "run", "deploy"]
-CMD ["serve", "-s", "build", "-l", "3000"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]
