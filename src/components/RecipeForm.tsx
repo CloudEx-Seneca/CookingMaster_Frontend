@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { Recipe } from '../types/Recipe';
 
 interface RecipeFormProps {
@@ -6,27 +7,64 @@ interface RecipeFormProps {
 }
 
 const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
-  const [title, setTitle] = useState('');
-  const [ingredients, setIngredients] = useState<string[]>(['']);
-  const [instructions, setInstructions] = useState('');
-  const [error, setError] = useState('');
+  const [name, setName] = useState('');
+  const [ingredients, setIngredients] = useState<string[]>([]);
+  const [description, setDescription] = useState('');
+  const [error, setError] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleAddRecipe = () => {
-    if (!title || ingredients.some(ingredient => ingredient === '') || !instructions) {
+  const handleAddRecipe = async () => {
+    if (!name.trim() || ingredients.some(ingredient => ingredient.trim() === '') || !description.trim()) {
       setError('Please fill in all fields, including at least one ingredient.');
       return;
     }
-    const newRecipe: Recipe = {
-      id: Date.now(),
-      title,
-      ingredients,
-      instructions,
+
+    // Create a new recipe object with additional properties
+    const newRecipe = {
+      "recipe": {
+        // id: Date.now(), // Generate ID for now, or let the API assign one
+        name,
+        // ingredients,
+        description,
+        // image: '', // Placeholder image, can be empty or null if no image
+        // author: [], // Empty array for authors, or undefined if not used
+      }
     };
-    onAddRecipe(newRecipe);
-    setTitle('');
-    setIngredients(['']);
-    setInstructions('');
-    setError('');
+
+    try {
+      setIsSubmitting(true);
+
+      // Retrieve the token from localStorage (or other secure places)
+      const token = localStorage.getItem('authToken');
+      
+      if (!token) {
+        setError('Authentication token is missing.');
+        return;
+      }
+
+      const response = await axios.post(
+        'http://localhost:8889/recipe/v1/recipe/insertorupdate',
+        newRecipe,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        // Assuming the response returns the new recipe object
+        onAddRecipe(response.data);
+
+        // Reset the form fields after successful submission
+        resetForm();
+        setError('');
+      }
+    } catch (err) {
+      setError('Failed to add recipe. Please try again later.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleIngredientChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
@@ -44,7 +82,12 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
     setIngredients(newIngredients);
   };
 
-  // Styles constant
+  const resetForm = () => {
+    setName('');
+    setIngredients([]);
+    setDescription('');
+  };
+
   const styles = {
     container: {
       maxWidth: '800px',
@@ -131,16 +174,16 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
 
       <div style={styles.card}>
         <div style={styles.cardBody}>
-          {/* Recipe Title */}
+          {/* Recipe Name */}
           <div style={styles.formGroup}>
-            <label htmlFor="recipeTitle" style={styles.formLabel}>Recipe Title</label>
+            <label htmlFor="recipeName" style={styles.formLabel}>Recipe Name</label>
             <input
-              id="recipeTitle"
+              id="recipeName"
               type="text"
               style={styles.formInput}
               placeholder="Enter the name of the recipe here"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
 
@@ -183,16 +226,16 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
             </button>
           </div>
 
-          {/* Instructions Section */}
+          {/* Description Section */}
           <div style={styles.formGroup}>
-            <label htmlFor="instructions" style={styles.formLabel}>Instructions</label>
+            <label htmlFor="description" style={styles.formLabel}>Description</label>
             <textarea
-              id="instructions"
+              id="description"
               style={styles.formInput}
               rows={4}
               placeholder="Enter your cooking preparation instructions"
-              value={instructions}
-              onChange={(e) => setInstructions(e.target.value)}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
           </div>
 
@@ -201,10 +244,11 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
             type="button"
             style={styles.addRecipeBtn}
             onClick={handleAddRecipe}
+            disabled={isSubmitting}
             onMouseEnter={(e) => e.target.style.backgroundColor = styles.addRecipeBtnHover.backgroundColor}
             onMouseLeave={(e) => e.target.style.backgroundColor = styles.addRecipeBtn.backgroundColor}
           >
-            Add Recipe
+            {isSubmitting ? 'Submitting...' : 'Add Recipe'}
           </button>
         </div>
       </div>

@@ -10,9 +10,9 @@ const RecipeDetail: React.FC = () => {
     // Simulate fetching recipe details by id
     const fetchedRecipe: Recipe = {
       id: Number(id), // Assuming id is a number
-      title: 'Spaghetti Carbonara',
+      name: 'Spaghetti Carbonara',
       ingredients: ['Spaghetti', 'Eggs', 'Parmesan', 'Bacon', 'Garlic'],
-      instructions: 'Boil pasta. Cook bacon. Mix eggs and cheese...',
+      description: 'Boil pasta. Cook bacon. Mix eggs and cheese...',
       image: '/img/carbonara.jpeg',
       author: 'Chef John',
     };
@@ -24,9 +24,9 @@ const RecipeDetail: React.FC = () => {
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.title}>{recipe.title}</h2>
+      <h2 style={styles.title}>{recipe.name}</h2> {/* Updated to use name */}
       <div style={styles.imageWrapper}>
-        <img src={recipe.image} alt={recipe.title} style={styles.image} />
+        <img src={recipe.image} alt={recipe.name} style={styles.image} /> {/* Updated to use name */}
       </div>
 
       <h4 style={styles.sectionTitle}>Ingredients:</h4>
@@ -38,8 +38,8 @@ const RecipeDetail: React.FC = () => {
         ))}
       </ul>
 
-      <h4 style={styles.sectionTitle}>Instructions:</h4>
-      <p style={styles.instructions}>{recipe.instructions}</p>
+      <h4 style={styles.sectionTitle}>Description:</h4> {/* Updated to use description */}
+      <p style={styles.instructions}>{recipe.description}</p> {/* Updated to use description */}
 
       <p style={styles.author}>By: {recipe.author}</p>
     </div>

@@ -6,7 +6,7 @@ import RecipeCard from './RecipeCard.tsx';
 const RecipeList: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
-  const [titleSearch, setTitleSearch] = useState('');
+  const [nameSearch, setNameSearch] = useState('');
   const [ingredientSearch, setIngredientSearch] = useState('');
   const [ingredientsList, setIngredientsList] = useState<string[]>([]);
 
@@ -14,49 +14,49 @@ const RecipeList: React.FC = () => {
     const fetchedRecipes: Recipe[] = [
       {
         id: 1,
-        title: 'Spaghetti Carbonara',
+        name: 'Spaghetti Carbonara',
         ingredients: ['Spaghetti', 'Eggs', 'Parmesan', 'Bacon', 'Garlic'],
-        instructions: 'Boil pasta. Cook bacon. Mix eggs and cheese...',
+        description: 'Boil pasta. Cook bacon. Mix eggs and cheese...',
         image: '/img/carbonara.jpeg',
         author: 'Chef John',
       },
       {
         id: 2,
-        title: 'Vegetable Stir Fry',
+        name: 'Vegetable Stir Fry',
         ingredients: ['Carrots', 'Broccoli', 'Peppers', 'Soy Sauce'],
-        instructions: 'Stir-fry veggies and soy sauce until tender...',
+        description: 'Stir-fry veggies and soy sauce until tender...',
         image: '/img/vegstirfry.jfif',
         author: 'Chef Jane',
       },
       {
         id: 3,
-        title: 'Chicken Curry',
+        name: 'Chicken Curry',
         ingredients: ['Chicken', 'Curry Powder', 'Coconut Milk', 'Onions'],
-        instructions: 'Cook chicken, add curry powder and coconut milk...',
+        description: 'Cook chicken, add curry powder and coconut milk...',
         image: '/img/chkcurry.jpg',
         author: 'Chef Tim',
       },
       {
         id: 4,
-        title: 'Grilled Cheese Sandwich',
+        name: 'Grilled Cheese Sandwich',
         ingredients: ['Bread', 'Cheese', 'Butter'],
-        instructions: 'Butter bread, add cheese, and grill...',
+        description: 'Butter bread, add cheese, and grill...',
         image: '/img/grilledcheese.jpg',
         author: 'Chef Anna',
       },
       {
         id: 5,
-        title: 'Caesar Salad',
+        name: 'Caesar Salad',
         ingredients: ['Lettuce', 'Caesar Dressing', 'Croutons', 'Parmesan'],
-        instructions: 'Toss lettuce with Caesar dressing and add toppings...',
+        description: 'Toss lettuce with Caesar dressing and add toppings...',
         image: '/img/caesarsalad.jpg',
         author: 'Chef Sarah',
       },
       {
         id: 6,
-        title: 'Tacos',
+        name: 'Tacos',
         ingredients: ['Taco Shells', 'Ground Beef', 'Lettuce', 'Cheese', 'Salsa'],
-        instructions: 'Cook beef, assemble tacos with toppings...',
+        description: 'Cook beef, assemble tacos with toppings...',
         image: '/img/taco.jfif',
         author: 'Chef Mark',
       },
@@ -68,9 +68,9 @@ const RecipeList: React.FC = () => {
 
   }, []);
 
-  // Handle the change in title search
-  const handleTitleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTitleSearch(event.target.value);
+  // Handle the change in name search
+  const handleNameSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNameSearch(event.target.value);
   };
 
   // Handle the change in ingredient search (for adding a new ingredient)
@@ -91,10 +91,10 @@ const RecipeList: React.FC = () => {
     setIngredientsList((prevList) => prevList.filter((ing) => ing !== ingredient));
   };
 
-  // Filter recipes based on both title and ingredients dynamically
+  // Filter recipes based on both name and ingredients dynamically
   const filterRecipes = () => {
     const filtered = recipes.filter((recipe) => {
-      const matchesTitle = recipe.title.toLowerCase().includes(titleSearch.toLowerCase());
+      const matchesName = recipe.name.toLowerCase().includes(nameSearch.toLowerCase());
 
       // Check if all ingredients in the list match any of the recipe's ingredients
       const matchesIngredients = ingredientsList.every((ingredient) =>
@@ -102,21 +102,21 @@ const RecipeList: React.FC = () => {
       );
 
       // Only show recipes that match both search criteria
-      return matchesTitle && matchesIngredients;
+      return matchesName && matchesIngredients;
     });
 
     setFilteredRecipes(filtered);
   };
 
-  // Use useEffect to run filter anytime titleSearch or ingredientsList changes
+  // Use useEffect to run filter anytime nameSearch or ingredientsList changes
   useEffect(() => {
     // Apply filtering only if there are inputs to filter
-    if (titleSearch || ingredientsList.length > 0) {
+    if (nameSearch || ingredientsList.length > 0) {
       filterRecipes();
     } else {
       setFilteredRecipes(recipes); // Reset to all recipes if no filter is applied
     }
-  }, [titleSearch, ingredientsList, recipes]); // Add recipes as a dependency
+  }, [nameSearch, ingredientsList, recipes]); // Add recipes as a dependency
 
   const styles = {
     container: {
@@ -126,7 +126,7 @@ const RecipeList: React.FC = () => {
     },
     grid: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(5, 1fr)',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', // Adjust columns dynamically based on screen size
       gap: '1.5rem',
     },
     cardWrapper: {
@@ -150,6 +150,14 @@ const RecipeList: React.FC = () => {
       border: '1px solid #ccc',
       borderRadius: '4px',
     },
+    addIngredientButton: {
+      padding: '0.5rem',
+      backgroundColor: '#28a745',
+      color: 'white',
+      border: 'none',
+      borderRadius: '4px',
+      cursor: 'pointer',
+    },
     ingredientList: {
       display: 'flex',
       flexWrap: 'wrap',
@@ -167,60 +175,3 @@ const RecipeList: React.FC = () => {
       marginLeft: '0.5rem',
       cursor: 'pointer',
       color: 'red',
-    },
-  };
-
-  return (
-    <div style={styles.container}>
-      <div style={styles.searchColumn}>
-        {/* Title Search Input */}
-        <input
-          type="text"
-          placeholder="Search by recipe name..."
-          value={titleSearch}
-          onChange={handleTitleSearchChange}
-          style={styles.searchInput}
-        />
-
-        {/* Ingredient Search Input */}
-        <input
-          type="text"
-          placeholder="Add ingredient filter..."
-          value={ingredientSearch}
-          onChange={handleIngredientSearchChange}
-          style={styles.searchInput}
-        />
-        <button onClick={handleAddIngredient} style={styles.searchInput}>
-          Add Ingredient Filter
-        </button>
-
-        {/* Display added ingredients */}
-        <div style={styles.ingredientList}>
-          {ingredientsList.map((ingredient, index) => (
-            <div key={index} style={styles.ingredientTag}>
-              {ingredient}
-              <span
-                style={styles.removeButton}
-                onClick={() => handleRemoveIngredient(ingredient)}
-              >
-                ×
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div style={styles.grid}>
-        {filteredRecipes.map((recipe) => (
-          <div key={recipe.id} style={styles.cardWrapper}>
-            <Link to={`/recipes/${recipe.id}`} style={styles.linkStyle}>
-              <RecipeCard recipe={recipe} />
-            </Link>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default RecipeList;
