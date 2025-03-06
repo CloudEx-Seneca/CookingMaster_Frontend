@@ -5,6 +5,10 @@ import RecipeCard from './RecipeCard.tsx';
 
 const RecipeList: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
+  const [titleSearch, setTitleSearch] = useState('');
+  const [ingredientSearch, setIngredientSearch] = useState('');
+  const [ingredientsList, setIngredientsList] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchedRecipes: Recipe[] = [
@@ -58,8 +62,61 @@ const RecipeList: React.FC = () => {
       },
     ];
 
+    // Set initial recipes and filtered recipes to the fetched data
     setRecipes(fetchedRecipes);
+    setFilteredRecipes(fetchedRecipes); // Show all recipes initially
+
   }, []);
+
+  // Handle the change in title search
+  const handleTitleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTitleSearch(event.target.value);
+  };
+
+  // Handle the change in ingredient search (for adding a new ingredient)
+  const handleIngredientSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIngredientSearch(event.target.value);
+  };
+
+  // Add ingredient to the list of filters
+  const handleAddIngredient = () => {
+    if (ingredientSearch.trim() !== '') {
+      setIngredientsList((prevList) => [...prevList, ingredientSearch.trim()]);
+      setIngredientSearch('');
+    }
+  };
+
+  // Remove ingredient from the list of filters
+  const handleRemoveIngredient = (ingredient: string) => {
+    setIngredientsList((prevList) => prevList.filter((ing) => ing !== ingredient));
+  };
+
+  // Filter recipes based on both title and ingredients dynamically
+  const filterRecipes = () => {
+    const filtered = recipes.filter((recipe) => {
+      const matchesTitle = recipe.title.toLowerCase().includes(titleSearch.toLowerCase());
+
+      // Check if all ingredients in the list match any of the recipe's ingredients
+      const matchesIngredients = ingredientsList.every((ingredient) =>
+        recipe.ingredients.some((ing) => ing.toLowerCase().includes(ingredient.toLowerCase()))
+      );
+
+      // Only show recipes that match both search criteria
+      return matchesTitle && matchesIngredients;
+    });
+
+    setFilteredRecipes(filtered);
+  };
+
+  // Use useEffect to run filter anytime titleSearch or ingredientsList changes
+  useEffect(() => {
+    // Apply filtering only if there are inputs to filter
+    if (titleSearch || ingredientsList.length > 0) {
+      filterRecipes();
+    } else {
+      setFilteredRecipes(recipes); // Reset to all recipes if no filter is applied
+    }
+  }, [titleSearch, ingredientsList, recipes]); // Add recipes as a dependency
 
   const styles = {
     container: {
@@ -79,14 +136,83 @@ const RecipeList: React.FC = () => {
     linkStyle: {
       textDecoration: 'none', // Remove underline
     },
+    searchColumn: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.75rem', // Reduced the gap between search fields
+      marginBottom: '1.5rem', // Reduced the bottom margin for less spacing
+    },
+    searchInput: {
+      padding: '0.5rem',
+      marginBottom: '0.5rem', // Reduced margin between the inputs
+      width: '100%',
+      fontSize: '1rem',
+      border: '1px solid #ccc',
+      borderRadius: '4px',
+    },
+    ingredientList: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: '0.25rem', // Reduced the gap between ingredient tags
+    },
+    ingredientTag: {
+      backgroundColor: '#f1f1f1',
+      padding: '0.3rem 0.6rem',
+      borderRadius: '12px',
+      fontSize: '0.9rem',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    removeButton: {
+      marginLeft: '0.5rem',
+      cursor: 'pointer',
+      color: 'red',
+    },
   };
 
   return (
     <div style={styles.container}>
+      <div style={styles.searchColumn}>
+        {/* Title Search Input */}
+        <input
+          type="text"
+          placeholder="Search by recipe name..."
+          value={titleSearch}
+          onChange={handleTitleSearchChange}
+          style={styles.searchInput}
+        />
+
+        {/* Ingredient Search Input */}
+        <input
+          type="text"
+          placeholder="Add ingredient filter..."
+          value={ingredientSearch}
+          onChange={handleIngredientSearchChange}
+          style={styles.searchInput}
+        />
+        <button onClick={handleAddIngredient} style={styles.searchInput}>
+          Add Ingredient Filter
+        </button>
+
+        {/* Display added ingredients */}
+        <div style={styles.ingredientList}>
+          {ingredientsList.map((ingredient, index) => (
+            <div key={index} style={styles.ingredientTag}>
+              {ingredient}
+              <span
+                style={styles.removeButton}
+                onClick={() => handleRemoveIngredient(ingredient)}
+              >
+                ×
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div style={styles.grid}>
-        {recipes.map((recipe) => (
+        {filteredRecipes.map((recipe) => (
           <div key={recipe.id} style={styles.cardWrapper}>
-            {/* Apply the link style */}
             <Link to={`/recipes/${recipe.id}`} style={styles.linkStyle}>
               <RecipeCard recipe={recipe} />
             </Link>
