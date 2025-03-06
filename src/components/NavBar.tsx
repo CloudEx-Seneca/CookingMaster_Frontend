@@ -10,7 +10,6 @@ import axios from 'axios';
 const NavBar: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState<string>('');
 
   const token = useSelector((state: RootState) => state.auth.token);
 
