@@ -11,7 +11,6 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
   const [instructions, setInstructions] = useState('');
   const [error, setError] = useState('');
 
-  // Handle adding a new recipe
   const handleAddRecipe = () => {
     if (!title || ingredients.some(ingredient => ingredient === '') || !instructions) {
       setError('Please fill in all fields, including at least one ingredient.');
@@ -24,31 +23,28 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
       instructions,
     };
     onAddRecipe(newRecipe);
-    // Reset fields after adding the recipe
     setTitle('');
     setIngredients(['']);
     setInstructions('');
     setError('');
   };
 
-  // Handle ingredient changes
   const handleIngredientChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const newIngredients = [...ingredients];
     newIngredients[index] = e.target.value;
     setIngredients(newIngredients);
   };
 
-  // Handle adding an empty ingredient field
   const handleAddIngredientField = () => {
     setIngredients([...ingredients, '']);
   };
 
-  // Handle deleting an ingredient
   const handleDeleteIngredient = (index: number) => {
     const newIngredients = ingredients.filter((_, i) => i !== index);
     setIngredients(newIngredients);
   };
 
+  // Styles constant
   const styles = {
     container: {
       maxWidth: '800px',
@@ -95,16 +91,14 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
       border: '1px solid #ccc',
       borderRadius: '4px',
     },
-    formInputFocus: {
-      borderColor: '#E73927',
-      outline: 'none',
-    },
     inputGroup: {
       marginBottom: '10px',
+      display: 'flex',
+      alignItems: 'center',
     },
     addIngredientBtn: {
       padding: '10px 20px',
-      backgroundColor: '#E73927', // Orange color applied here
+      backgroundColor: '#E73927',
       color: 'white',
       border: 'none',
       borderRadius: '4px',
@@ -112,12 +106,12 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
       cursor: 'pointer',
     },
     addIngredientBtnHover: {
-      backgroundColor: '#c5281d', // Slightly darker shade for hover
+      backgroundColor: '#c5281d',
     },
     addRecipeBtn: {
       width: '100%',
       padding: '12px',
-      backgroundColor: '#E73927', // Orange color applied here
+      backgroundColor: '#E73927',
       color: 'white',
       border: 'none',
       borderRadius: '4px',
@@ -125,7 +119,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
       cursor: 'pointer',
     },
     addRecipeBtnHover: {
-      backgroundColor: '#c5281d', // Slightly darker shade for hover
+      backgroundColor: '#c5281d',
     },
   };
 
@@ -154,7 +148,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
           <div style={styles.formGroup}>
             <label style={styles.formLabel}>Ingredients</label>
             {ingredients.map((ingredient, index) => (
-              <div style={styles.inputGroup} key={index}>
+              <div key={index} style={styles.inputGroup}>
                 <input
                   type="text"
                   style={styles.formInput}
@@ -165,7 +159,6 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
                 {/* Delete Button */}
                 <button
                   type="button"
-                  className="btn btn-danger"
                   style={{
                     ...styles.addIngredientBtn,
                     backgroundColor: '#dc3545',
