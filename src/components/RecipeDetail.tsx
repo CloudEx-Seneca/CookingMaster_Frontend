@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'; // For accessing the URL parameters
+import { useParams, Link } from 'react-router-dom'; // For accessing the URL parameters
 import { Recipe } from '../types/Recipe';
 
 const RecipeDetail: React.FC = () => {
@@ -24,7 +24,12 @@ const RecipeDetail: React.FC = () => {
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.title}>{recipe.name}</h2> {/* Updated to use name */}
+      <div style={styles.headerRow}>
+        <h2 style={styles.title}>{recipe.name}</h2> {/* Updated to use name */}
+        <Link to="/recipes" style={styles.addButton}>
+          Back to Recipes
+        </Link>
+      </div>
       <div style={styles.imageWrapper}>
         <img src={recipe.image} alt={recipe.name} style={styles.image} /> {/* Updated to use name */}
       </div>
@@ -60,7 +65,7 @@ const styles = {
   title: {
     fontSize: '2rem',
     fontWeight: 'bold',
-    color: '#FF7A47', // The orange color you requested
+    color: '#E73927', // The orange color you requested
     marginBottom: '1rem',
   },
   imageWrapper: {
@@ -95,6 +100,22 @@ const styles = {
   author: {
     fontSize: '0.875rem',
     color: '#777',
+  },    
+  addButton: {
+    padding: '0.5rem 1rem',
+    backgroundColor: '#E73927',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    textDecoration: 'none',
+    fontSize: '1rem',
+  },
+  headerRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '1.5rem',
   },
 };
 
