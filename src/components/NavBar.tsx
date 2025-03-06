@@ -129,7 +129,7 @@ const NavBar: React.FC = () => {
   return (
     <nav style={styles.navbar}>
       <div style={styles.container}>
-        <Link to="/home" style={styles.brand}>Cooking Master</Link>
+        <p style={styles.brand}>Cooking Master</p>
         <div style={styles.navItems}>
           <ul style={styles.navLinks}>
             <li style={styles.navItem}>

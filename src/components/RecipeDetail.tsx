@@ -21,12 +21,8 @@ const RecipeDetail: React.FC = () => {
           image: '/img/carbonara.jpeg',
           author: 'Chef John',
         };
-
-        // Simulate a delay for fetching (you can remove this in production)
-        setTimeout(() => {
-          setRecipe(fetchedRecipe);
-          setIsLoading(false); // Set loading to false when data is fetched
-        }, 1000);
+        setRecipe(fetchedRecipe);
+        setIsLoading(false);
       } catch (error) {
         console.error('Failed to fetch recipe:', error);
         setIsLoading(false); // Ensure loading is stopped even on error
