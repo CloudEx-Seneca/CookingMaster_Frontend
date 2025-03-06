@@ -15,12 +15,12 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
       {/* Uniform image size */}
       <img 
         src={recipe.image} 
-        alt={recipe.title} 
+        alt={recipe.name} 
         style={styles.cardImage}
       />
       <div style={styles.cardBody}>
         {/* Apply the orange color to the title */}
-        <h5 style={styles.cardTitle}>{recipe.title}</h5>
+        <h5 style={styles.cardTitle}>{recipe.name}</h5>
 
         {/* Ingredients section in two columns */}
         <div style={styles.ingredientsContainer}>
@@ -45,7 +45,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
         </div>
 
         {/* Recipe Instructions */}
-        <p style={styles.cardText}>{recipe.instructions}</p>
+        <p style={styles.cardText}>{recipe.description}</p>
 
         {/* Author Info */}
         <p style={styles.cardAuthor}>By: {recipe.author}</p>

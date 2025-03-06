@@ -6,7 +6,7 @@ import RecipeCard from './RecipeCard.tsx';
 const RecipeList: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
-  const [nameSearch, setNameSearch] = useState('');
+  const [titleSearch, setTitleSearch] = useState('');
   const [ingredientSearch, setIngredientSearch] = useState('');
   const [ingredientsList, setIngredientsList] = useState<string[]>([]);
 
@@ -68,9 +68,9 @@ const RecipeList: React.FC = () => {
 
   }, []);
 
-  // Handle the change in name search
-  const handleNameSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNameSearch(event.target.value);
+  // Handle the change in title search
+  const handleTitleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTitleSearch(event.target.value);
   };
 
   // Handle the change in ingredient search (for adding a new ingredient)
@@ -91,10 +91,10 @@ const RecipeList: React.FC = () => {
     setIngredientsList((prevList) => prevList.filter((ing) => ing !== ingredient));
   };
 
-  // Filter recipes based on both name and ingredients dynamically
+  // Filter recipes based on both title and ingredients dynamically
   const filterRecipes = () => {
     const filtered = recipes.filter((recipe) => {
-      const matchesName = recipe.name.toLowerCase().includes(nameSearch.toLowerCase());
+      const matchesTitle = recipe.name.toLowerCase().includes(titleSearch.toLowerCase());
 
       // Check if all ingredients in the list match any of the recipe's ingredients
       const matchesIngredients = ingredientsList.every((ingredient) =>
@@ -102,21 +102,21 @@ const RecipeList: React.FC = () => {
       );
 
       // Only show recipes that match both search criteria
-      return matchesName && matchesIngredients;
+      return matchesTitle && matchesIngredients;
     });
 
     setFilteredRecipes(filtered);
   };
 
-  // Use useEffect to run filter anytime nameSearch or ingredientsList changes
+  // Use useEffect to run filter anytime titleSearch or ingredientsList changes
   useEffect(() => {
     // Apply filtering only if there are inputs to filter
-    if (nameSearch || ingredientsList.length > 0) {
+    if (titleSearch || ingredientsList.length > 0) {
       filterRecipes();
     } else {
       setFilteredRecipes(recipes); // Reset to all recipes if no filter is applied
     }
-  }, [nameSearch, ingredientsList, recipes]); // Add recipes as a dependency
+  }, [titleSearch, ingredientsList, recipes]); // Add recipes as a dependency
 
   const styles = {
     container: {
@@ -126,7 +126,7 @@ const RecipeList: React.FC = () => {
     },
     grid: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', // Adjust columns dynamically based on screen size
+      gridTemplateColumns: 'repeat(5, 1fr)',
       gap: '1.5rem',
     },
     cardWrapper: {
@@ -149,14 +149,6 @@ const RecipeList: React.FC = () => {
       fontSize: '1rem',
       border: '1px solid #ccc',
       borderRadius: '4px',
-    },
-    addIngredientButton: {
-      padding: '0.5rem',
-      backgroundColor: '#28a745',
-      color: 'white',
-      border: 'none',
-      borderRadius: '4px',
-      cursor: 'pointer',
     },
     ingredientList: {
       display: 'flex',
@@ -181,12 +173,12 @@ const RecipeList: React.FC = () => {
   return (
     <div style={styles.container}>
       <div style={styles.searchColumn}>
-        {/* Name Search Input */}
+        {/* Title Search Input */}
         <input
           type="text"
           placeholder="Search by recipe name..."
-          value={nameSearch}
-          onChange={handleNameSearchChange}
+          value={titleSearch}
+          onChange={handleTitleSearchChange}
           style={styles.searchInput}
         />
 
@@ -198,7 +190,7 @@ const RecipeList: React.FC = () => {
           onChange={handleIngredientSearchChange}
           style={styles.searchInput}
         />
-        <button onClick={handleAddIngredient} style={styles.addIngredientButton}>
+        <button onClick={handleAddIngredient} style={styles.searchInput}>
           Add Ingredient Filter
         </button>
 
