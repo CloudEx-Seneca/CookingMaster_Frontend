@@ -11,6 +11,7 @@ const RecipeList: React.FC = () => {
   const [ingredientsList, setIngredientsList] = useState<string[]>([]);
 
   useEffect(() => {
+    // Simulate fetching data
     const fetchedRecipes: Recipe[] = [
       {
         id: 1,
@@ -62,23 +63,37 @@ const RecipeList: React.FC = () => {
       },
     ];
 
-    // Set initial recipes and filtered recipes to the fetched data
+    // Set initial recipes and filteredRecipes state
     setRecipes(fetchedRecipes);
-    setFilteredRecipes(fetchedRecipes); // Show all recipes initially
-
+    setFilteredRecipes(fetchedRecipes); // Ensure filteredRecipes initially has all recipes
   }, []);
 
-  // Handle the change in title search
+  useEffect(() => {
+    const filterRecipes = () => {
+      const filtered = recipes.filter((recipe) => {
+        const matchesTitle = recipe.name.toLowerCase().includes(titleSearch.toLowerCase());
+        const matchesIngredients = ingredientsList.every((ingredient) =>
+          recipe.ingredients.some((ing) => ing.toLowerCase().includes(ingredient.toLowerCase()))
+        );
+        return matchesTitle && matchesIngredients;
+      });
+
+      setFilteredRecipes(filtered);
+    };
+
+    if (recipes.length > 0) {
+      filterRecipes();
+    }
+  }, [titleSearch, ingredientsList, recipes]); // This ensures filter is applied when data changes
+
   const handleTitleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitleSearch(event.target.value);
   };
 
-  // Handle the change in ingredient search (for adding a new ingredient)
   const handleIngredientSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIngredientSearch(event.target.value);
   };
 
-  // Add ingredient to the list of filters
   const handleAddIngredient = () => {
     if (ingredientSearch.trim() !== '') {
       setIngredientsList((prevList) => [...prevList, ingredientSearch.trim()]);
@@ -86,37 +101,9 @@ const RecipeList: React.FC = () => {
     }
   };
 
-  // Remove ingredient from the list of filters
   const handleRemoveIngredient = (ingredient: string) => {
     setIngredientsList((prevList) => prevList.filter((ing) => ing !== ingredient));
   };
-
-  // Filter recipes based on both title and ingredients dynamically
-  const filterRecipes = () => {
-    const filtered = recipes.filter((recipe) => {
-      const matchesTitle = recipe.name.toLowerCase().includes(titleSearch.toLowerCase());
-
-      // Check if all ingredients in the list match any of the recipe's ingredients
-      const matchesIngredients = ingredientsList.every((ingredient) =>
-        recipe.ingredients.some((ing) => ing.toLowerCase().includes(ingredient.toLowerCase()))
-      );
-
-      // Only show recipes that match both search criteria
-      return matchesTitle && matchesIngredients;
-    });
-
-    setFilteredRecipes(filtered);
-  };
-
-  // Use useEffect to run filter anytime titleSearch or ingredientsList changes
-  useEffect(() => {
-    // Apply filtering only if there are inputs to filter
-    if (titleSearch || ingredientsList.length > 0) {
-      filterRecipes();
-    } else {
-      setFilteredRecipes(recipes); // Reset to all recipes if no filter is applied
-    }
-  }, [titleSearch, ingredientsList, recipes]); // Add recipes as a dependency
 
   const styles = {
     container: {
@@ -134,17 +121,23 @@ const RecipeList: React.FC = () => {
       justifyContent: 'center',
     },
     linkStyle: {
-      textDecoration: 'none', // Remove underline
+      textDecoration: 'none',
+    },
+    headerRow: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '1.5rem',
     },
     searchColumn: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '0.75rem', // Reduced the gap between search fields
-      marginBottom: '1.5rem', // Reduced the bottom margin for less spacing
+      gap: '0.75rem',
+      marginBottom: '1.5rem',
     },
     searchInput: {
       padding: '0.5rem',
-      marginBottom: '0.5rem', // Reduced margin between the inputs
+      marginBottom: '0.5rem',
       width: '100%',
       fontSize: '1rem',
       border: '1px solid #ccc',
@@ -153,7 +146,7 @@ const RecipeList: React.FC = () => {
     ingredientList: {
       display: 'flex',
       flexWrap: 'wrap',
-      gap: '0.25rem', // Reduced the gap between ingredient tags
+      gap: '0.25rem',
     },
     ingredientTag: {
       backgroundColor: '#f1f1f1',
@@ -168,10 +161,28 @@ const RecipeList: React.FC = () => {
       cursor: 'pointer',
       color: 'red',
     },
+    addButton: {
+      padding: '0.5rem 1rem',
+      backgroundColor: '#E73927',
+      color: 'white',
+      border: 'none',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      textDecoration: 'none',
+      fontSize: '1rem',
+    },
   };
 
   return (
     <div style={styles.container}>
+      {/* Header Row with "Add New Recipe" button aligned to the right */}
+      <div style={styles.headerRow}>
+        <h3>Search for Recipe</h3>
+        <Link to="/recipes/add" style={styles.addButton}>
+          Add New Recipe
+        </Link>
+      </div>
+
       <div style={styles.searchColumn}>
         {/* Title Search Input */}
         <input

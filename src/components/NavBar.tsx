@@ -139,9 +139,6 @@ const NavBar: React.FC = () => {
               <Link to="/shoppinglist" style={styles.navLink}>Shopping List</Link>
             </li>
             <li style={styles.navItem}>
-              <Link to="/recipes/add" style={styles.navLink}>New Recipe</Link>
-            </li>
-            <li style={styles.navItem}>
               {!token ? (
                 <Link to="/login" style={styles.loginBtn}>Login</Link>
               ) : (

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Recipe } from '../types/Recipe';
+import { Link } from 'react-router-dom';
 
 interface RecipeFormProps {
   onAddRecipe: (recipe: Recipe) => void;
@@ -164,11 +165,32 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
     addRecipeBtnHover: {
       backgroundColor: '#c5281d',
     },
+    addButton: {
+      padding: '0.5rem 1rem',
+      backgroundColor: '#E73927',
+      color: 'white',
+      border: 'none',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      textDecoration: 'none',
+      fontSize: '1rem',
+    },
+    headerRow: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '1.5rem',
+    },
   };
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.formTitle}>Adding a New Recipe</h2>
+      <div style={styles.headerRow}>
+        <h3>Create a New Recipe</h3>
+        <Link to="/recipes" style={styles.addButton}>
+          Back to Recipes
+        </Link>
+      </div>
 
       {error && <div style={styles.errorMessage}>{error}</div>}
 
