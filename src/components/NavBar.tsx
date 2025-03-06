@@ -32,10 +32,6 @@ const NavBar: React.FC = () => {
     }
   };
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
-  };
-
   // Styles as a constant
   const styles = {
     navbar: {
@@ -144,15 +140,6 @@ const NavBar: React.FC = () => {
             </li>
             <li style={styles.navItem}>
               <Link to="/recipes/add" style={styles.navLink}>New Recipe</Link>
-            </li>
-            <li style={styles.navItem}>
-              <input
-                type="text"
-                style={styles.searchInput}
-                placeholder="Search Recipe"
-                value={searchQuery}
-                onChange={handleSearchChange}
-              />
             </li>
             <li style={styles.navItem}>
               {!token ? (
