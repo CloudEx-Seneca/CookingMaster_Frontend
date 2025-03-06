@@ -43,6 +43,12 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
     setIngredients([...ingredients, '']);
   };
 
+  // Handle deleting an ingredient
+  const handleDeleteIngredient = (index: number) => {
+    const newIngredients = ingredients.filter((_, i) => i !== index);
+    setIngredients(newIngredients);
+  };
+
   const styles = {
     container: {
       maxWidth: '800px',
@@ -156,6 +162,21 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
                   value={ingredient}
                   onChange={(e) => handleIngredientChange(e, index)}
                 />
+                {/* Delete Button */}
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  style={{
+                    ...styles.addIngredientBtn,
+                    backgroundColor: '#dc3545',
+                    marginLeft: '10px',
+                  }}
+                  onClick={() => handleDeleteIngredient(index)}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = styles.addIngredientBtnHover.backgroundColor}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = styles.addIngredientBtn.backgroundColor}
+                >
+                  Delete
+                </button>
               </div>
             ))}
             <button
