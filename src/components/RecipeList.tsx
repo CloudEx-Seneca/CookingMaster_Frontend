@@ -175,3 +175,60 @@ const RecipeList: React.FC = () => {
       marginLeft: '0.5rem',
       cursor: 'pointer',
       color: 'red',
+    },
+  };
+
+  return (
+    <div style={styles.container}>
+      <div style={styles.searchColumn}>
+        {/* Name Search Input */}
+        <input
+          type="text"
+          placeholder="Search by recipe name..."
+          value={nameSearch}
+          onChange={handleNameSearchChange}
+          style={styles.searchInput}
+        />
+
+        {/* Ingredient Search Input */}
+        <input
+          type="text"
+          placeholder="Add ingredient filter..."
+          value={ingredientSearch}
+          onChange={handleIngredientSearchChange}
+          style={styles.searchInput}
+        />
+        <button onClick={handleAddIngredient} style={styles.addIngredientButton}>
+          Add Ingredient Filter
+        </button>
+
+        {/* Display added ingredients */}
+        <div style={styles.ingredientList}>
+          {ingredientsList.map((ingredient, index) => (
+            <div key={index} style={styles.ingredientTag}>
+              {ingredient}
+              <span
+                style={styles.removeButton}
+                onClick={() => handleRemoveIngredient(ingredient)}
+              >
+                ×
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={styles.grid}>
+        {filteredRecipes.map((recipe) => (
+          <div key={recipe.id} style={styles.cardWrapper}>
+            <Link to={`/recipes/${recipe.id}`} style={styles.linkStyle}>
+              <RecipeCard recipe={recipe} />
+            </Link>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default RecipeList;
