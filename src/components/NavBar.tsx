@@ -138,6 +138,9 @@ const NavBar: React.FC = () => {
               <Link to="/shoppinglist" style={styles.navLink}>Shopping List</Link>
             </li>
             <li style={styles.navItem}>
+              <Link to="/profile" style={styles.navLink}>My Profile</Link>
+            </li>
+            <li style={styles.navItem}>
               {!token ? (
                 <Link to="/login" style={styles.loginBtn}>Login</Link>
               ) : (
