@@ -79,8 +79,8 @@ const RecipeList: React.FC = () => {
     
         const apiUrl = getApiBaseUrl();
         const response = await axios.post(
-          `http://localhost:8889/recipe/v1/recipe/list`,
-          //`${apiUrl}/recipe/v1/recipe/list`,
+          //`http://localhost:8889/recipe/v1/recipe/list`,
+          `${apiUrl}/recipe/v1/recipe/list`,
           {},
           {
             headers: {
