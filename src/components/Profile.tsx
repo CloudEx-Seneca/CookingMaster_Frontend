@@ -19,7 +19,7 @@ const ProfilePage: React.FC = () => {
     const apiUrl = getApiBaseUrl();
     const token = localStorage.getItem('authToken');
     if (!token) {
-      setError('No token found. Please log in.');
+      setError('No token generated/found. Please log in or sign up.');
       setLoading(false);
       return;
     }
