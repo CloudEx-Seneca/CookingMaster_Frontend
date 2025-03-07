@@ -13,63 +13,70 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [description, setDescription] = useState('');
   const [error, setError] = useState<string>('');
+  const [successMessage, setSuccessMessage] = useState<string>(''); // New state for success message
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAddRecipe = async () => {
+    // Check if all required fields are filled
     if (!name.trim() || ingredients.some(ingredient => ingredient.trim() === '') || !description.trim()) {
-      setError('Please fill in all fields, including at least one ingredient.');
+      setError('Please fill in all fields');
       return;
     }
-
-    // Create a new recipe object with additional properties
+  
     const newRecipe = {
       "recipe": {
-        // id: Date.now(), // Generate ID for now, or let the API assign one
         name,
-        // ingredients,
         description,
-        // image: '', // Placeholder image, can be empty or null if no image
-        // author: [], // Empty array for authors, or undefined if not used
       }
     };
-
+  
     try {
       setIsSubmitting(true);
-
-      // Retrieve the token from localStorage (or other secure places)
+  
       const token = localStorage.getItem('authToken');
-      
       if (!token) {
         setError('Authentication token is missing.');
         return;
       }
-
+  
       const apiUrl = getApiBaseUrl();
       const response = await axios.post(
+        //`http://localhost:8889/recipe/v1/recipe/insertorupdate`,
         `${apiUrl}/recipe/v1/recipe/insertorupdate`,
-        // `http://localhost:8889/recipe/v1/recipe/insertorupdate`,
         newRecipe,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-
-      if (response.status === 201) {
-        // Assuming the response returns the new recipe object
-        onAddRecipe(response.data);
-
-        // Reset the form fields after successful submission
+  
+      // Log the response for debugging purposes
+      console.log('Status:', response.status); // Check HTTP status code
+      console.log('Response Data:', response.data); // Check the actual data returned by the API
+  
+      // Check for a successful response status and response code
+      if (response.status === 200 || response.data.code === 200 || response.data.msg === "success") {
+        // Handle success
+        // onAddRecipe(response.data);  // Use response.data.data for the recipe data
+  
+        // Set the success message
+        setSuccessMessage('Recipe added successfully!');
+        
+        // Reset the form fields
         resetForm();
         setError('');
+      } else {
+        setError('Failed to add recipe. Please try again later.');
       }
     } catch (err) {
+      console.error('Error:', err); // Log the error to help with debugging
       setError('Failed to add recipe. Please try again later.');
     } finally {
       setIsSubmitting(false);
     }
   };
+  
 
   const handleIngredientChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const newIngredients = [...ingredients];
@@ -113,6 +120,15 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
       borderRadius: '4px',
       marginBottom: '20px',
       fontSize: '14px',
+    },
+    successMessage: {  
+      color: '#28a745', // Green color for success
+      backgroundColor: '#d4edda', // Light green background for success
+      padding: '10px',
+      borderRadius: '4px',
+      marginBottom: '20px',
+      fontSize: '16px', // Larger font for better visibility
+      fontWeight: 'bold', // Make it bold to highlight the message
     },
     card: {
       backgroundColor: '#fff',
@@ -196,6 +212,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
       </div>
 
       {error && <div style={styles.errorMessage}>{error}</div>}
+      {successMessage && <div style={styles.successMessage}>{successMessage}</div>} {/* Display success message */}
 
       <div style={styles.card}>
         <div style={styles.cardBody}>
