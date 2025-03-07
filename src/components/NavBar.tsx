@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store/authSlice.tsx';
@@ -31,11 +31,15 @@ const NavBar: React.FC = () => {
     }
   };
 
-  // Styles as a constant
+  // Updated Styles with the logout button hover color changed to #FFBB33
   const styles = {
     navbar: {
       backgroundColor: '#E73927',
       padding: '1rem 2rem',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+      position: 'sticky',
+      top: '0',
+      zIndex: '1000',
     },
     container: {
       display: 'flex',
@@ -43,12 +47,15 @@ const NavBar: React.FC = () => {
       alignItems: 'center',
       maxWidth: '1200px',
       margin: '0 auto',
+      padding: '0 1rem',
     },
     brand: {
       color: 'white',
-      fontSize: '24px',
-      textDecoration: 'none',
+      fontSize: '28px',
       fontWeight: 'bold',
+      textDecoration: 'none',
+      letterSpacing: '1px',
+      textTransform: 'uppercase',
     },
     navItems: {
       display: 'flex',
@@ -59,7 +66,7 @@ const NavBar: React.FC = () => {
       margin: 0,
       padding: 0,
       display: 'flex',
-      gap: '20px',
+      gap: '30px',
     },
     navItem: {
       display: 'inline',
@@ -68,17 +75,22 @@ const NavBar: React.FC = () => {
       color: 'white',
       textDecoration: 'none',
       fontSize: '16px',
+      fontWeight: '600',
+      transition: 'color 0.3s ease, text-decoration 0.3s ease',
     },
     navLinkHover: {
+      color: '#FFBB33',
       textDecoration: 'underline',
+      fontWeight: '700',
     },
     searchInput: {
-      padding: '8px',
+      padding: '8px 15px',
       fontSize: '16px',
-      marginLeft: '15px',
-      border: 'none',
       borderRadius: '4px',
+      border: 'none',
       maxWidth: '250px',
+      marginLeft: '15px',
+      outline: 'none',
     },
     searchInputFocus: {
       outline: 'none',
@@ -88,8 +100,10 @@ const NavBar: React.FC = () => {
       color: '#E73927',
       backgroundColor: 'white',
       border: '1px solid #E73927',
-      borderRadius: '4px',
+      borderRadius: '30px',
+      fontWeight: 'bold',
       textDecoration: 'none',
+      transition: 'all 0.3s ease',
     },
     loginBtnHover: {
       backgroundColor: '#E73927',
@@ -100,12 +114,14 @@ const NavBar: React.FC = () => {
       color: '#E73927',
       backgroundColor: 'white',
       border: '1px solid #E73927',
-      borderRadius: '4px',
+      borderRadius: '30px',
       cursor: 'pointer',
+      fontWeight: 'bold',
+      transition: 'all 0.3s ease',
     },
     logoutBtnHover: {
-      backgroundColor: '#E73927',
-      color: 'white',
+      backgroundColor: '#FFBB33', // Changed hover background color to #FFBB33
+      color: 'white', // Text color turns white on hover for better contrast
     },
     // Responsive styles
     responsive: {
@@ -116,10 +132,15 @@ const NavBar: React.FC = () => {
         navLinks: {
           display: 'block',
           textAlign: 'center',
+          marginTop: '10px',
         },
         searchInput: {
           marginTop: '10px',
           width: '100%',
+        },
+        container: {
+          flexDirection: 'column',
+          alignItems: 'flex-start',
         },
       },
     },
@@ -128,23 +149,58 @@ const NavBar: React.FC = () => {
   return (
     <nav style={styles.navbar}>
       <div style={styles.container}>
-        <p style={styles.brand}>Cooking Master</p>
+        <Link to="/" style={styles.brand}>Cooking Master</Link>
         <div style={styles.navItems}>
           <ul style={styles.navLinks}>
             <li style={styles.navItem}>
-              <Link to="/recipes" style={styles.navLink}>Recipes</Link>
+              <Link 
+                to="/recipes" 
+                style={styles.navLink} 
+                onMouseEnter={(e) => e.currentTarget.style.color = '#FFBB33'} 
+                onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
+              >
+                Recipes
+              </Link>
             </li>
             <li style={styles.navItem}>
-              <Link to="/shoppinglist" style={styles.navLink}>Shopping List</Link>
+              <Link 
+                to="/shoppinglist" 
+                style={styles.navLink} 
+                onMouseEnter={(e) => e.currentTarget.style.color = '#FFBB33'} 
+                onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
+              >
+                Shopping List
+              </Link>
             </li>
             <li style={styles.navItem}>
-              <Link to="/profile" style={styles.navLink}>My Profile</Link>
+              <Link 
+                to="/profile" 
+                style={styles.navLink} 
+                onMouseEnter={(e) => e.currentTarget.style.color = '#FFBB33'} 
+                onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
+              >
+                My Profile
+              </Link>
             </li>
             <li style={styles.navItem}>
               {!token ? (
-                <Link to="/login" style={styles.loginBtn}>Login</Link>
+                <Link 
+                  to="/login" 
+                  style={styles.loginBtn} 
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#E73927'} 
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                >
+                  Login
+                </Link>
               ) : (
-                <button style={styles.logoutBtn} onClick={handleLogout}>Logout</button>
+                <button 
+                  style={styles.logoutBtn} 
+                  onClick={handleLogout} 
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#FFBB33'} // Hover effect
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'} // Remove hover effect
+                >
+                  Logout
+                </button>
               )}
             </li>
           </ul>
