@@ -17,22 +17,22 @@ const ShoppingList: React.FC = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h2 className="mb-4">My Shopping List</h2>
+    <div style={styles.container}>
+      <h2 style={styles.heading}>My Shopping List</h2>
       
-      <div className="card shadow-sm mb-4">
-        <div className="card-body">
-          <h5 className="card-title">Add Item</h5>
-          <div className="input-group mb-3">
+      <div style={styles.card}>
+        <div style={styles.cardBody}>
+          <h5 style={styles.cardTitle}>Add Item</h5>
+          <div style={styles.inputGroup}>
             <input
               type="text"
-              className="form-control"
+              style={styles.input}
               placeholder="Enter item"
               value={newItem}
               onChange={(e) => setNewItem(e.target.value)}
             />
             <button
-              className="btn btn-outline-primary"
+              style={styles.addButton}
               onClick={() => addItem(newItem)}
             >
               Add Item
@@ -42,11 +42,11 @@ const ShoppingList: React.FC = () => {
       </div>
 
       {items.length === 0 ? (
-        <div className="alert alert-info" role="alert">
+        <div style={styles.alert}>
           No items in the shopping list.
         </div>
       ) : (
-        <div className="list-group">
+        <div style={styles.list}>
           {items.map((item) => (
             <ShoppingListItem
               key={item}
@@ -58,6 +58,70 @@ const ShoppingList: React.FC = () => {
       )}
     </div>
   );
+};
+
+// Inline styles
+const styles = {
+  container: {
+    padding: '2rem',
+    maxWidth: '800px',
+    margin: '0 auto',
+  },
+  heading: {
+    fontSize: '2rem',
+    fontWeight: 'bold',
+    marginBottom: '1.5rem',
+    color: '#333',
+  },
+  card: {
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    borderRadius: '8px',
+    backgroundColor: '#fff',
+    marginBottom: '1.5rem',
+    padding: '1rem',
+  },
+  cardBody: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  cardTitle: {
+    fontSize: '1.25rem',
+    fontWeight: 'bold',
+    marginBottom: '1rem',
+  },
+  inputGroup: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  input: {
+    padding: '0.75rem',
+    fontSize: '1rem',
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    flexGrow: 1,
+    marginRight: '0.5rem',
+  },
+  addButton: {
+    padding: '0.75rem 1rem',
+    fontSize: '1rem',
+    backgroundColor: '#E73927', // Main color
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  },
+  alert: {
+    padding: '1rem',
+    backgroundColor: '#e9f7fe',
+    color: '#31708f',
+    borderRadius: '4px',
+    fontSize: '1rem',
+  },
+  list: {
+    listStyleType: 'none',
+    paddingLeft: '0',
+  },
 };
 
 export default ShoppingList;

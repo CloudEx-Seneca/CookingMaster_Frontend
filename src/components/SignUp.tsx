@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
 import { useNavigate } from 'react-router-dom';
+import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
 
 interface RegistrationFormData {
   email: string;
@@ -17,6 +17,8 @@ const SignUp: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
+  const [btnHovered, setBtnHovered] = useState<boolean>(false); // Track hover state for Register button
+  const [loginBtnHovered, setLoginBtnHovered] = useState<boolean>(false); // Track hover state for Login button
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,70 +57,80 @@ const SignUp: React.FC = () => {
       console.log(response.data); // Handle the successful registration
     } catch (err) {
       setLoading(false);
-      
-      // Check if the error has a response object, which means the error is from the API
+
       if (err.response) {
-        // You can access the error message from the response object
         setError(err.response.data.msg || 'An error occurred. Please try again.');
-        console.error(err.response.data); // Log the full error response from the API
+        console.error(err.response.data);
       } else {
         setError('Failed to register. Please try again.');
-        console.error(err); // Log the error if it's not from the API
+        console.error(err);
       }
     }
   };
 
   const handleLoginRedirect = () => {
-    // Redirect to the login page
     navigate('/login');
   };
 
   return (
-    <div className="container-fluid" style={styles.backgroundContainer}>
-      <div className="row justify-content-center align-items-center" style={{ height: '100vh' }}>
+    <div style={styles.backgroundContainer}>
+      <div style={styles.loginContainer}>
         {/* Left Column - Registration Form */}
-        <div className="col-md-1"></div>
-        <div className="col-md-3">
-          <div className="card shadow-lg mt-5" style={styles.card}>
-            <div className="card-header bg-primary text-white text-center">
-              <h4>Register</h4>
+        <div style={styles.formContainer}>
+          <div style={styles.card}>
+            <div style={styles.cardHeader}>
+              <h4 style={styles.cardHeaderText}>Register</h4>
             </div>
-            <div className="card-body">
+            <div style={styles.cardBody}>
               <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label htmlFor="email" className="text">Email</label>
+                <div style={styles.formGroup}>
+                  <label htmlFor="email" style={styles.label}>Email</label>
                   <input
                     type="email"
                     id="email"
                     name="email"
-                    className="form-control"
+                    style={styles.input}
                     value={formData.email}
                     onChange={handleChange}
                     required
                   />
                 </div>
-                <div className="form-group mt-3">
-                  <label htmlFor="password" className="text">Password</label>
+                <div style={styles.formGroup}>
+                  <label htmlFor="password" style={styles.label}>Password</label>
                   <input
                     type="password"
                     id="password"
                     name="password"
-                    className="form-control"
+                    style={styles.input}
                     value={formData.password}
                     onChange={handleChange}
                     required
                   />
                 </div>
-                {error && <p className="text-danger mt-2">{error}</p>}
-                {success && <p className="text-success mt-2">Registration successful!</p>}
-                <div className="d-flex justify-content-between mt-4">
-                  <button type="submit" className="btn btn-primary" disabled={loading}>
+                {error && <p style={styles.error}>{error}</p>}
+                {success && <p style={styles.success}>Registration successful!</p>}
+                <div style={styles.buttonContainer}>
+                  <button
+                    type="submit"
+                    style={{
+                      ...styles.btn,
+                      backgroundColor: btnHovered ? '#FFBB33' : '#E73927',
+                    }} // Apply hover effect for Register button
+                    disabled={loading}
+                    onMouseEnter={() => setBtnHovered(true)}  // Trigger hover on mouse enter
+                    onMouseLeave={() => setBtnHovered(false)}  // Revert back on mouse leave
+                  >
                     {loading ? 'Registering...' : 'Register'}
                   </button>
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    style={{
+                      ...styles.btn,
+                      backgroundColor: loginBtnHovered ? '#FFBB33' : '#6c757d', // Apply hover effect for Login button
+                    }}
                     onClick={handleLoginRedirect}
+                    onMouseEnter={() => setLoginBtnHovered(true)}  // Trigger hover for Login button
+                    onMouseLeave={() => setLoginBtnHovered(false)}  // Revert back on mouse leave
                   >
                     Login
                   </button>
@@ -129,11 +141,11 @@ const SignUp: React.FC = () => {
         </div>
 
         {/* Right Column */}
-        <div className="col-md-4 d-flex justify-content-center align-items-center">
-          <div className="text-center text-white shadow-lg p-4 rounded" style={styles.welcomeText}>
-            <h1 className="display-4 font-weight-bold">Welcome to Cooking Master</h1>
-            <p className="lead mt-3">A place to share and try out new recipes!</p>
-            <p className="text-light mt-3">Sign up to explore thousands of delicious dishes.</p>
+        <div style={styles.welcomeContainer}>
+          <div style={styles.welcomeText}>
+            <h1 style={styles.welcomeTitle}>Welcome to Cooking Master</h1>
+            <p style={styles.welcomeDescription}>A place to share and try out new recipes!</p>
+            <p style={styles.welcomeSubDescription}>Sign up to explore thousands of delicious dishes.</p>
           </div>
         </div>
       </div>
@@ -141,21 +153,112 @@ const SignUp: React.FC = () => {
   );
 };
 
-// Inline styles for background image and card
 const styles = {
   backgroundContainer: {
-    backgroundImage: 'url(/img/FoodBackground.jpg)', // Replace with your image URL
+    backgroundImage: 'url(/img/FoodBackground.jpg)', 
     backgroundPosition: 'right center',
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
     height: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loginContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '80%',
+    maxWidth: '1200px',
+  },
+  formContainer: {
+    width: '35%',
   },
   card: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Slight opacity to ensure text readability
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: '8px',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+  },
+  cardHeader: {
+    backgroundColor: '#E73927',
+    color: 'white',
+    padding: '15px',
+    textAlign: 'center',
+    borderRadius: '8px 8px 0 0',
+  },
+  cardHeaderText: {
+    fontFamily: "'Poppins', sans-serif",
+    fontWeight: '600',
+  },
+  cardBody: {
+    padding: '20px',
+  },
+  formGroup: {
+    marginBottom: '15px',
+  },
+  label: {
+    fontSize: '14px',
+    marginBottom: '5px',
+    display: 'block',
+    fontFamily: "'Poppins', sans-serif",
+  },
+  input: {
+    width: '100%',
+    padding: '10px',
+    fontSize: '14px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    fontFamily: "'Poppins', sans-serif",
+  },
+  error: {
+    color: 'red',
+    fontSize: '12px',
+    marginTop: '5px',
+  },
+  success: {
+    color: 'green',
+    fontSize: '12px',
+    marginTop: '5px',
+  },
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: '20px',
+  },
+  btn: {
+    padding: '10px 20px',
+    fontSize: '14px',
+    border: 'none',
+    borderRadius: '4px',
+    color: 'white',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
+    fontFamily: "'Poppins', sans-serif",
+    fontWeight: '600',
+  },
+  welcomeContainer: {
+    width: '50%',
+    padding: '20px',
   },
   welcomeText: {
-    textShadow: '3px 3px 6px rgba(0, 0, 0, 0.5)', // Adding text shadow for the welcome portion
+    color: 'white',
+    textAlign: 'center',
+    padding: '40px',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    borderRadius: '8px',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
+  },
+  welcomeTitle: {
+    fontSize: '36px',
+    fontWeight: 'bold',
+    textShadow: '3px 3px 6px rgba(0, 0, 0, 0.5)',
+  },
+  welcomeDescription: {
+    fontSize: '18px',
+    marginTop: '20px',
+  },
+  welcomeSubDescription: {
+    fontSize: '16px',
+    marginTop: '20px',
   },
 };
 

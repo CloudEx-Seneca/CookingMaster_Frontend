@@ -11,9 +11,12 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const [loginBtnHover, setLoginBtnHover] = useState(false);
+  const [signUpBtnHover, setSignUpBtnHover] = useState(false);
+
   const error = useSelector((state: RootState) => state.auth.error);
   const dispatch = useDispatch();
-  const navigate = useNavigate();  // React Router's useNavigate hook for redirection
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,30 +26,24 @@ const Login: React.FC = () => {
       const apiUrl = getApiBaseUrl();
       const response = await axios.post(`${apiUrl}/usercenter/v1/user/login`, { email, password });
 
-      // Assuming the response contains the tokens on successful login
       const { access_token, refresh_token, access_expire, refresh_after } = response.data.data;
 
-      // Dispatch the login success action with the access token
       dispatch(loginSuccess(access_token));
 
-      // Store both access_token and refresh_token in localStorage
       localStorage.setItem('authToken', access_token);
       localStorage.setItem('refreshToken', refresh_token);
       localStorage.setItem('accessExpire', access_expire.toString());
       localStorage.setItem('refreshAfter', refresh_after.toString());
 
-      // Clear the form and stop loading
       setEmail('');
       setPassword('');
       setLoading(false);
 
-      // Redirect to the /home page after successful login
       navigate('/recipes');
     } catch (err) {
       setLoading(false);
 
       if (err.response) {
-        // Dispatch the login failure action with an error message
         dispatch(loginFailure(err.response.data.msg || 'Login failed'));
       } else {
         dispatch(loginFailure('Network error. Please try again later.'));
@@ -55,54 +52,59 @@ const Login: React.FC = () => {
   };
 
   const handleSignUpRedirect = () => {
-    // Redirect to the sign-up page
     navigate('/signup');
   };
 
   return (
-    <div className="container-fluid" style={styles.backgroundContainer}>
-      <div className="row justify-content-center align-items-center" style={{ height: '100vh' }}>
+    <div style={styles.backgroundContainer}>
+      <div style={styles.loginContainer}>
         {/* Left Column - Login Form */}
-        <div className="col-md-1">
-        </div>
-        <div className="col-md-3">
-          <div className="card shadow-lg mt-5" style={styles.card}>
-            <div className="card-header bg-primary text-white text-center">
-              <h4>Login</h4>
+        <div style={styles.formContainer}>
+          <div style={styles.card}>
+            <div style={styles.cardHeader}>
+              <h4 style={styles.cardHeaderText}>Login</h4>
             </div>
-            <div className="card-body">
+            <div style={styles.cardBody}>
               <form onSubmit={handleLogin}>
-                <div className="form-group">
-                  <label htmlFor="email" className="text">Email</label>
+                <div style={styles.formGroup}>
+                  <label htmlFor="email" style={styles.label}>Email</label>
                   <input
                     type="email"
                     id="email"
-                    className="form-control"
+                    style={styles.input}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
-                <div className="form-group mt-3">
-                  <label htmlFor="password" className="text">Password</label>
+                <div style={{ ...styles.formGroup, marginTop: '15px' }}>
+                  <label htmlFor="password" style={styles.label}>Password</label>
                   <input
                     type="password"
                     id="password"
-                    className="form-control"
+                    style={styles.input}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                 </div>
-                {error && <p className="text-danger mt-2">{error}</p>}
-                <div className="d-flex justify-content-between mt-4">
-                  <button type="submit" className="btn btn-primary" disabled={loading}>
+                {error && <p style={styles.error}>{error}</p>}
+                <div style={styles.buttonContainer}>
+                  <button
+                    type="submit"
+                    style={loginBtnHover ? { ...styles.btn, backgroundColor: '#FFBB33', color: 'white' } : styles.btn}
+                    disabled={loading}
+                    onMouseEnter={() => setLoginBtnHover(true)}
+                    onMouseLeave={() => setLoginBtnHover(false)}
+                  >
                     {loading ? 'Logging in...' : 'Login'}
                   </button>
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    style={signUpBtnHover ? { ...styles.btn, backgroundColor: '#FFBB33', color: 'white' } : { ...styles.btn, backgroundColor: '#6c757d' }}
                     onClick={handleSignUpRedirect}
+                    onMouseEnter={() => setSignUpBtnHover(true)}
+                    onMouseLeave={() => setSignUpBtnHover(false)}
                   >
                     Sign Up
                   </button>
@@ -113,11 +115,11 @@ const Login: React.FC = () => {
         </div>
 
         {/* Right Column */}
-        <div className="col-md-4 d-flex justify-content-center align-items-center">
-          <div className="text-center text-white shadow-lg p-4 rounded" style={styles.welcomeText}>
-            <h1 className="display-4 font-weight-bold">Welcome to Cooking Master</h1>
-            <p className="lead mt-3">A place to share and try out new recipes!</p>
-            <p className="text-light mt-3">Sign in to explore thousands of delicious dishes.</p>
+        <div style={styles.welcomeContainer}>
+          <div style={styles.welcomeText}>
+            <h1 style={styles.welcomeTitle}>Welcome to Cooking Master</h1>
+            <p style={styles.welcomeDescription}>A place to share and try out new recipes!</p>
+            <p style={styles.welcomeSubDescription}>Sign in to explore thousands of delicious dishes.</p>
           </div>
         </div>
       </div>
@@ -125,7 +127,6 @@ const Login: React.FC = () => {
   );
 };
 
-// Inline styles for background image and card
 const styles = {
   backgroundContainer: {
     backgroundImage: 'url(/img/FoodBackground.jpg)',
@@ -133,13 +134,111 @@ const styles = {
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
     height: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loginContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '80%',
+    maxWidth: '1200px',
+  },
+  formContainer: {
+    width: '35%',
   },
   card: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',  // Add a slight opacity to the card to ensure text readability
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: '8px',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+  },
+  cardHeader: {
+    backgroundColor: '#E73927',
+    color: 'white',
+    padding: '15px',
+    textAlign: 'center',
+    borderRadius: '8px 8px 0 0',
+  },
+  cardHeaderText: {
+    fontFamily: "'Poppins', sans-serif", // Font family matching the navbar
+    fontWeight: 'bold',
+    fontSize: '24px',
+  },
+  cardBody: {
+    padding: '20px',
+  },
+  formGroup: {
+    marginBottom: '15px',
+  },
+  label: {
+    fontSize: '14px',
+    marginBottom: '5px',
+    display: 'block',
+    fontFamily: "'Poppins', sans-serif", // Consistent font family
+    fontWeight: '500',
+  },
+  input: {
+    width: '100%',
+    padding: '10px',
+    fontSize: '14px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    transition: 'border-color 0.3s ease',
+    fontFamily: "'Poppins', sans-serif", // Font family for input fields
+  },
+  inputFocus: {
+    borderColor: '#E73927',
+    outline: 'none',
+  },
+  error: {
+    color: 'red',
+    fontSize: '12px',
+    marginTop: '5px',
+  },
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: '20px',
+  },
+  btn: {
+    padding: '10px 20px',
+    fontSize: '14px',
+    border: 'none',
+    borderRadius: '4px',
+    backgroundColor: '#E73927',
+    color: 'white',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    fontFamily: "'Poppins', sans-serif", // Font family for buttons
+    fontWeight: '600',
+  },
+  welcomeContainer: {
+    width: '50%',
+    padding: '20px',
   },
   welcomeText: {
-    textShadow: '3px 3px 6px rgba(0, 0, 0, 0.5)', // Adding text shadow for the welcome portion
+    color: 'white',
+    textAlign: 'center',
+    padding: '40px',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    borderRadius: '8px',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
+  },
+  welcomeTitle: {
+    fontSize: '36px',
+    fontWeight: 'bold',
+    fontFamily: "'Poppins', sans-serif", // Consistent font family
+    textShadow: '3px 3px 6px rgba(0, 0, 0, 0.5)',
+  },
+  welcomeDescription: {
+    fontSize: '18px',
+    marginTop: '20px',
+    fontFamily: "'Poppins', sans-serif", // Consistent font family
+  },
+  welcomeSubDescription: {
+    fontSize: '16px',
+    marginTop: '20px',
+    fontFamily: "'Poppins', sans-serif", // Consistent font family
   },
 };
 
