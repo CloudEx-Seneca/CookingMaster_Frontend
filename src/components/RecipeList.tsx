@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Recipe } from '../types/Recipe';
 import { Link } from 'react-router-dom';
 import RecipeCard from './RecipeCard.tsx';
+import axios from 'axios';
+import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
 
 const RecipeList: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -9,65 +11,106 @@ const RecipeList: React.FC = () => {
   const [titleSearch, setTitleSearch] = useState('');
   const [ingredientSearch, setIngredientSearch] = useState('');
   const [ingredientsList, setIngredientsList] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Simulated data
+  const initialRecipes: Recipe[] = [
+    {
+      id: 1,
+      name: 'Spaghetti Carbonara',
+      ingredients: ['Spaghetti', 'Eggs', 'Parmesan', 'Bacon', 'Garlic'],
+      description: 'Boil pasta. Cook bacon. Mix eggs and cheese...',
+      image: '/img/carbonara.jpeg',
+      author: 'Chef John',
+    },
+    {
+      id: 2,
+      name: 'Vegetable Stir Fry',
+      ingredients: ['Carrots', 'Broccoli', 'Peppers', 'Soy Sauce'],
+      description: 'Stir-fry veggies and soy sauce until tender...',
+      image: '/img/vegstirfry.jfif',
+      author: 'Chef Jane',
+    },
+    {
+      id: 3,
+      name: 'Chicken Curry',
+      ingredients: ['Chicken', 'Curry Powder', 'Coconut Milk', 'Onions'],
+      description: 'Cook chicken, add curry powder and coconut milk...',
+      image: '/img/chkcurry.jpg',
+      author: 'Chef Tim',
+    },
+    {
+      id: 4,
+      name: 'Grilled Cheese Sandwich',
+      ingredients: ['Bread', 'Cheese', 'Butter'],
+      description: 'Butter bread, add cheese, and grill...',
+      image: '/img/grilledcheese.jpg',
+      author: 'Chef Anna',
+    },
+    {
+      id: 5,
+      name: 'Caesar Salad',
+      ingredients: ['Lettuce', 'Caesar Dressing', 'Croutons', 'Parmesan'],
+      description: 'Toss lettuce with Caesar dressing and add toppings...',
+      image: '/img/caesarsalad.jpg',
+      author: 'Chef Sarah',
+    },
+    {
+      id: 6,
+      name: 'Tacos',
+      ingredients: ['Taco Shells', 'Ground Beef', 'Lettuce', 'Cheese', 'Salsa'],
+      description: 'Cook beef, assemble tacos with toppings...',
+      image: '/img/taco.jfif',
+      author: 'Chef Mark',
+    },
+  ];
 
   useEffect(() => {
-    // Simulate fetching data
-    const fetchedRecipes: Recipe[] = [
-      {
-        id: 1,
-        name: 'Spaghetti Carbonara',
-        ingredients: ['Spaghetti', 'Eggs', 'Parmesan', 'Bacon', 'Garlic'],
-        description: 'Boil pasta. Cook bacon. Mix eggs and cheese...',
-        image: '/img/carbonara.jpeg',
-        author: 'Chef John',
-      },
-      {
-        id: 2,
-        name: 'Vegetable Stir Fry',
-        ingredients: ['Carrots', 'Broccoli', 'Peppers', 'Soy Sauce'],
-        description: 'Stir-fry veggies and soy sauce until tender...',
-        image: '/img/vegstirfry.jfif',
-        author: 'Chef Jane',
-      },
-      {
-        id: 3,
-        name: 'Chicken Curry',
-        ingredients: ['Chicken', 'Curry Powder', 'Coconut Milk', 'Onions'],
-        description: 'Cook chicken, add curry powder and coconut milk...',
-        image: '/img/chkcurry.jpg',
-        author: 'Chef Tim',
-      },
-      {
-        id: 4,
-        name: 'Grilled Cheese Sandwich',
-        ingredients: ['Bread', 'Cheese', 'Butter'],
-        description: 'Butter bread, add cheese, and grill...',
-        image: '/img/grilledcheese.jpg',
-        author: 'Chef Anna',
-      },
-      {
-        id: 5,
-        name: 'Caesar Salad',
-        ingredients: ['Lettuce', 'Caesar Dressing', 'Croutons', 'Parmesan'],
-        description: 'Toss lettuce with Caesar dressing and add toppings...',
-        image: '/img/caesarsalad.jpg',
-        author: 'Chef Sarah',
-      },
-      {
-        id: 6,
-        name: 'Tacos',
-        ingredients: ['Taco Shells', 'Ground Beef', 'Lettuce', 'Cheese', 'Salsa'],
-        description: 'Cook beef, assemble tacos with toppings...',
-        image: '/img/taco.jfif',
-        author: 'Chef Mark',
-      },
-    ];
+    // Simulating an API call with axios
+    const fetchAdditionalData = async () => {
+      try {
+        // Replace with actual API endpoint
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          setError('Authentication token is missing.');
+          return;
+        }
+    
+        const apiUrl = getApiBaseUrl();
+        const response = await axios.post(
+          `http://localhost:8889/recipe/v1/recipe/list`,
+          //`${apiUrl}/recipe/v1/recipe/list`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+  
+        const fetchedRecipes = response.data;
 
-    // Set initial recipes and filteredRecipes state
-    setRecipes(fetchedRecipes);
-    setFilteredRecipes(fetchedRecipes); // Ensure filteredRecipes initially has all recipes
+        // Append fetched data to the initial simulated data
+        // setRecipes((prevRecipes) => [...prevRecipes, ...fetchedRecipes]);
+        // setFilteredRecipes((prevRecipes) => [...prevRecipes, ...fetchedRecipes]);
+
+        setLoading(false);
+      } catch (err) {
+        setError('Error fetching recipes');
+        setLoading(false);
+      }
+    };
+
+    // Set initial recipes from simulated data
+    setRecipes(initialRecipes);
+    setFilteredRecipes(initialRecipes); // Ensure filteredRecipes initially has all recipes
+
+    // Fetch additional data from the API after setting initial data
+    fetchAdditionalData();
   }, []);
 
+  // Filtering recipes based on title and ingredients
   useEffect(() => {
     const filterRecipes = () => {
       const filtered = recipes.filter((recipe) => {
@@ -173,9 +216,11 @@ const RecipeList: React.FC = () => {
     },
   };
 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
   return (
     <div style={styles.container}>
-      {/* Header Row with "Add New Recipe" button aligned to the right */}
       <div style={styles.headerRow}>
         <h3>Search for Recipe</h3>
         <Link to="/recipes/add" style={styles.addButton}>
@@ -184,7 +229,6 @@ const RecipeList: React.FC = () => {
       </div>
 
       <div style={styles.searchColumn}>
-        {/* Title Search Input */}
         <input
           type="text"
           placeholder="Search by recipe name..."
@@ -193,7 +237,6 @@ const RecipeList: React.FC = () => {
           style={styles.searchInput}
         />
 
-        {/* Ingredient Search Input */}
         <input
           type="text"
           placeholder="Add ingredient filter..."
@@ -205,7 +248,6 @@ const RecipeList: React.FC = () => {
           Add Ingredient Filter
         </button>
 
-        {/* Display added ingredients */}
         <div style={styles.ingredientList}>
           {ingredientsList.map((ingredient, index) => (
             <div key={index} style={styles.ingredientTag}>
