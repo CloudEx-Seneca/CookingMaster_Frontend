@@ -21,6 +21,7 @@ export const withNavRoutes: JSX.Element[] = [
         <Route path="/reset-password" element={<PasswordReset />} key="reset-password" />,
         <Route path="/shoppinglist" element={<ShoppingList />} key="shoppinglist" />,
         <Route path="/profile" element={<Profile />} key="profile" />
+        {/* <Route path="/emailverified" element={<EmailVerified />} key="emailverified" />         */}
     </Route>
 ];
 
