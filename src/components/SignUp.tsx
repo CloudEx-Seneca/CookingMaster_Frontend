@@ -17,6 +17,8 @@ const SignUp: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
+  const [btnHovered, setBtnHovered] = useState<boolean>(false); // Track hover state for Register button
+  const [loginBtnHovered, setLoginBtnHovered] = useState<boolean>(false); // Track hover state for Login button
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,12 +74,12 @@ const SignUp: React.FC = () => {
 
   return (
     <div style={styles.backgroundContainer}>
-      <div style={styles.container}>
+      <div style={styles.loginContainer}>
         {/* Left Column - Registration Form */}
         <div style={styles.formContainer}>
           <div style={styles.card}>
             <div style={styles.cardHeader}>
-              <h4>Register</h4>
+              <h4 style={styles.cardHeaderText}>Register</h4>
             </div>
             <div style={styles.cardBody}>
               <form onSubmit={handleSubmit}>
@@ -108,13 +110,27 @@ const SignUp: React.FC = () => {
                 {error && <p style={styles.error}>{error}</p>}
                 {success && <p style={styles.success}>Registration successful!</p>}
                 <div style={styles.buttonContainer}>
-                  <button type="submit" style={styles.btn} disabled={loading}>
+                  <button
+                    type="submit"
+                    style={{
+                      ...styles.btn,
+                      backgroundColor: btnHovered ? '#FFBB33' : '#E73927',
+                    }} // Apply hover effect for Register button
+                    disabled={loading}
+                    onMouseEnter={() => setBtnHovered(true)}  // Trigger hover on mouse enter
+                    onMouseLeave={() => setBtnHovered(false)}  // Revert back on mouse leave
+                  >
                     {loading ? 'Registering...' : 'Register'}
                   </button>
                   <button
                     type="button"
-                    style={{ ...styles.btn, backgroundColor: '#6c757d' }}
+                    style={{
+                      ...styles.btn,
+                      backgroundColor: loginBtnHovered ? '#FFBB33' : '#6c757d', // Apply hover effect for Login button
+                    }}
                     onClick={handleLoginRedirect}
+                    onMouseEnter={() => setLoginBtnHovered(true)}  // Trigger hover for Login button
+                    onMouseLeave={() => setLoginBtnHovered(false)}  // Revert back on mouse leave
                   >
                     Login
                   </button>
@@ -139,7 +155,7 @@ const SignUp: React.FC = () => {
 
 const styles = {
   backgroundContainer: {
-    backgroundImage: 'url(/img/FoodBackground.jpg)', // Replace with your image URL
+    backgroundImage: 'url(/img/FoodBackground.jpg)', 
     backgroundPosition: 'right center',
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
@@ -148,7 +164,7 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
   },
-  container: {
+  loginContainer: {
     display: 'flex',
     justifyContent: 'space-between',
     width: '80%',
@@ -169,6 +185,10 @@ const styles = {
     textAlign: 'center',
     borderRadius: '8px 8px 0 0',
   },
+  cardHeaderText: {
+    fontFamily: "'Poppins', sans-serif",
+    fontWeight: '600',
+  },
   cardBody: {
     padding: '20px',
   },
@@ -179,6 +199,7 @@ const styles = {
     fontSize: '14px',
     marginBottom: '5px',
     display: 'block',
+    fontFamily: "'Poppins', sans-serif",
   },
   input: {
     width: '100%',
@@ -186,10 +207,7 @@ const styles = {
     fontSize: '14px',
     border: '1px solid #ccc',
     borderRadius: '4px',
-  },
-  inputFocus: {
-    borderColor: '#E73927',
-    outline: 'none',
+    fontFamily: "'Poppins', sans-serif",
   },
   error: {
     color: 'red',
@@ -211,9 +229,11 @@ const styles = {
     fontSize: '14px',
     border: 'none',
     borderRadius: '4px',
-    backgroundColor: '#E73927',
     color: 'white',
     cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
+    fontFamily: "'Poppins', sans-serif",
+    fontWeight: '600',
   },
   welcomeContainer: {
     width: '50%',

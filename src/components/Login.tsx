@@ -11,6 +11,9 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const [loginBtnHover, setLoginBtnHover] = useState(false);
+  const [signUpBtnHover, setSignUpBtnHover] = useState(false);
+
   const error = useSelector((state: RootState) => state.auth.error);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -59,7 +62,7 @@ const Login: React.FC = () => {
         <div style={styles.formContainer}>
           <div style={styles.card}>
             <div style={styles.cardHeader}>
-              <h4>Login</h4>
+              <h4 style={styles.cardHeaderText}>Login</h4>
             </div>
             <div style={styles.cardBody}>
               <form onSubmit={handleLogin}>
@@ -87,13 +90,21 @@ const Login: React.FC = () => {
                 </div>
                 {error && <p style={styles.error}>{error}</p>}
                 <div style={styles.buttonContainer}>
-                  <button type="submit" style={styles.btn} disabled={loading}>
+                  <button
+                    type="submit"
+                    style={loginBtnHover ? { ...styles.btn, backgroundColor: '#FFBB33', color: 'white' } : styles.btn}
+                    disabled={loading}
+                    onMouseEnter={() => setLoginBtnHover(true)}
+                    onMouseLeave={() => setLoginBtnHover(false)}
+                  >
                     {loading ? 'Logging in...' : 'Login'}
                   </button>
                   <button
                     type="button"
-                    style={{ ...styles.btn, backgroundColor: '#6c757d' }}
+                    style={signUpBtnHover ? { ...styles.btn, backgroundColor: '#FFBB33', color: 'white' } : { ...styles.btn, backgroundColor: '#6c757d' }}
                     onClick={handleSignUpRedirect}
+                    onMouseEnter={() => setSignUpBtnHover(true)}
+                    onMouseLeave={() => setSignUpBtnHover(false)}
                   >
                     Sign Up
                   </button>
@@ -148,6 +159,11 @@ const styles = {
     textAlign: 'center',
     borderRadius: '8px 8px 0 0',
   },
+  cardHeaderText: {
+    fontFamily: "'Poppins', sans-serif", // Font family matching the navbar
+    fontWeight: 'bold',
+    fontSize: '24px',
+  },
   cardBody: {
     padding: '20px',
   },
@@ -158,6 +174,8 @@ const styles = {
     fontSize: '14px',
     marginBottom: '5px',
     display: 'block',
+    fontFamily: "'Poppins', sans-serif", // Consistent font family
+    fontWeight: '500',
   },
   input: {
     width: '100%',
@@ -165,6 +183,8 @@ const styles = {
     fontSize: '14px',
     border: '1px solid #ccc',
     borderRadius: '4px',
+    transition: 'border-color 0.3s ease',
+    fontFamily: "'Poppins', sans-serif", // Font family for input fields
   },
   inputFocus: {
     borderColor: '#E73927',
@@ -188,6 +208,9 @@ const styles = {
     backgroundColor: '#E73927',
     color: 'white',
     cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    fontFamily: "'Poppins', sans-serif", // Font family for buttons
+    fontWeight: '600',
   },
   welcomeContainer: {
     width: '50%',
@@ -204,15 +227,18 @@ const styles = {
   welcomeTitle: {
     fontSize: '36px',
     fontWeight: 'bold',
+    fontFamily: "'Poppins', sans-serif", // Consistent font family
     textShadow: '3px 3px 6px rgba(0, 0, 0, 0.5)',
   },
   welcomeDescription: {
     fontSize: '18px',
     marginTop: '20px',
+    fontFamily: "'Poppins', sans-serif", // Consistent font family
   },
   welcomeSubDescription: {
     fontSize: '16px',
     marginTop: '20px',
+    fontFamily: "'Poppins', sans-serif", // Consistent font family
   },
 };
 
