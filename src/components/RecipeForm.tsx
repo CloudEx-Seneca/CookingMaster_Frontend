@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Recipe } from '../types/Recipe';
 import { Link } from 'react-router-dom';
-import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
+import { getApiBaseUrlRec } from '../helpers/GetApiBaseUrl.tsx';
 
 interface RecipeFormProps {
   onAddRecipe: (recipe: Recipe) => void;
@@ -39,7 +39,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
         return;
       }
   
-      const apiUrl = getApiBaseUrl();
+      const apiUrl = getApiBaseUrlRec();
       const response = await axios.post(
         //`http://localhost:8889/recipe/v1/recipe/insertorupdate`,
         `${apiUrl}/recipe/v1/recipe/insertorupdate`,

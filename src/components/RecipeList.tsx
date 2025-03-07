@@ -3,7 +3,7 @@ import { Recipe } from '../types/Recipe';
 import { Link } from 'react-router-dom';
 import RecipeCard from './RecipeCard.tsx';
 import axios from 'axios';
-import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
+import { getApiBaseUrlRec } from '../helpers/GetApiBaseUrl.tsx';
 
 const RecipeList: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -77,7 +77,7 @@ const RecipeList: React.FC = () => {
           return;
         }
     
-        const apiUrl = getApiBaseUrl();
+        const apiUrl = getApiBaseUrlRec();
         const response = await axios.post(
           //`http://localhost:8889/recipe/v1/recipe/list`,
           `${apiUrl}/recipe/v1/recipe/list`,
