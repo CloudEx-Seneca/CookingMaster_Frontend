@@ -37,6 +37,7 @@ const ProfilePage: React.FC = () => {
     }
 
     try {
+      setLoading(true);
       const response = await axios.post(
         `${apiUrl}/usercenter/v1/user/detail`,
         {},
@@ -49,8 +50,11 @@ const ProfilePage: React.FC = () => {
 
       // Access the nested user data
       const user = response.data.data.user;
+      console.log(response);
+      console.log(response.data);
+      console.log(user);
 
-      setUserData(user);
+      setUserData(user); // Set the userData
       setFormValues({
         nickname: user.nickname || '',
         email: user.email || '',
@@ -108,12 +112,14 @@ const ProfilePage: React.FC = () => {
       );
       setIsProfileUpdated(true); // Set flag to true when profile is successfully updated
       setError(null); // Reset any previous errors
-      setUserData({
-        ...userData!,
-        nickname,
-        info,
-        sex,
-      }); // Update the userData state to reflect the new changes
+      if (userData) {
+        setUserData({
+          ...userData,
+          nickname,
+          info,
+          sex,
+        }); // Update the userData state to reflect the new changes
+      }
     } catch (err: any) {
       setError('Failed to update profile. Please try again.');
       console.error('Error updating profile:', err);
@@ -137,7 +143,6 @@ const ProfilePage: React.FC = () => {
 
       <form onSubmit={handleFormSubmit} style={styles.card}>
         <div style={styles.cardBody}>
-
           <div style={styles.avatarContainer}>
             <label htmlFor="avatarUrl" style={styles.label}>Avatar URL</label>
             <input
