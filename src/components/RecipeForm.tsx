@@ -3,6 +3,8 @@ import axios from 'axios';
 import { Recipe } from '../types/Recipe';
 import { Link } from 'react-router-dom';
 import { getApiBaseUrlRec } from '../helpers/GetApiBaseUrl.tsx';
+import { useEffect } from 'react'; // Added for redirect to Recipe Confirmation Page
+import { useNavigate } from 'react-router-dom'; // Added for redirect to Recipe Confirmation Page
 
 interface RecipeFormProps {
   onAddRecipe: (recipe: Recipe) => void;
@@ -15,6 +17,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
   const [error, setError] = useState<string>('');
   const [successMessage, setSuccessMessage] = useState<string>(''); 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate(); // Added for redirect to Recipe Confirmation Page
 
   const handleAddRecipe = async () => {
     if (!name.trim() || ingredients.some(ingredient => ingredient.trim() === '') || !description.trim()) {
@@ -54,6 +57,19 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
         setSuccessMessage('Recipe added successfully!');
         resetForm();
         setError('');
+        // Added for Redirect to Confirmation Page
+        // *************************************
+        // const navigate = useNavigate();
+
+        // useEffect(() => {
+          // const timer = setTimeout(() => {
+        navigate('/recipes/confirm');
+        // }, 500); 
+
+          // return () => clearTimeout(timer);
+        // }, [navigate]);
+        // *************************************
+        // Added for Redirect to Confirmation Page
       } else {
         setError('Failed to add recipe. Please try again later.');
       }
