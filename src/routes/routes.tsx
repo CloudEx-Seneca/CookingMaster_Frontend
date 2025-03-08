@@ -13,6 +13,7 @@ import ShoppingList from '../components/ShoppingList.tsx';
 import Profile from '../components/Profile.tsx';
 import RecipeDetail from '../components/RecipeDetail.tsx';
 import EmailVerified from '../components/EmailVerified.tsx';
+import RecipeConfirmation from '../components/RecipeConfirmation.tsx';
 
 export const withNavRoutes: JSX.Element[] = [
     <Route element={<WithNav />}>
@@ -31,6 +32,7 @@ export const withoutNavRoutes: JSX.Element[] = [
         <Route path="/login" element={<Login />} key="login" />,
         <Route path="/" element={<Login />} key="login-alt" />,
         <Route path="/signup" element={<SignUp />} key="signup" />
-        <Route path="/verify" element={<EmailVerified />} /> 
+        <Route path="/verify" element={<EmailVerified />} />
+        <Route path="/recipes/confirm" element={<RecipeConfirmation />} />
     </Route>
 ];
