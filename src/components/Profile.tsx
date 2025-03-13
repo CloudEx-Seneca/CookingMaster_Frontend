@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
+import AvatarUpload from './AvatarUpload.tsx';
 
 interface UserProfile {
   nickname: string;
@@ -26,7 +27,7 @@ const ProfilePage: React.FC = () => {
 
   const [isProfileUpdated, setIsProfileUpdated] = useState<boolean>(false);
 
-  // Function to fetch user data
+  // Fetch user data from API
   const fetchUserData = async () => {
     const apiUrl = getApiBaseUrl();
     const token = localStorage.getItem('authToken');
@@ -48,13 +49,9 @@ const ProfilePage: React.FC = () => {
         }
       );
 
-      // Access the nested user data
       const user = response.data.data.user;
-      console.log(response);
-      console.log(response.data);
-      console.log(user);
 
-      setUserData(user); // Set the userData
+      setUserData(user);
       setFormValues({
         nickname: user.nickname || '',
         email: user.email || '',
@@ -71,23 +68,7 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  // Handle form value changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormValues({
-      ...formValues,
-      [name]: value,
-    });
-  };
-
-  const handleSexChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormValues({
-      ...formValues,
-      sex: parseInt(e.target.value, 10),
-    });
-  };
-
-  // Handle form submission
+  // Handle form submission (update profile)
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const apiUrl = getApiBaseUrl();
@@ -97,28 +78,28 @@ const ProfilePage: React.FC = () => {
       return;
     }
 
-    // Only send nickname, info, and sex in the update request
-    const { nickname, info, sex } = formValues;
+    const { nickname, info, sex, avatarUrl } = formValues;
 
     try {
       await axios.post(
         `${apiUrl}/usercenter/v1/user/update`,
-        { nickname, info, sex },
+        { nickname, info, sex, avatar_url: avatarUrl },
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      setIsProfileUpdated(true); // Set flag to true when profile is successfully updated
-      setError(null); // Reset any previous errors
+      setIsProfileUpdated(true);
+      setError(null);
       if (userData) {
         setUserData({
           ...userData,
           nickname,
           info,
           sex,
-        }); // Update the userData state to reflect the new changes
+          avatarUrl: avatarUrl,
+        });
       }
     } catch (err: any) {
       setError('Failed to update profile. Please try again.');
@@ -126,7 +107,7 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  // Fetch user data on component mount
+  // Fetch user data when component mounts
   useEffect(() => {
     fetchUserData();
   }, []);
@@ -134,6 +115,8 @@ const ProfilePage: React.FC = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
+
+  const containerName = 'avatars'; // Your container name in Azure Blob Storage
 
   return (
     <div style={styles.container}>
@@ -143,24 +126,14 @@ const ProfilePage: React.FC = () => {
 
       <form onSubmit={handleFormSubmit} style={styles.card}>
         <div style={styles.cardBody}>
-          <div style={styles.avatarContainer}>
-            <label htmlFor="avatarUrl" style={styles.label}>Avatar URL</label>
-            <input
-              id="avatarUrl"
-              type="text"
-              name="avatarUrl"
-              placeholder="Avatar URL"
-              value={formValues.avatarUrl}
-              onChange={handleInputChange}
-              style={styles.formInput}
-            />
-            <img
-              src={formValues.avatarUrl || '/img/default-avatar.png'}
-              alt="User Avatar"
-              style={styles.avatar}
-            />
-          </div>
+          {/* Avatar upload section */}
+          <AvatarUpload
+            avatarUrl={formValues.avatarUrl}
+            onAvatarUrlChange={(url) => setFormValues({ ...formValues, avatarUrl: url })}
+            containerName={containerName}
+          />
 
+          {/* Other form fields */}
           <div style={styles.formGroup}>
             <label htmlFor="nickname" style={styles.label}>Nickname</label>
             <input
@@ -169,7 +142,7 @@ const ProfilePage: React.FC = () => {
               name="nickname"
               placeholder="Nickname"
               value={formValues.nickname}
-              onChange={handleInputChange}
+              onChange={(e) => setFormValues({ ...formValues, nickname: e.target.value })}
               style={styles.formInput}
             />
 
@@ -180,7 +153,7 @@ const ProfilePage: React.FC = () => {
               name="email"
               placeholder="Email"
               value={formValues.email}
-              onChange={handleInputChange}
+              onChange={(e) => setFormValues({ ...formValues, email: e.target.value })}
               style={styles.formInput}
               disabled
             />
@@ -191,12 +164,12 @@ const ProfilePage: React.FC = () => {
               name="info"
               placeholder="User Information"
               value={formValues.info}
-              onChange={handleInputChange}
+              onChange={(e) => setFormValues({ ...formValues, info: e.target.value })}
               style={styles.textarea}
             />
           </div>
 
-          {/* Sex Radio Buttons */}
+          {/* Gender radio buttons */}
           <div style={styles.genderContainer}>
             <label htmlFor="sex" style={styles.label}>Gender</label>
             <label style={styles.radioLabel}>
@@ -205,7 +178,7 @@ const ProfilePage: React.FC = () => {
                 name="sex"
                 value="0"
                 checked={formValues.sex === 0}
-                onChange={handleSexChange}
+                onChange={(e) => setFormValues({ ...formValues, sex: parseInt(e.target.value, 10) })}
               />
               Female
             </label>
@@ -215,13 +188,13 @@ const ProfilePage: React.FC = () => {
                 name="sex"
                 value="1"
                 checked={formValues.sex === 1}
-                onChange={handleSexChange}
+                onChange={(e) => setFormValues({ ...formValues, sex: parseInt(e.target.value, 10) })}
               />
               Male
             </label>
           </div>
 
-          {/* Display userId as read-only */}
+          {/* User ID field */}
           <label htmlFor="userId" style={styles.label}>User ID</label>
           <input
             id="userId"
@@ -233,15 +206,15 @@ const ProfilePage: React.FC = () => {
             disabled
           />
 
-          {/* Display success message if profile updated */}
+          {/* Success or error messages */}
           {isProfileUpdated && (
             <div style={styles.successMessage}>
               Profile updated successfully!
             </div>
           )}
-          {/* Show error message */}
           {error && <div style={styles.errorMessage}>{error}</div>}
 
+          {/* Submit button */}
           <div style={styles.submitContainer}>
             <button type="submit" style={styles.submitButton}>Update Profile</button>
           </div>
@@ -322,7 +295,7 @@ const styles = {
     alignItems: 'center',
     marginBottom: '20px',
   },
-  avatar: {
+  avatarImage: {
     width: '120px',
     height: '120px',
     borderRadius: '50%',
