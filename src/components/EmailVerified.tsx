@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const EmailVerified: React.FC = () => {
+  const [buttonHover, setButtonHover] = useState(false); // To handle hover effect
   const navigate = useNavigate(); // Hook to navigate programmatically
 
   useEffect(() => {
@@ -29,10 +30,12 @@ const EmailVerified: React.FC = () => {
             You will be redirected to the login page shortly...
           </p>
           <button
-            style={styles.redirectButton}
+            style={buttonHover ? { ...styles.redirectButton, backgroundColor: '#FFBB33', color: 'white' } : styles.redirectButton}
             onClick={handleRedirectNow}
+            onMouseEnter={() => setButtonHover(true)}
+            onMouseLeave={() => setButtonHover(false)}
           >
-            Go to Login Now
+            Redirect Now
           </button>
         </div>
       </div>
