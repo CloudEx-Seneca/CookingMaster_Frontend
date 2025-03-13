@@ -5,7 +5,7 @@ const EmailVerified: React.FC = () => {
   const navigate = useNavigate(); // Hook to navigate programmatically
 
   useEffect(() => {
-    // Redirect after 3 seconds (3000 milliseconds)
+    // Redirect after 4 seconds (4000 milliseconds)
     const timer = setTimeout(() => {
       navigate("/login"); // Redirects to the Login route
     }, 4000);
@@ -13,6 +13,11 @@ const EmailVerified: React.FC = () => {
     // Cleanup timer on component unmount
     return () => clearTimeout(timer);
   }, [navigate]);
+
+  // Function to handle manual redirection
+  const handleRedirectNow = () => {
+    navigate("/login");
+  };
 
   return (
     <div style={styles.backgroundContainer}>
@@ -23,6 +28,12 @@ const EmailVerified: React.FC = () => {
           <p style={styles.welcomeSubDescription}>
             You will be redirected to the login page shortly...
           </p>
+          <button
+            style={styles.redirectButton}
+            onClick={handleRedirectNow}
+          >
+            Go to Login Now
+          </button>
         </div>
       </div>
     </div>
@@ -67,6 +78,19 @@ const styles = {
     fontSize: '16px',
     marginTop: '20px',
     fontFamily: "'Poppins', sans-serif",
+  },
+  redirectButton: {
+    marginTop: '20px',
+    padding: '10px 20px',
+    fontSize: '14px',
+    border: 'none',
+    borderRadius: '4px',
+    backgroundColor: '#E73927',
+    color: 'white',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    fontFamily: "'Poppins', sans-serif",
+    fontWeight: '600',
   },
 };
 
