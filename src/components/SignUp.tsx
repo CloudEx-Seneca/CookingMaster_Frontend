@@ -143,6 +143,7 @@ const SignUp: React.FC = () => {
         {/* Right Column */}
         <div style={styles.welcomeContainer}>
           <div style={styles.welcomeText}>
+            <img src="/chstock.ico" alt="Logo" style={styles.logo} />
             <h1 style={styles.welcomeTitle}>Welcome to Cooking Master</h1>
             <p style={styles.welcomeDescription}>A place to share and try out new recipes!</p>
             <p style={styles.welcomeSubDescription}>Sign up to explore thousands of delicious dishes.</p>
@@ -186,8 +187,9 @@ const styles = {
     borderRadius: '8px 8px 0 0',
   },
   cardHeaderText: {
-    fontFamily: "'Poppins', sans-serif",
-    fontWeight: '600',
+    fontFamily: "'Poppins', sans-serif", // Font family matching the navbar
+    fontWeight: 'bold',
+    fontSize: '24px',
   },
   cardBody: {
     padding: '20px',
@@ -199,7 +201,8 @@ const styles = {
     fontSize: '14px',
     marginBottom: '5px',
     display: 'block',
-    fontFamily: "'Poppins', sans-serif",
+    fontFamily: "'Poppins', sans-serif", // Consistent font family
+    fontWeight: '500',
   },
   input: {
     width: '100%',
@@ -207,7 +210,8 @@ const styles = {
     fontSize: '14px',
     border: '1px solid #ccc',
     borderRadius: '4px',
-    fontFamily: "'Poppins', sans-serif",
+    transition: 'border-color 0.3s ease',
+    fontFamily: "'Poppins', sans-serif", // Font family for input fields
   },
   error: {
     color: 'red',
@@ -229,14 +233,15 @@ const styles = {
     fontSize: '14px',
     border: 'none',
     borderRadius: '4px',
+    backgroundColor: '#E73927',
     color: 'white',
     cursor: 'pointer',
-    transition: 'background-color 0.3s ease',
-    fontFamily: "'Poppins', sans-serif",
+    transition: 'all 0.3s ease',
+    fontFamily: "'Poppins', sans-serif", // Font family for buttons
     fontWeight: '600',
   },
   welcomeContainer: {
-    width: '50%',
+    width: '55%',
     padding: '20px',
   },
   welcomeText: {
@@ -250,15 +255,23 @@ const styles = {
   welcomeTitle: {
     fontSize: '36px',
     fontWeight: 'bold',
+    fontFamily: "'Poppins', sans-serif", // Consistent font family
     textShadow: '3px 3px 6px rgba(0, 0, 0, 0.5)',
   },
   welcomeDescription: {
     fontSize: '18px',
     marginTop: '20px',
+    fontFamily: "'Poppins', sans-serif", // Consistent font family
   },
   welcomeSubDescription: {
     fontSize: '16px',
     marginTop: '20px',
+    fontFamily: "'Poppins', sans-serif", // Consistent font family
+  },
+  logo: {
+    width: '100px', // Adjust the size as needed
+    height: '100px',
+    marginBottom: '20px', // Adds space between the logo and the title
   },
 };
 

@@ -113,10 +113,9 @@ const Login: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {/* Right Column */}
         <div style={styles.welcomeContainer}>
           <div style={styles.welcomeText}>
+            <img src="/chstock.ico" alt="Logo" style={styles.logo} />
             <h1 style={styles.welcomeTitle}>Welcome to Cooking Master</h1>
             <p style={styles.welcomeDescription}>A place to share and try out new recipes!</p>
             <p style={styles.welcomeSubDescription}>Sign in to explore thousands of delicious dishes.</p>
@@ -213,7 +212,7 @@ const styles = {
     fontWeight: '600',
   },
   welcomeContainer: {
-    width: '50%',
+    width: '55%',
     padding: '20px',
   },
   welcomeText: {
@@ -239,6 +238,11 @@ const styles = {
     fontSize: '16px',
     marginTop: '20px',
     fontFamily: "'Poppins', sans-serif", // Consistent font family
+  },
+  logo: {
+    width: '100px', // Adjust the size as needed
+    height: '100px',
+    marginBottom: '20px', // Adds space between the logo and the title
   },
 };
 
