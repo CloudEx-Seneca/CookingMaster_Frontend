@@ -31,7 +31,6 @@ const NavBar: React.FC = () => {
     }
   };
 
-  // Updated Styles with the logout button hover color changed to #FFBB33
   const styles = {
     navbar: {
       backgroundColor: '#E73927',
@@ -50,12 +49,20 @@ const NavBar: React.FC = () => {
       padding: '0 1rem',
     },
     brand: {
+      display: 'flex',
+      alignItems: 'center', 
       color: 'white',
       fontSize: '28px',
       fontWeight: 'bold',
       textDecoration: 'none',
       letterSpacing: '1px',
       textTransform: 'uppercase',
+    },
+    logo: {
+      width: '40px', // Adjust size of the logo as needed
+      height: '40px',
+      marginRight: '10px', // Space between logo and text
+      marginBottom: '15px',
     },
     navItems: {
       display: 'flex',
@@ -120,10 +127,9 @@ const NavBar: React.FC = () => {
       transition: 'all 0.3s ease',
     },
     logoutBtnHover: {
-      backgroundColor: '#FFBB33', // Changed hover background color to #FFBB33
-      color: 'white', // Text color turns white on hover for better contrast
+      backgroundColor: '#FFBB33',
+      color: 'white',
     },
-    // Responsive styles
     responsive: {
       '@media (max-width: 768px)': {
         navItems: {
@@ -149,7 +155,10 @@ const NavBar: React.FC = () => {
   return (
     <nav style={styles.navbar}>
       <div style={styles.container}>
-        <p style={styles.brand}>Cooking Master</p>
+        <div style={styles.brand}>
+          <img src="/chstock.ico" alt="Logo" style={styles.logo} /> {/* Add your logo image here */}
+          <p>Cooking Master</p>
+        </div>
         <div style={styles.navItems}>
           <ul style={styles.navLinks}>
             <li style={styles.navItem}>
@@ -196,8 +205,8 @@ const NavBar: React.FC = () => {
                 <button 
                   style={styles.logoutBtn} 
                   onClick={handleLogout} 
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#FFBB33'} // Hover effect
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'} // Remove hover effect
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#FFBB33'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                 >
                   Logout
                 </button>
