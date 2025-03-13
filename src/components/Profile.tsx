@@ -130,7 +130,6 @@ const ProfilePage: React.FC = () => {
           <AvatarUpload
             avatarUrl={formValues.avatarUrl}
             onAvatarUrlChange={(url) => setFormValues({ ...formValues, avatarUrl: url })}
-            containerName={containerName}
           />
 
           {/* Other form fields */}

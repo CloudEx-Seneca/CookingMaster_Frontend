@@ -5,12 +5,15 @@ import { BlobServiceClient, AnonymousCredential } from '@azure/storage-blob';
 interface AvatarUploadProps {
   avatarUrl: string;
   onAvatarUrlChange: (url: string) => void;
-  containerName: string;
 }
 
-const AvatarUpload: React.FC<AvatarUploadProps> = ({ avatarUrl, onAvatarUrlChange, containerName }) => {
+const AvatarUpload: React.FC<AvatarUploadProps> = ({ avatarUrl, onAvatarUrlChange }) => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);  // Success message state
+
+  // Hardcoded container name
+  const containerName = 'your-container-name'; // Replace with your actual container name
 
   // Validate the file before uploading
   const validateFile = (file: File): boolean => {
@@ -39,6 +42,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ avatarUrl, onAvatarUrlChang
     try {
       setIsUploading(true);
       setUploadError(null);
+      setUploadSuccess(null);  // Reset success message before uploading
 
       // Hardcoded SAS Token (consider a more secure approach for production)
       const sasToken = 'YOUR_SAS_TOKEN';  // Replace with your actual SAS token
@@ -57,6 +61,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ avatarUrl, onAvatarUrlChang
       onAvatarUrlChange(uploadedUrl);
 
       setIsUploading(false);
+      setUploadSuccess('File uploaded successfully!');  // Set success message after upload
     } catch (error: any) {
       setUploadError('Failed to upload image. Please try again.');
       console.error('Error uploading image:', error);
@@ -76,6 +81,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ avatarUrl, onAvatarUrlChang
       />
       {isUploading && <p>Uploading...</p>}
       {uploadError && <p style={styles.errorText}>{uploadError}</p>}
+      {uploadSuccess && <p style={styles.successText}>{uploadSuccess}</p>} {/* Success message */}
       <div style={styles.imagePreviewContainer}>
         <img src={avatarUrl || '/img/default-avatar.png'} alt="Default" style={styles.avatarImage} />
       </div>
@@ -106,6 +112,9 @@ const styles = {
   },
   errorText: {
     color: 'red',
+  },
+  successText: {
+    color: 'green',  // Green color for success message
   },
   imagePreviewContainer: {
     marginTop: '10px',
