@@ -13,7 +13,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ avatarUrl, onAvatarUrlChang
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);  // Success message state
 
   // Hardcoded container name
-  const containerName = 'your-container-name'; // Replace with your actual container name
+  const containerName = 'avatars'; // Replace with your actual container name
 
   // Validate the file before uploading
   const validateFile = (file: File): boolean => {
@@ -44,9 +44,11 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ avatarUrl, onAvatarUrlChang
       setUploadError(null);
       setUploadSuccess(null);  // Reset success message before uploading
 
-      // Hardcoded SAS Token (consider a more secure approach for production)
-      const sasToken = 'YOUR_SAS_TOKEN';  // Replace with your actual SAS token
-      const blobServiceClient = new BlobServiceClient(`https://${sasToken.split('?')[0]}`, new AnonymousCredential());
+      // Ensure SAS token is correctly appended to the URL - retrieve securely
+      const sasToken = '';  // Replace with your actual SAS token
+      const accountName = 'cookingmastercapstone'; // Replace with your Azure Blob Storage account name
+      const blobServiceUrl = `https://${accountName}.blob.core.windows.net?${sasToken}`;
+      const blobServiceClient = new BlobServiceClient(blobServiceUrl, new AnonymousCredential());
       const containerClient = blobServiceClient.getContainerClient(containerName);
 
       // Create a unique blob name
