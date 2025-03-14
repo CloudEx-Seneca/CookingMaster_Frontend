@@ -56,13 +56,14 @@ const NavBar: React.FC = () => {
       fontWeight: 'bold',
       textDecoration: 'none',
       letterSpacing: '1px',
+      marginTop: '10px',
       textTransform: 'uppercase',
     },
     logo: {
       width: '40px', // Adjust size of the logo as needed
       height: '40px',
       marginRight: '10px', // Space between logo and text
-      marginBottom: '15px',
+      marginBottom: '12px',
     },
     navItems: {
       display: 'flex',
