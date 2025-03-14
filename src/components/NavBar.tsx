@@ -157,7 +157,7 @@ const NavBar: React.FC = () => {
     <nav style={styles.navbar}>
       <div style={styles.container}>
         <div style={styles.brand}>
-          <img src="/chstock.ico" alt="Logo" style={styles.logo} /> {/* Add your logo image here */}
+          <img src="/chstock4.ico" alt="Logo" style={styles.logo} /> {/* Add your logo image here */}
           <p>Cooking Master</p>
         </div>
         <div style={styles.navItems}>

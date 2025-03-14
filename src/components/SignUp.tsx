@@ -143,7 +143,7 @@ const SignUp: React.FC = () => {
         {/* Right Column */}
         <div style={styles.welcomeContainer}>
           <div style={styles.welcomeText}>
-            <img src="/chstock.ico" alt="Logo" style={styles.logo} />
+            <img src="/chstock4.ico" alt="Logo" style={styles.logo} />
             <h1 style={styles.welcomeTitle}>Welcome to Cooking Master</h1>
             <p style={styles.welcomeDescription}>A place to share and try out new recipes!</p>
             <p style={styles.welcomeSubDescription}>Sign up to explore thousands of delicious dishes.</p>

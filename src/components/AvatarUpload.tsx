@@ -44,7 +44,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ avatarUrl, onAvatarUrlChang
       setUploadError(null);
       setUploadSuccess(null);  // Reset success message before uploading
 
-      // Ensure SAS token is correctly appended to the URL - retrieve securely
+      // Ensure SAS token is correctly appended to the URL
       const sasToken = '';  // Replace with your actual SAS token
       const accountName = 'cookingmastercapstone'; // Replace with your Azure Blob Storage account name
       const blobServiceUrl = `https://${accountName}.blob.core.windows.net?${sasToken}`;
@@ -85,7 +85,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ avatarUrl, onAvatarUrlChang
       {uploadError && <p style={styles.errorText}>{uploadError}</p>}
       {uploadSuccess && <p style={styles.successText}>{uploadSuccess}</p>} {/* Success message */}
       <div style={styles.imagePreviewContainer}>
-        <img src={avatarUrl || '/img/default-avatar.png'} alt="Default" style={styles.avatarImage} />
+        <img src={avatarUrl || '/chstock.ico'} alt="Default" style={styles.avatarImage} />
       </div>
     </div>
   );
