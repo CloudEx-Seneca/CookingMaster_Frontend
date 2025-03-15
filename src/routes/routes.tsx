@@ -12,6 +12,7 @@ import PasswordReset from '../components/PasswordReset.tsx';
 import ShoppingList from '../components/ShoppingList.tsx';
 import Profile from '../components/Profile.tsx';
 import RecipeDetail from '../components/RecipeDetail.tsx';
+import EmailVerified from '../components/EmailVerified.tsx';
 
 export const withNavRoutes: JSX.Element[] = [
     <Route element={<WithNav />}>
@@ -21,6 +22,7 @@ export const withNavRoutes: JSX.Element[] = [
         <Route path="/reset-password" element={<PasswordReset />} key="reset-password" />,
         <Route path="/shoppinglist" element={<ShoppingList />} key="shoppinglist" />,
         <Route path="/profile" element={<Profile />} key="profile" />
+       
     </Route>
 ];
 
@@ -29,5 +31,6 @@ export const withoutNavRoutes: JSX.Element[] = [
         <Route path="/login" element={<Login />} key="login" />,
         <Route path="/" element={<Login />} key="login-alt" />,
         <Route path="/signup" element={<SignUp />} key="signup" />
+        <Route path="/verify" element={<EmailVerified />} />
     </Route>
 ];
