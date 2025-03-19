@@ -33,6 +33,8 @@ const ShoppingList: React.FC = () => {
             />
             <button
               style={styles.addButton}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'blue'} 
+              onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
               onClick={() => addItem(newItem)}
             >
               Add Item
