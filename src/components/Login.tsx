@@ -26,11 +26,12 @@ const Login: React.FC = () => {
       const apiUrl = getApiBaseUrl();
       const response = await axios.post(`${apiUrl}/usercenter/v2/login`, { email, password });
 
-      const { token } = response.data.data;
+      const { token, user_id } = response.data.data;
 
       dispatch(loginSuccess(token));
 
       localStorage.setItem('authToken', token);
+      localStorage.setItem('userID', user_id);
 
       setEmail('');
       setPassword('');
@@ -39,24 +40,6 @@ const Login: React.FC = () => {
       if (!token) {
         setLoading(false);
         return;
-      }
-
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          `${apiUrl}/usercenter/v2/profile`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        
-        const user_id = response.data.data.id;
-        localStorage.setItem('userID', user_id);
-      } catch (err) {
-        setLoading(false);
-        dispatch(loginFailure('Network error. Please try again later.'));
       }
 
       navigate('/recipes');

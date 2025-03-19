@@ -59,7 +59,7 @@ const SignUp: React.FC = () => {
       setLoading(false);
 
       if (err.response) {
-        setError(err.response.data.msg || 'An error occurred. Please try again.');
+        setError(err.response.data.message || 'An error occurred. Please try again.');
         console.error(err.response.data);
       } else {
         setError('Failed to register. Please try again.');
