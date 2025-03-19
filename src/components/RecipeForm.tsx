@@ -41,7 +41,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
 
       const apiUrl = getApiBaseUrlRec();
       const response = await axios.post(
-        `${apiUrl}/recipe/v1/recipe/insertorupdate`,
+        `${apiUrl}/recipe/v2/create`,
         newRecipe,
         {
           headers: {
