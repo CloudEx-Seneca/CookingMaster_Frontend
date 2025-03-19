@@ -112,7 +112,7 @@ const RecipeList: React.FC = () => {
       const filtered = recipes.filter((recipe) => {
         const matchesTitle = recipe.name.toLowerCase().includes(titleSearch.toLowerCase());
         const matchesIngredients = ingredientsList.every((ingredient) =>
-          recipe.ingredients.some((ing) => ing.toLowerCase().includes(ingredient.toLowerCase()))
+          recipe.ingredients.some((ing) => ing.name.toLowerCase().includes(ingredient.toLowerCase()))
         );
         return matchesTitle && matchesIngredients;
       });
