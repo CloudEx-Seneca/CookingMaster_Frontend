@@ -1,16 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store/authSlice.tsx';
 import { useNavigate } from 'react-router-dom';
-import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
-import axios from 'axios';
+// import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
+// import axios from 'axios';
 
 const NavBar: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const token = localStorage.getItem('authToken');
+
+  useEffect(() => {
+    if (!token) {
+      navigate('/login');
+    }
+  }, [token, navigate]);
 
   const handleLogout = async () => {
     try {
