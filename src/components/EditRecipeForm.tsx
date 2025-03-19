@@ -26,6 +26,7 @@ const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ }) => {
       try {
         const apiUrl = getApiBaseUrlRec();
         const token = localStorage.getItem('authToken');
+        const uid = localStorage.getItem('userID');
 
         if (!token) {
           setError('Authentication token is missing.');
@@ -35,6 +36,10 @@ const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ }) => {
         const response = await axios.get(`${apiUrl}/recipe/v2/detail/${id}`);
         if (response.status === 200) {
           const recipeData: Recipe = response.data.data; // Assuming the response contains the recipe object
+          
+          if (parseInt(uid, 10) !== recipeData.user_id) {
+            navigate(`/recipes/${recipeData.id}`);
+          }
           setExistingRecipe(recipeData);
 
           // Populate the form fields with the fetched recipe data
@@ -62,7 +67,6 @@ const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ }) => {
 
   // Handle the update recipe functionality
   const handleUpdateRecipe = async () => {
-    console.log(ingredients);
     if (!name.trim() || ingredients.some((ingredient) => ingredient.trim() === '') || !description.trim()) {
       setSuccessMessage('');
       setError('Please fill in all fields');

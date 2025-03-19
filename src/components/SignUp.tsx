@@ -51,7 +51,6 @@ const SignUp: React.FC = () => {
       );
       setLoading(false);
       setSuccess(true);
-      console.log(response.data); // Handle the successful registration
     } catch (err) {
       setLoading(false);
 

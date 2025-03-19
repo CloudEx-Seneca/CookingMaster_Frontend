@@ -89,7 +89,6 @@ const RecipeList: React.FC = () => {
         );
   
         const fetchedRecipes = response.data.data;
-        console.log(fetchedRecipes);
 
         // Append fetched data to the initial simulated data
         setRecipes([...fetchedRecipes]);
