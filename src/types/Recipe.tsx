@@ -12,4 +12,5 @@ export interface Recipe {
   description: string;
   image: string;
   author: string;
+  user_id: number;
 }
