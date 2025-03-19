@@ -78,10 +78,9 @@ const RecipeList: React.FC = () => {
         }
     
         const apiUrl = getApiBaseUrlRec();
-        const response = await axios.post(
+        const response = await axios.get(
           //`http://localhost:8889/recipe/v1/recipe/list`,
-          `${apiUrl}/recipe/v1/recipe/list`,
-          {},
+          `${apiUrl}/recipe/v2/list`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
