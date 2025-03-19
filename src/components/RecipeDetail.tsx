@@ -86,7 +86,7 @@ const RecipeDetail: React.FC = () => {
 
       {uid===recipe.user_id ? (
       <div style={styles.buttonContainer}>
-        <Link to={`/edit-recipe/${id}`} style={styles.editButton}>
+        <Link to={`/recipes/edit/${recipe.id}`} style={styles.editButton}>
           Edit Recipe
         </Link>
 
