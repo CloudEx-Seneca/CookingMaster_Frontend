@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Recipe } from '../types/Recipe';
 import { Link } from 'react-router-dom';
 import { getApiBaseUrlRec } from '../helpers/GetApiBaseUrl.tsx';
+import RecipeImgUpload from './RecipeImgUpload.tsx';
 
 interface RecipeFormProps {
   onAddRecipe: (recipe: Recipe) => void;
@@ -12,6 +13,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
   const [name, setName] = useState('');
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [description, setDescription] = useState('');
+  const [image, setImage] = useState('');  // State for image URL
   const [error, setError] = useState<string>('');
   const [successMessage, setSuccessMessage] = useState<string>(''); 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,10 +26,10 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
     }
 
     const newRecipe = {
-      "recipe": {
-        name,
-        description,
-      }
+      name,
+      ingredients: [...ingredients],
+      description,
+      image, // Include the image URL in the recipe object
     };
 
     try {
@@ -50,7 +52,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
         }
       );
 
-      if (response.status === 200 || response.data.code === 200 || response.data.msg === "success") {
+      if (response.status === 200 || response.code === 200 || response.data.msg === "success") {
         setSuccessMessage('Recipe added successfully!');
         resetForm();
         setError('');
@@ -84,6 +86,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
     setName('');
     setIngredients([]);
     setDescription('');
+    setImage('');  // Reset the image URL after form submission
   };
 
   const styles = {
@@ -219,9 +222,13 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
         <div style={styles.cardBody}>
           {/* Recipe Name */}
           <div style={styles.formGroup}>
-            <label htmlFor="recipeName" style={styles.formLabel}>Recipe Name</label>
+            <RecipeImgUpload
+              image={image}  // Pass the image state
+              onRecipeImgUrlChange={(url) => setImage(url)}  // Handle image URL change
+            />
+            <label htmlFor="Name" style={styles.formLabel}>Recipe Name</label>
             <input
-              id="recipeName"
+              id="Name"
               type="text"
               style={styles.formInput}
               placeholder="Enter the name of the recipe here"
@@ -270,9 +277,9 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
 
           {/* Description Section */}
           <div style={styles.formGroup}>
-            <label htmlFor="description" style={styles.formLabel}>Description</label>
+            <label htmlFor="Description" style={styles.formLabel}>Description</label>
             <textarea
-              id="description"
+              id="Description"
               style={styles.formInput}
               rows={4}
               placeholder="Enter your cooking preparation instructions"
