@@ -6,12 +6,14 @@ import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
 interface RegistrationFormData {
   email: string;
   password: string;
+  nickname: string;
 }
 
 const SignUp: React.FC = () => {
   const [formData, setFormData] = useState<RegistrationFormData>({
     email: '',
     password: '',
+    nickname: '',
   });
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -46,11 +48,6 @@ const SignUp: React.FC = () => {
       const response = await axios.post(
         `${apiUrl}/usercenter/v2/register`,
         formData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
       );
       setLoading(false);
       setSuccess(true);
@@ -83,6 +80,18 @@ const SignUp: React.FC = () => {
             </div>
             <div style={styles.cardBody}>
               <form onSubmit={handleSubmit}>
+              <div style={styles.formGroup}>
+                  <label htmlFor="nickname" style={styles.label}>Name</label>
+                  <input
+                    type="text"
+                    id="nickname"
+                    name="nickname"
+                    style={styles.input}
+                    value={formData.nickname}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
                 <div style={styles.formGroup}>
                   <label htmlFor="email" style={styles.label}>Email</label>
                   <input
