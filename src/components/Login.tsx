@@ -36,6 +36,29 @@ const Login: React.FC = () => {
       setPassword('');
       setLoading(false);
 
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `${apiUrl}/usercenter/v2/profile`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        
+        const user_id = response.data.data.id;
+        localStorage.setItem('userID', user_id);
+      } catch (err) {
+        setLoading(false);
+        dispatch(loginFailure('Network error. Please try again later.'));
+      }
+
       navigate('/recipes');
     } catch (err) {
       setLoading(false);

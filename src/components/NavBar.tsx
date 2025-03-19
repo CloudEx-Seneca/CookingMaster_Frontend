@@ -23,6 +23,7 @@ const NavBar: React.FC = () => {
 
       dispatch(logout());
       localStorage.removeItem('authToken');
+      localStorage.removeItem('userID');
 
       navigate('/login');
     } catch (err) {
