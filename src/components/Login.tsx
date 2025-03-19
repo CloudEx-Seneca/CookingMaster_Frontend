@@ -26,7 +26,7 @@ const Login: React.FC = () => {
       const apiUrl = getApiBaseUrl();
       const response = await axios.post(`${apiUrl}/usercenter/v2/login`, { email, password });
 
-      const { token } = response.data;
+      const { token } = response.data.data;
 
       dispatch(loginSuccess(token));
 
