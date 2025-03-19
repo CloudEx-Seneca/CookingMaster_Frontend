@@ -28,7 +28,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
             <ul style={styles.ingredientList}>
               {firstHalf.map((ingredient, index) => (
                 <li key={index} style={styles.ingredientItem}>
-                  <span style={styles.ingredientBadge}>{ingredient}</span>
+                  <span style={styles.ingredientBadge}>{ingredient.name}</span>
                 </li>
               ))}
             </ul>
@@ -37,7 +37,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
             <ul style={styles.ingredientList}>
               {secondHalf.map((ingredient, index) => (
                 <li key={index} style={styles.ingredientItem}>
-                  <span style={styles.ingredientBadge}>{ingredient}</span>
+                  <span style={styles.ingredientBadge}>{ingredient.name}</span>
                 </li>
               ))}
             </ul>

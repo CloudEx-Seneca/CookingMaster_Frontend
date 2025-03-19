@@ -14,7 +14,7 @@ const RecipeList: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Simulated data
+  /* Simulated data
   const initialRecipes: Recipe[] = [
     {
       id: 1,
@@ -65,6 +65,7 @@ const RecipeList: React.FC = () => {
       author: 'Chef Mark',
     },
   ];
+  */
 
   useEffect(() => {
     // Simulating an API call with axios
@@ -79,7 +80,6 @@ const RecipeList: React.FC = () => {
     
         const apiUrl = getApiBaseUrlRec();
         const response = await axios.get(
-          //`http://localhost:8889/recipe/v1/recipe/list`,
           `${apiUrl}/recipe/v2/list`,
           {
             headers: {
@@ -88,11 +88,12 @@ const RecipeList: React.FC = () => {
           }
         );
   
-        const fetchedRecipes = response.data;
+        const fetchedRecipes = response.data.data;
+        console.log(fetchedRecipes);
 
         // Append fetched data to the initial simulated data
-        // setRecipes((prevRecipes) => [...prevRecipes, ...fetchedRecipes]);
-        // setFilteredRecipes((prevRecipes) => [...prevRecipes, ...fetchedRecipes]);
+        setRecipes([...fetchedRecipes]);
+        setFilteredRecipes([...fetchedRecipes]);
 
         setLoading(false);
       } catch (err) {
@@ -100,10 +101,6 @@ const RecipeList: React.FC = () => {
         setLoading(false);
       }
     };
-
-    // Set initial recipes from simulated data
-    setRecipes(initialRecipes);
-    setFilteredRecipes(initialRecipes); // Ensure filteredRecipes initially has all recipes
 
     // Fetch additional data from the API after setting initial data
     fetchAdditionalData();
