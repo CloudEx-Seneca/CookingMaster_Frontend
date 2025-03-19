@@ -44,7 +44,7 @@ const SignUp: React.FC = () => {
     try {
       const apiUrl = getApiBaseUrl();
       const response = await axios.post(
-        `${apiUrl}/usercenter/v1/user/register`,
+        `${apiUrl}/usercenter/v2/register`,
         formData,
         {
           headers: {
