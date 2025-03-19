@@ -1,29 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store/authSlice.tsx';
-import { RootState } from '../store/store.tsx';
 import { useNavigate } from 'react-router-dom';
-import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
-import axios from 'axios';
+// import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
+// import axios from 'axios';
 
 const NavBar: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const token = useSelector((state: RootState) => state.auth.token);
+  const token = localStorage.getItem('authToken');
+
+  useEffect(() => {
+    if (!token) {
+      navigate('/login');
+    }
+  }, [token, navigate]);
 
   const handleLogout = async () => {
     try {
-      const refreshToken = localStorage.getItem('refreshToken');
-      const apiUrl = getApiBaseUrl();
-      if (refreshToken) {
+      /*
+       const apiUrl = getApiBaseUrl();
+      if (token) {
         await axios.post(`${apiUrl}/usercenter/v1/user/logout`, { refresh_token: refreshToken });
       }
+      */
 
       dispatch(logout());
       localStorage.removeItem('authToken');
-      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('userID');
 
       navigate('/login');
     } catch (err) {

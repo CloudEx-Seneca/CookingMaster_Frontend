@@ -6,12 +6,14 @@ import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
 interface RegistrationFormData {
   email: string;
   password: string;
+  nickname: string;
 }
 
 const SignUp: React.FC = () => {
   const [formData, setFormData] = useState<RegistrationFormData>({
     email: '',
     password: '',
+    nickname: '',
   });
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -44,22 +46,16 @@ const SignUp: React.FC = () => {
     try {
       const apiUrl = getApiBaseUrl();
       const response = await axios.post(
-        `${apiUrl}/usercenter/v1/user/register`,
+        `${apiUrl}/usercenter/v2/register`,
         formData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
       );
       setLoading(false);
       setSuccess(true);
-      console.log(response.data); // Handle the successful registration
     } catch (err) {
       setLoading(false);
 
       if (err.response) {
-        setError(err.response.data.msg || 'An error occurred. Please try again.');
+        setError(err.response.data.message || 'An error occurred. Please try again.');
         console.error(err.response.data);
       } else {
         setError('Failed to register. Please try again.');
@@ -83,6 +79,18 @@ const SignUp: React.FC = () => {
             </div>
             <div style={styles.cardBody}>
               <form onSubmit={handleSubmit}>
+              <div style={styles.formGroup}>
+                  <label htmlFor="nickname" style={styles.label}>Name</label>
+                  <input
+                    type="text"
+                    id="nickname"
+                    name="nickname"
+                    style={styles.input}
+                    value={formData.nickname}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
                 <div style={styles.formGroup}>
                   <label htmlFor="email" style={styles.label}>Email</label>
                   <input

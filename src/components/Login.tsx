@@ -24,20 +24,23 @@ const Login: React.FC = () => {
 
     try {
       const apiUrl = getApiBaseUrl();
-      const response = await axios.post(`${apiUrl}/usercenter/v1/user/login`, { email, password });
+      const response = await axios.post(`${apiUrl}/usercenter/v2/login`, { email, password });
 
-      const { access_token, refresh_token, access_expire, refresh_after } = response.data.data;
+      const { token, user_id } = response.data.data;
 
-      dispatch(loginSuccess(access_token));
+      dispatch(loginSuccess(token));
 
-      localStorage.setItem('authToken', access_token);
-      localStorage.setItem('refreshToken', refresh_token);
-      localStorage.setItem('accessExpire', access_expire.toString());
-      localStorage.setItem('refreshAfter', refresh_after.toString());
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('userID', user_id);
 
       setEmail('');
       setPassword('');
       setLoading(false);
+
+      if (!token) {
+        setLoading(false);
+        return;
+      }
 
       navigate('/recipes');
     } catch (err) {

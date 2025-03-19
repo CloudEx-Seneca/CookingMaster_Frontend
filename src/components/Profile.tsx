@@ -9,7 +9,7 @@ interface UserProfile {
   avatarUrl: string;
   info: string;
   userId: string;
-  sex: number;
+  sex: string;
 }
 
 const ProfilePage: React.FC = () => {
@@ -22,7 +22,7 @@ const ProfilePage: React.FC = () => {
     avatarUrl: '',
     info: '',
     userId: '',
-    sex: 0,
+    sex: '',
   });
 
   const [isProfileUpdated, setIsProfileUpdated] = useState<boolean>(false);
@@ -39,9 +39,8 @@ const ProfilePage: React.FC = () => {
 
     try {
       setLoading(true);
-      const response = await axios.post(
-        `${apiUrl}/usercenter/v1/user/detail`,
-        {},
+      const response = await axios.get(
+        `${apiUrl}/usercenter/v2/profile`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -49,7 +48,7 @@ const ProfilePage: React.FC = () => {
         }
       );
 
-      const user = response.data.data.user;
+      const user = response.data.data;
 
       setUserData(user);
       setFormValues({
@@ -57,8 +56,8 @@ const ProfilePage: React.FC = () => {
         email: user.email || '',
         avatarUrl: user.avatar_url || '',
         info: user.info || '',
-        userId: user.user_id.toString(),
-        sex: user.sex || 0,
+        userId: user.id.toString(),
+        sex: user.sex || "Female",
       });
       setLoading(false);
     } catch (err: any) {
@@ -82,7 +81,7 @@ const ProfilePage: React.FC = () => {
 
     try {
       await axios.post(
-        `${apiUrl}/usercenter/v1/user/update`,
+        `${apiUrl}/usercenter/v2/profile`,
         { nickname, info, sex, avatar_url: avatarUrl },
         {
           headers: {
@@ -175,9 +174,9 @@ const ProfilePage: React.FC = () => {
               <input
                 type="radio"
                 name="sex"
-                value="0"
-                checked={formValues.sex === 0}
-                onChange={(e) => setFormValues({ ...formValues, sex: parseInt(e.target.value, 10) })}
+                value="Female"
+                checked={formValues.sex === "Female"}
+                onChange={(e) => setFormValues({ ...formValues, sex: e.target.value })}
               />
               Female
             </label>
@@ -185,9 +184,9 @@ const ProfilePage: React.FC = () => {
               <input
                 type="radio"
                 name="sex"
-                value="1"
-                checked={formValues.sex === 1}
-                onChange={(e) => setFormValues({ ...formValues, sex: parseInt(e.target.value, 10) })}
+                value="Male"
+                checked={formValues.sex === "Male"}
+                onChange={(e) => setFormValues({ ...formValues, sex: e.target.value })}
               />
               Male
             </label>

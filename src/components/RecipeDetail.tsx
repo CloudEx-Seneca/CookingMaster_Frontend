@@ -1,28 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { Recipe } from '../types/Recipe';
+import { getApiBaseUrlRec } from '../helpers/GetApiBaseUrl.tsx';
 
 const RecipeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Get the id parameter from the URL
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [isLoading, setIsLoading] = useState(true); // Track loading state
+  const [isDeleting, setIsDeleting] = useState(false); // Track if deletion confirmation is shown
+  const navigate = useNavigate(); // Initialize useNavigate for navigation
+  const uid = parseInt(localStorage.getItem('userID'), 10);
 
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
         setIsLoading(true); // Set loading to true before fetching data
-
-        // Simulate fetching data (replace with an actual API call in a real app)
-        const fetchedRecipe: Recipe = {
-          id: Number(id), // Assuming id is a number
-          name: 'Spaghetti Carbonara',
-          ingredients: ['Spaghetti', 'Eggs', 'Parmesan', 'Bacon', 'Garlic'],
-          description: 'Boil pasta. Cook bacon. Mix eggs and cheese...',
-          image: '/img/carbonara.jpeg',
-          author: 'Chef John',
-        };
-        setRecipe(fetchedRecipe);
-        setIsLoading(false);
+        const apiUrl = getApiBaseUrlRec();
+        // Fetch recipe details from the API
+        const response = await axios.get(`${apiUrl}/recipe/v2/detail/${id}`);
+        setRecipe(response.data.data); // Set recipe data
+        setIsLoading(false); // Set loading to false once data is fetched
       } catch (error) {
         console.error('Failed to fetch recipe:', error);
         setIsLoading(false); // Ensure loading is stopped even on error
@@ -31,6 +29,27 @@ const RecipeDetail: React.FC = () => {
 
     fetchRecipe();
   }, [id]); // Refetch when the id changes
+
+  const handleDelete = async () => {
+    try {
+      const apiUrl = getApiBaseUrlRec();
+      const token = localStorage.getItem('authToken');
+
+      await axios.post(
+        `${apiUrl}/recipe/v2/delete`,
+        { recipe_id: parseInt(id, 10) },  // Convert id to integer
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      ); // Call delete API
+      
+      navigate('/recipes'); // Redirect to the recipes list after successful deletion
+    } catch (error) {
+      console.error('Failed to delete recipe:', error);
+    }
+  };
 
   if (isLoading) {
     return <div>Loading...</div>; // Show loading state until the data is fetched
@@ -48,7 +67,7 @@ const RecipeDetail: React.FC = () => {
           Back to Recipes
         </Link>
       </div>
-      <p style={styles.author}>By: {recipe.author}</p> {/* Author placed under title */}
+      <p style={styles.author}>By: {recipe.author}</p>
       <div style={styles.imageWrapper}>
         <img src={recipe.image} alt={recipe.name} style={styles.image} />
       </div>
@@ -57,13 +76,40 @@ const RecipeDetail: React.FC = () => {
       <div style={styles.ingredientList}>
         {recipe.ingredients.map((ingredient, index) => (
           <span key={index} style={styles.ingredientBadge}>
-            {ingredient}
+            {ingredient.name}
           </span>
         ))}
       </div>
 
       <h4 style={styles.sectionTitle}>Description:</h4>
       <p style={styles.instructions}>{recipe.description}</p>
+
+      {uid===recipe.user_id ? (
+      <div style={styles.buttonContainer}>
+        <Link to={`/recipes/edit/${recipe.id}`} style={styles.editButton}>
+          Edit Recipe
+        </Link>
+
+        {/* Delete Recipe Button */}
+        {!isDeleting ? (
+          <button onClick={() => setIsDeleting(true)} style={styles.deleteButton}>
+            Delete Recipe
+          </button>
+        ) : (
+          <div style={styles.confirmationContainer}>
+            <span style={styles.confirmationText}>Are you sure?</span>
+            <button onClick={handleDelete} style={styles.confirmButton}>
+              Yes
+            </button>
+            <button onClick={() => setIsDeleting(false)} style={styles.cancelButton}>
+              No
+            </button>
+          </div>
+        )}
+      </div>
+      ) : (
+        <div></div>
+      )}
     </div>
   );
 };
@@ -91,12 +137,12 @@ const styles = {
   },
   imageWrapper: {
     marginBottom: '2rem',
-    display: 'flex', // Apply flex display to the wrapper
-    justifyContent: 'center', // Center the image horizontally
+    display: 'flex',
+    justifyContent: 'center',
   },
   image: {
-    width: '80%', // Set the width to 80% of the container
-    height: 'auto', // Maintain aspect ratio
+    width: '80%',
+    height: 'auto',
     borderRadius: '8px',
   },
   sectionTitle: {
@@ -138,6 +184,57 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: '1.5rem',
+  },
+  buttonContainer: {
+    marginTop: '1.5rem',
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  editButton: {
+    padding: '0.5rem 1rem',
+    backgroundColor: '#FF7A47', // Matching color with ingredient label
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    textDecoration: 'none',
+    fontSize: '1rem',
+  },
+  deleteButton: {
+    padding: '0.5rem 1rem',
+    backgroundColor: '#F44336',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '1rem',
+  },
+  confirmationContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1rem',
+    justifyContent: 'center',
+  },
+  confirmationText: {
+    fontSize: '1rem',
+    color: '#333',
+  },
+  confirmButton: {
+    padding: '0.5rem 1rem',
+    backgroundColor: '#FF7A47', // Matching color with ingredient label
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '1rem',
+  },
+  cancelButton: {
+    padding: '0.5rem 1rem',
+    backgroundColor: '#888',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '1rem',
   },
 };
 

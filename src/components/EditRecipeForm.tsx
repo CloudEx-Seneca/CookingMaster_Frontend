@@ -1,35 +1,84 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Recipe } from '../types/Recipe';
-import { Link } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { getApiBaseUrlRec } from '../helpers/GetApiBaseUrl.tsx';
 import RecipeImgUpload from './RecipeImgUpload.tsx';
 
-interface RecipeFormProps {
-  onAddRecipe: (recipe: Recipe) => void;
+interface EditRecipeFormProps {
 }
 
-const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
+const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ }) => {
+  const { id } = useParams<{ id: string }>(); // Get the id parameter from the URL
   const [name, setName] = useState('');
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [description, setDescription] = useState('');
-  const [image, setImage] = useState('');  // State for image URL
+  const [image, setImage] = useState('');
   const [error, setError] = useState<string>('');
-  const [successMessage, setSuccessMessage] = useState<string>(''); 
+  const [successMessage, setSuccessMessage] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [existingRecipe, setExistingRecipe] = useState<Recipe | null>(null); // New state for the recipe data
+  const navigate = useNavigate(); // Initialize useNavigate for navigation
 
-  const handleAddRecipe = async () => {
-    if (!name.trim() || ingredients.some(ingredient => ingredient.trim() === '') || !description.trim()) {
+  // Fetch the recipe data when the component mounts
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        const apiUrl = getApiBaseUrlRec();
+        const token = localStorage.getItem('authToken');
+        const uid = localStorage.getItem('userID');
+
+        if (!token) {
+          setError('Authentication token is missing.');
+          return;
+        }
+
+        const response = await axios.get(`${apiUrl}/recipe/v2/detail/${id}`);
+        if (response.status === 200) {
+          const recipeData: Recipe = response.data.data; // Assuming the response contains the recipe object
+          
+          if (parseInt(uid, 10) !== recipeData.user_id) {
+            navigate(`/recipes/${recipeData.id}`);
+          }
+          setExistingRecipe(recipeData);
+
+          // Populate the form fields with the fetched recipe data
+          setName(recipeData.name);
+
+          // Handle ingredients: if they are objects, extract 'name' field
+          const ingredients = recipeData.ingredients.map((ingredient: any) =>
+            typeof ingredient === 'object' && ingredient.name ? ingredient.name : ingredient
+          );
+          setIngredients(ingredients);
+
+          setDescription(recipeData.description);
+          setImage(recipeData.image);
+        } else {
+          setError('Recipe not found.');
+        }
+      } catch (err) {
+        console.error('Error fetching recipe:', err);
+        setError('Failed to fetch recipe data.');
+      }
+    };
+
+    fetchRecipe();
+  }, [id]); // Fetch the recipe again if the `id` changes
+
+  // Handle the update recipe functionality
+  const handleUpdateRecipe = async () => {
+    if (!name.trim() || ingredients.some((ingredient) => ingredient.trim() === '') || !description.trim()) {
       setSuccessMessage('');
       setError('Please fill in all fields');
       return;
     }
 
-    const newRecipe = {
+    const updatedRecipe: Recipe = {
+      id: existingRecipe ? existingRecipe.id : '', // Ensure the ID is passed for the update
       name,
-      ingredients: [...ingredients],
+      ingredients: [...ingredients], // Copy the ingredients array
       description,
-      image, // Include the image URL in the recipe object
+      image,
     };
 
     try {
@@ -43,8 +92,11 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
 
       const apiUrl = getApiBaseUrlRec();
       const response = await axios.post(
-        `${apiUrl}/recipe/v2/create`,
-        newRecipe,
+        `${apiUrl}/recipe/v2/update`, // Use PUT request to update
+        { 
+            ...updatedRecipe,
+            recipe_id: parseInt(id, 10)
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -52,21 +104,22 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
         }
       );
 
-      if (response.status === 200 || response.code === 200 || response.data.msg === "success") {
-        setSuccessMessage('Recipe added successfully!');
-        resetForm();
+      if (response.status === 200 || response.data.msg === 'success') {
+        setSuccessMessage('Recipe updated successfully!');
         setError('');
+        navigate(`/recipes/${id}`)
       } else {
-        setError('Failed to add recipe. Please try again later.');
+        setError('Failed to update recipe. Please try again later.');
       }
     } catch (err) {
       console.error('Error:', err);
-      setError('Failed to add recipe. Please try again later.');
+      setError('Failed to update recipe. Please try again later.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Handle ingredient changes
   const handleIngredientChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const newIngredients = [...ingredients];
     newIngredients[index] = e.target.value;
@@ -86,7 +139,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
     setName('');
     setIngredients([]);
     setDescription('');
-    setImage('');  // Reset the image URL after form submission
+    setImage('');
   };
 
   const styles = {
@@ -113,7 +166,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
       marginBottom: '20px',
       fontSize: '14px',
     },
-    successMessage: {  
+    successMessage: {
       color: '#28a745',
       backgroundColor: '#d4edda',
       padding: '10px',
@@ -204,12 +257,12 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
   return (
     <div style={styles.container}>
       <div style={styles.headerRow}>
-        <h3 style={styles.formTitle}>Create a New Recipe</h3>
+        <h3 style={styles.formTitle}>Edit Recipe</h3>
         <Link
           to="/recipes"
           style={styles.addButton}
-          onMouseEnter={(e) => e.target.style.backgroundColor = styles.addButtonHover.backgroundColor}
-          onMouseLeave={(e) => e.target.style.backgroundColor = styles.addButton.backgroundColor}
+          onMouseEnter={(e) => (e.target.style.backgroundColor = styles.addButtonHover.backgroundColor)}
+          onMouseLeave={(e) => (e.target.style.backgroundColor = styles.addButton.backgroundColor)}
         >
           Back to Recipes
         </Link>
@@ -223,8 +276,8 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
           {/* Recipe Name */}
           <div style={styles.formGroup}>
             <RecipeImgUpload
-              image={image}  // Pass the image state
-              onRecipeImgUrlChange={(url) => setImage(url)}  // Handle image URL change
+              image={image} // Pass the image state
+              onRecipeImgUrlChange={(url) => setImage(url)} // Handle image URL change
             />
             <label htmlFor="Name" style={styles.formLabel}>Recipe Name</label>
             <input
@@ -246,7 +299,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
                   type="text"
                   style={styles.formInput}
                   placeholder={`Ingredient #${index + 1}`}
-                  value={ingredient}
+                  value={ingredient}  // Use 'ingredient' directly since it's now a string
                   onChange={(e) => handleIngredientChange(e, index)}
                 />
                 <button
@@ -257,8 +310,8 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
                     marginLeft: '10px',
                   }}
                   onClick={() => handleDeleteIngredient(index)}
-                  onMouseEnter={(e) => e.target.style.backgroundColor = styles.addIngredientBtnHover.backgroundColor}
-                  onMouseLeave={(e) => e.target.style.backgroundColor = styles.addIngredientBtn.backgroundColor}
+                  onMouseEnter={(e) => (e.target.style.backgroundColor = styles.addIngredientBtnHover.backgroundColor)}
+                  onMouseLeave={(e) => (e.target.style.backgroundColor = styles.addIngredientBtn.backgroundColor)}
                 >
                   Delete
                 </button>
@@ -268,8 +321,8 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
               type="button"
               style={styles.addIngredientBtn}
               onClick={handleAddIngredientField}
-              onMouseEnter={(e) => e.target.style.backgroundColor = styles.addIngredientBtnHover.backgroundColor}
-              onMouseLeave={(e) => e.target.style.backgroundColor = styles.addIngredientBtn.backgroundColor}
+              onMouseEnter={(e) => (e.target.style.backgroundColor = styles.addIngredientBtnHover.backgroundColor)}
+              onMouseLeave={(e) => (e.target.style.backgroundColor = styles.addIngredientBtn.backgroundColor)}
             >
               Add Ingredient
             </button>
@@ -288,16 +341,16 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
             />
           </div>
 
-          {/* Add Recipe Button */}
+          {/* Update Recipe Button */}
           <button
             type="button"
             style={styles.addRecipeBtn}
-            onClick={handleAddRecipe}
+            onClick={handleUpdateRecipe}
             disabled={isSubmitting}
-            onMouseEnter={(e) => e.target.style.backgroundColor = styles.addRecipeBtnHover.backgroundColor}
-            onMouseLeave={(e) => e.target.style.backgroundColor = styles.addRecipeBtn.backgroundColor}
+            onMouseEnter={(e) => (e.target.style.backgroundColor = styles.addRecipeBtnHover.backgroundColor)}
+            onMouseLeave={(e) => (e.target.style.backgroundColor = styles.addRecipeBtn.backgroundColor)}
           >
-            {isSubmitting ? 'Submitting...' : 'Add Recipe'}
+            {isSubmitting ? 'Submitting...' : 'Update Recipe'}
           </button>
         </div>
       </div>
@@ -305,4 +358,4 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
   );
 };
 
-export default RecipeForm;
+export default EditRecipeForm;

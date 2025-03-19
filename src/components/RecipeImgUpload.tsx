@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import { BlobServiceClient, AnonymousCredential } from '@azure/storage-blob';
 
-// Interface for AvatarUpload props
-interface AvatarUploadProps {
-  avatarUrl: string;
-  onAvatarUrlChange: (url: string) => void;
+interface RecipeImgUploadProps {
+  image: string;
+  onRecipeImgUrlChange: (url: string) => void;
 }
 
-const AvatarUpload: React.FC<AvatarUploadProps> = ({ avatarUrl, onAvatarUrlChange }) => {
+const RecipeImgUpload: React.FC<RecipeImgUploadProps> = ({ image, onRecipeImgUrlChange }) => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);  // Success message state
 
   // Hardcoded container name
-  const containerName = 'avatars'; // Replace with your actual container name
+  const containerName = 'recipes'; // Replace with your actual container name
 
   // Validate the file before uploading
   const validateFile = (file: File): boolean => {
@@ -58,9 +57,9 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ avatarUrl, onAvatarUrlChang
       // Use the uploadData method instead of uploadBrowserData (as uploadBrowserData is deprecated)
       await blockBlobClient.uploadData(file);
 
-      // Once uploaded, update avatar URL in the parent component
+      // Once uploaded, update image URL in the parent component
       const uploadedUrl = blockBlobClient.url;
-      onAvatarUrlChange(uploadedUrl);
+      onRecipeImgUrlChange(uploadedUrl);
 
       setIsUploading(false);
       setUploadSuccess('File uploaded successfully!');  // Set success message after upload
@@ -72,10 +71,10 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ avatarUrl, onAvatarUrlChang
   };
 
   return (
-    <div style={styles.avatarContainer}>
-      <label htmlFor="avatar" style={styles.label}>Avatar Upload</label>
+    <div style={styles.imageContainer}>
+      <label htmlFor="image" style={styles.label}>Upload Image</label>
       <input
-        id="avatar"
+        id="image"
         type="file"
         accept="image/*"
         onChange={(e) => uploadImage(e.target.files ? e.target.files[0] : null)}
@@ -85,14 +84,14 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ avatarUrl, onAvatarUrlChang
       {uploadError && <p style={styles.errorText}>{uploadError}</p>}
       {uploadSuccess && <p style={styles.successText}>{uploadSuccess}</p>} {/* Success message */}
       <div style={styles.imagePreviewContainer}>
-        <img src={avatarUrl || '/chstock.ico'} alt="Default" style={styles.avatarImage} />
+        <img src={image || '/chstock.ico'} alt="Default" style={styles.imageImage} />
       </div>
     </div>
   );
 };
 
 const styles = {
-  avatarContainer: {
+  imageContainer: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -107,7 +106,7 @@ const styles = {
     padding: '10px',
     marginBottom: '10px',
   },
-  avatarImage: {
+  imageImage: {
     width: '120px',
     height: '120px',
     borderRadius: '50%',
@@ -123,4 +122,4 @@ const styles = {
   },
 };
 
-export default AvatarUpload;
+export default RecipeImgUpload;
