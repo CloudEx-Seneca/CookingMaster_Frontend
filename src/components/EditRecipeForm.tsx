@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Recipe } from '../types/Recipe';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { getApiBaseUrlRec } from '../helpers/GetApiBaseUrl.tsx';
 import RecipeImgUpload from './RecipeImgUpload.tsx';
 
@@ -18,6 +18,7 @@ const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ }) => {
   const [successMessage, setSuccessMessage] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [existingRecipe, setExistingRecipe] = useState<Recipe | null>(null); // New state for the recipe data
+  const navigate = useNavigate(); // Initialize useNavigate for navigation
 
   // Fetch the recipe data when the component mounts
   useEffect(() => {
@@ -102,6 +103,7 @@ const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ }) => {
       if (response.status === 200 || response.data.msg === 'success') {
         setSuccessMessage('Recipe updated successfully!');
         setError('');
+        navigate(`/recipes/${id}`)
       } else {
         setError('Failed to update recipe. Please try again later.');
       }
