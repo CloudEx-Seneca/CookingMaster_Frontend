@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import axios from 'axios'; // Import axios
 import { Recipe } from '../types/Recipe';
+import { getApiBaseUrlRec } from '../helpers/GetApiBaseUrl.tsx';
 
 const RecipeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Get the id parameter from the URL
@@ -12,17 +14,13 @@ const RecipeDetail: React.FC = () => {
       try {
         setIsLoading(true); // Set loading to true before fetching data
 
-        // Simulate fetching data (replace with an actual API call in a real app)
-        const fetchedRecipe: Recipe = {
-          id: Number(id), // Assuming id is a number
-          name: 'Spaghetti Carbonara',
-          ingredients: ['Spaghetti', 'Eggs', 'Parmesan', 'Bacon', 'Garlic'],
-          description: 'Boil pasta. Cook bacon. Mix eggs and cheese...',
-          image: '/img/carbonara.jpeg',
-          author: 'Chef John',
-        };
-        setRecipe(fetchedRecipe);
-        setIsLoading(false);
+        const apiUrl = getApiBaseUrlRec();
+        // Replace with your actual API endpoint
+        const response = await axios.get(
+          `${apiUrl}/recipe/v2/detail/${id}`
+        );
+        setRecipe(response.data.data); // Set recipe data
+        setIsLoading(false); // Set loading to false once data is fetched
       } catch (error) {
         console.error('Failed to fetch recipe:', error);
         setIsLoading(false); // Ensure loading is stopped even on error
@@ -57,7 +55,7 @@ const RecipeDetail: React.FC = () => {
       <div style={styles.ingredientList}>
         {recipe.ingredients.map((ingredient, index) => (
           <span key={index} style={styles.ingredientBadge}>
-            {ingredient}
+            {ingredient.name}
           </span>
         ))}
       </div>
