@@ -6,10 +6,9 @@ import { getApiBaseUrlRec } from '../helpers/GetApiBaseUrl.tsx';
 import RecipeImgUpload from './RecipeImgUpload.tsx';
 
 interface EditRecipeFormProps {
-  onUpdateRecipe: (recipe: Recipe) => void;
 }
 
-const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ onUpdateRecipe }) => {
+const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ }) => {
   const { id } = useParams<{ id: string }>(); // Get the id parameter from the URL
   const [name, setName] = useState('');
   const [ingredients, setIngredients] = useState<string[]>([]);
@@ -39,7 +38,13 @@ const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ onUpdateRecipe }) => {
 
           // Populate the form fields with the fetched recipe data
           setName(recipeData.name);
-          setIngredients(recipeData.ingredients);
+
+          // Handle ingredients: if they are objects, extract 'name' field
+          const ingredients = recipeData.ingredients.map((ingredient: any) =>
+            typeof ingredient === 'object' && ingredient.name ? ingredient.name : ingredient
+          );
+          setIngredients(ingredients);
+
           setDescription(recipeData.description);
           setImage(recipeData.image);
         } else {
@@ -82,8 +87,11 @@ const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ onUpdateRecipe }) => {
 
       const apiUrl = getApiBaseUrlRec();
       const response = await axios.post(
-        `${apiUrl}/recipe/v2/update/${id}`, // Use PUT request to update
-        updatedRecipe,
+        `${apiUrl}/recipe/v2/update`, // Use PUT request to update
+        { 
+            ...updatedRecipe,
+            recipe_id: parseInt(id, 10)
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -94,7 +102,6 @@ const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ onUpdateRecipe }) => {
       if (response.status === 200 || response.data.msg === 'success') {
         setSuccessMessage('Recipe updated successfully!');
         setError('');
-        onUpdateRecipe(updatedRecipe); // Call parent function to update the list
       } else {
         setError('Failed to update recipe. Please try again later.');
       }
@@ -153,7 +160,7 @@ const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ onUpdateRecipe }) => {
       marginBottom: '20px',
       fontSize: '14px',
     },
-    successMessage: {  
+    successMessage: {
       color: '#28a745',
       backgroundColor: '#d4edda',
       padding: '10px',
@@ -286,7 +293,7 @@ const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ onUpdateRecipe }) => {
                   type="text"
                   style={styles.formInput}
                   placeholder={`Ingredient #${index + 1}`}
-                  value={ingredient.name}
+                  value={ingredient}  // Use 'ingredient' directly since it's now a string
                   onChange={(e) => handleIngredientChange(e, index)}
                 />
                 <button
