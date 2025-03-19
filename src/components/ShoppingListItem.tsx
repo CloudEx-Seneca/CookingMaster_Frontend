@@ -1,4 +1,5 @@
 import React from 'react';
+// import React, { useState } from 'react';
 
 interface ShoppingListItemProps {
   item: string;
@@ -9,7 +10,11 @@ const ShoppingListItem: React.FC<ShoppingListItemProps> = ({ item, onRemove }) =
   return (
     <div style={styles.itemContainer}>
       <span style={styles.itemText}>{item}</span>
-      <button onClick={onRemove} style={styles.removeButton}>
+      <button
+        onMouseEnter={(e) => e.currentTarget.style.color = 'red'} 
+        onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
+        onClick={onRemove} style={styles.removeButton}>
+
         Remove
       </button>
     </div>
