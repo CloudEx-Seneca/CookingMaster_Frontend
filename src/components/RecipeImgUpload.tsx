@@ -84,7 +84,7 @@ const RecipeImgUpload: React.FC<RecipeImgUploadProps> = ({ image, onRecipeImgUrl
       {uploadError && <p style={styles.errorText}>{uploadError}</p>}
       {uploadSuccess && <p style={styles.successText}>{uploadSuccess}</p>} {/* Success message */}
       <div style={styles.imagePreviewContainer}>
-        <img src={image || '/chstock.ico'} alt="Default" style={styles.imageImage} />
+        <img src={image || '/chstock2.ico'} alt="Default" style={styles.imageImage} />
       </div>
     </div>
   );
@@ -107,9 +107,9 @@ const styles = {
     marginBottom: '10px',
   },
   imageImage: {
-    width: '120px',
-    height: '120px',
-    borderRadius: '50%',
+    width: '500px',
+    height: 'auto',
+    borderRadius: '5%',
   },
   errorText: {
     color: 'red',
