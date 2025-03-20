@@ -9,6 +9,7 @@ const RecipeList: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
   const [titleSearch, setTitleSearch] = useState('');
+  const [authorSearch, setAuthorSearch] = useState('');
   const [ingredientSearch, setIngredientSearch] = useState('');
   const [ingredientsList, setIngredientsList] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -119,10 +120,11 @@ const RecipeList: React.FC = () => {
     const filterRecipes = () => {
       const filtered = recipes.filter((recipe) => {
         const matchesTitle = recipe.name.toLowerCase().includes(titleSearch.toLowerCase());
+        const matchesAuthor = recipe.author.toLowerCase().includes(authorSearch.toLowerCase());
         const matchesIngredients = ingredientsList.every((ingredient) =>
           recipe.ingredients.some((ing) => ing.name.toLowerCase().includes(ingredient.toLowerCase()))
         );
-        return matchesTitle && matchesIngredients;
+        return matchesTitle && matchesIngredients && matchesAuthor;
       });
 
       setFilteredRecipes(filtered);
@@ -131,10 +133,14 @@ const RecipeList: React.FC = () => {
     if (recipes.length > 0) {
       filterRecipes();
     }
-  }, [titleSearch, ingredientsList, recipes]); // This ensures filter is applied when data changes
+  }, [titleSearch, authorSearch, ingredientsList, recipes]); // This ensures filter is applied when data changes
 
   const handleTitleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitleSearch(event.target.value);
+  };
+
+  const handleAuthorSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAuthorSearch(event.target.value);
   };
 
   const handleIngredientSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -240,6 +246,14 @@ const RecipeList: React.FC = () => {
           placeholder="Search by recipe name..."
           value={titleSearch}
           onChange={handleTitleSearchChange}
+          style={styles.searchInput}
+        />
+
+        <input
+          type="text"
+          placeholder="Search by author..."
+          value={authorSearch}
+          onChange={handleAuthorSearchChange}
           style={styles.searchInput}
         />
 
