@@ -73,6 +73,12 @@ const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ }) => {
       return;
     }
 
+    if(!image.trim()) {
+      setSuccessMessage('');
+      setError('Please upload an image');
+      return;
+    }
+
     const updatedRecipe: Recipe = {
       id: existingRecipe ? existingRecipe.id : '', // Ensure the ID is passed for the update
       name,
