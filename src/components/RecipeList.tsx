@@ -13,6 +13,15 @@ const RecipeList: React.FC = () => {
   const [ingredientsList, setIngredientsList] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [hoveredCard, setHoveredCard] = useState(null);
+
+  const handleMouseEnter = (id) => {
+    setHoveredCard(id);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredCard(null);
+  };
 
   /* Simulated data
   const initialRecipes: Recipe[] = [
@@ -157,6 +166,11 @@ const RecipeList: React.FC = () => {
     cardWrapper: {
       display: 'flex',
       justifyContent: 'center',
+      transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth animation
+    },
+    cardHover: {
+      transform: 'scale(1.05)', // Slightly enlarges the card
+      boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', // Adds a subtle shadow
     },
     linkStyle: {
       textDecoration: 'none',
@@ -210,10 +224,7 @@ const RecipeList: React.FC = () => {
       fontSize: '1rem',
     },
   };
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
-
+  
   return (
     <div style={styles.container}>
       <div style={styles.headerRow}>
@@ -260,7 +271,15 @@ const RecipeList: React.FC = () => {
 
       <div style={styles.grid}>
         {filteredRecipes.map((recipe) => (
-          <div key={recipe.id} style={styles.cardWrapper}>
+          <div
+            key={recipe.id}
+            style={{
+              ...styles.cardWrapper,
+              ...(hoveredCard === recipe.id ? styles.cardHover : {}),
+            }}
+            onMouseEnter={() => handleMouseEnter(recipe.id)}
+            onMouseLeave={handleMouseLeave}
+          >
             <Link to={`/recipes/${recipe.id}`} style={styles.linkStyle}>
               <RecipeCard recipe={recipe} />
             </Link>
