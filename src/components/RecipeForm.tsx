@@ -25,6 +25,12 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
       return;
     }
 
+    if(!image.trim()) {
+      setSuccessMessage('');
+      setError('Please upload an image');
+      return;
+    }
+
     const newRecipe = {
       name,
       ingredients: [...ingredients],

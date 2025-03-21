@@ -85,7 +85,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ avatarUrl, onAvatarUrlChang
       {uploadError && <p style={styles.errorText}>{uploadError}</p>}
       {uploadSuccess && <p style={styles.successText}>{uploadSuccess}</p>} {/* Success message */}
       <div style={styles.imagePreviewContainer}>
-        <img src={avatarUrl || '/chstock.ico'} alt="Default" style={styles.avatarImage} />
+        <img src={avatarUrl || '/chstock2.ico'} alt="Default" style={styles.avatarImage} />
       </div>
     </div>
   );

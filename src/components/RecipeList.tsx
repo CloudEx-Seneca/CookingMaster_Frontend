@@ -9,10 +9,20 @@ const RecipeList: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
   const [titleSearch, setTitleSearch] = useState('');
+  const [authorSearch, setAuthorSearch] = useState('');
   const [ingredientSearch, setIngredientSearch] = useState('');
   const [ingredientsList, setIngredientsList] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [hoveredCard, setHoveredCard] = useState(null);
+
+  const handleMouseEnter = (id) => {
+    setHoveredCard(id);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredCard(null);
+  };
 
   /* Simulated data
   const initialRecipes: Recipe[] = [
@@ -110,10 +120,11 @@ const RecipeList: React.FC = () => {
     const filterRecipes = () => {
       const filtered = recipes.filter((recipe) => {
         const matchesTitle = recipe.name.toLowerCase().includes(titleSearch.toLowerCase());
+        const matchesAuthor = recipe.author.toLowerCase().includes(authorSearch.toLowerCase());
         const matchesIngredients = ingredientsList.every((ingredient) =>
           recipe.ingredients.some((ing) => ing.name.toLowerCase().includes(ingredient.toLowerCase()))
         );
-        return matchesTitle && matchesIngredients;
+        return matchesTitle && matchesIngredients && matchesAuthor;
       });
 
       setFilteredRecipes(filtered);
@@ -122,10 +133,14 @@ const RecipeList: React.FC = () => {
     if (recipes.length > 0) {
       filterRecipes();
     }
-  }, [titleSearch, ingredientsList, recipes]); // This ensures filter is applied when data changes
+  }, [titleSearch, authorSearch, ingredientsList, recipes]); // This ensures filter is applied when data changes
 
   const handleTitleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitleSearch(event.target.value);
+  };
+
+  const handleAuthorSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAuthorSearch(event.target.value);
   };
 
   const handleIngredientSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -157,6 +172,11 @@ const RecipeList: React.FC = () => {
     cardWrapper: {
       display: 'flex',
       justifyContent: 'center',
+      transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth animation
+    },
+    cardHover: {
+      transform: 'scale(1.05)', // Slightly enlarges the card
+      boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', // Adds a subtle shadow
     },
     linkStyle: {
       textDecoration: 'none',
@@ -210,10 +230,7 @@ const RecipeList: React.FC = () => {
       fontSize: '1rem',
     },
   };
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
-
+  
   return (
     <div style={styles.container}>
       <div style={styles.headerRow}>
@@ -229,6 +246,14 @@ const RecipeList: React.FC = () => {
           placeholder="Search by recipe name..."
           value={titleSearch}
           onChange={handleTitleSearchChange}
+          style={styles.searchInput}
+        />
+
+        <input
+          type="text"
+          placeholder="Search by author..."
+          value={authorSearch}
+          onChange={handleAuthorSearchChange}
           style={styles.searchInput}
         />
 
@@ -260,7 +285,15 @@ const RecipeList: React.FC = () => {
 
       <div style={styles.grid}>
         {filteredRecipes.map((recipe) => (
-          <div key={recipe.id} style={styles.cardWrapper}>
+          <div
+            key={recipe.id}
+            style={{
+              ...styles.cardWrapper,
+              ...(hoveredCard === recipe.id ? styles.cardHover : {}),
+            }}
+            onMouseEnter={() => handleMouseEnter(recipe.id)}
+            onMouseLeave={handleMouseLeave}
+          >
             <Link to={`/recipes/${recipe.id}`} style={styles.linkStyle}>
               <RecipeCard recipe={recipe} />
             </Link>
