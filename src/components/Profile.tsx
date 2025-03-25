@@ -2,6 +2,22 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
 import AvatarUpload from './AvatarUpload.tsx';
+import {
+  Box,
+  Button,
+  Grid,
+  TextField,
+  Typography,
+  Radio,
+  FormControl,
+  FormLabel,
+  FormControlLabel,
+  RadioGroup,
+  CircularProgress,
+  Snackbar,
+  Alert,
+} from '@mui/material';
+import { styled } from '@mui/system';
 
 interface UserProfile {
   nickname: string;
@@ -26,6 +42,7 @@ const ProfilePage: React.FC = () => {
   });
 
   const [isProfileUpdated, setIsProfileUpdated] = useState<boolean>(false);
+  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
 
   // Fetch user data from API
   const fetchUserData = async () => {
@@ -57,7 +74,7 @@ const ProfilePage: React.FC = () => {
         avatarUrl: user.avatar_url || '',
         info: user.info || '',
         userId: user.id.toString(),
-        sex: user.sex || "Female",
+        sex: user.sex || 'Female',
       });
       setLoading(false);
     } catch (err: any) {
@@ -91,6 +108,7 @@ const ProfilePage: React.FC = () => {
       );
       setIsProfileUpdated(true);
       setError(null);
+      setOpenSnackbar(true);
       if (userData) {
         setUserData({
           ...userData,
@@ -111,219 +129,148 @@ const ProfilePage: React.FC = () => {
     fetchUserData();
   }, []);
 
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
   if (loading) {
-    return <div>Loading...</div>;
+    return <CircularProgress />;
   }
 
-  const containerName = 'avatars'; // Your container name in Azure Blob Storage
-
   return (
-    <div style={styles.container}>
-      <div style={styles.headerRow}>
-        <h3 style={styles.formTitle}>My Profile</h3>
-      </div>
+    <ProfileContainer>
+      <ProfileHeader variant="h4" align="center" gutterBottom>
+        My Profile
+      </ProfileHeader>
 
-      <form onSubmit={handleFormSubmit} style={styles.card}>
-        <div style={styles.cardBody}>
-          {/* Avatar upload section */}
-          <AvatarUpload
-            avatarUrl={formValues.avatarUrl}
-            onAvatarUrlChange={(url) => setFormValues({ ...formValues, avatarUrl: url })}
-          />
+      <form onSubmit={handleFormSubmit}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <AvatarUpload
+              avatarUrl={formValues.avatarUrl}
+              onAvatarUrlChange={(url) => setFormValues({ ...formValues, avatarUrl: url })}
+            />
+          </Grid>
 
-          {/* Other form fields */}
-          <div style={styles.formGroup}>
-            <label htmlFor="nickname" style={styles.label}>Nickname</label>
-            <input
-              id="nickname"
-              type="text"
-              name="nickname"
-              placeholder="Nickname"
+          <Grid item xs={12} md={8}>
+            {/* Nickname */}
+            <StyledTextField
+              fullWidth
+              label="Nickname"
+              variant="outlined"
               value={formValues.nickname}
               onChange={(e) => setFormValues({ ...formValues, nickname: e.target.value })}
-              style={styles.formInput}
             />
 
-            <label htmlFor="email" style={styles.label}>Email</label>
-            <input
-              id="email"
-              type="email"
-              name="email"
-              placeholder="Email"
+            {/* Email (read-only) */}
+            <StyledTextField
+              fullWidth
+              label="Email"
+              variant="outlined"
               value={formValues.email}
-              onChange={(e) => setFormValues({ ...formValues, email: e.target.value })}
-              style={styles.formInput}
-              disabled
+              InputProps={{ readOnly: true }}
             />
 
-            <label htmlFor="info" style={styles.label}>User Information</label>
-            <textarea
-              id="info"
-              name="info"
-              placeholder="User Information"
+            {/* User Information */}
+            <StyledTextField
+              fullWidth
+              label="User Information"
+              variant="outlined"
+              multiline
+              rows={4}
               value={formValues.info}
               onChange={(e) => setFormValues({ ...formValues, info: e.target.value })}
-              style={styles.textarea}
             />
-          </div>
 
-          {/* Gender radio buttons */}
-          <div style={styles.genderContainer}>
-            <label htmlFor="sex" style={styles.label}>Gender</label>
-            <label style={styles.radioLabel}>
-              <input
-                type="radio"
-                name="sex"
-                value="Female"
-                checked={formValues.sex === "Female"}
+            {/* Gender (Radio Buttons) */}
+            <FormControl component="fieldset" sx={{ marginBottom: 2 }}>
+              <FormLabel component="legend" sx={{ color: '#E73927' }}>Gender</FormLabel>
+              <RadioGroup
+                row
+                value={formValues.sex}
                 onChange={(e) => setFormValues({ ...formValues, sex: e.target.value })}
-              />
-              Female
-            </label>
-            <label style={styles.radioLabel}>
-              <input
-                type="radio"
-                name="sex"
-                value="Male"
-                checked={formValues.sex === "Male"}
-                onChange={(e) => setFormValues({ ...formValues, sex: e.target.value })}
-              />
-              Male
-            </label>
-          </div>
+              >
+                <FormControlLabel value="Female" control={<Radio sx={{ color: '#E73927' }} />} label="Female" />
+                <FormControlLabel value="Male" control={<Radio sx={{ color: '#E73927' }} />} label="Male" />
+              </RadioGroup>
+            </FormControl>
 
-          {/* User ID field */}
-          <label htmlFor="userId" style={styles.label}>User ID</label>
-          <input
-            id="userId"
-            type="text"
-            name="userId"
-            value={formValues.userId}
-            readOnly
-            style={styles.formInput}
-            disabled
-          />
+            {/* User ID (read-only) */}
+            <StyledTextField
+              fullWidth
+              label="User ID"
+              variant="outlined"
+              value={formValues.userId}
+              InputProps={{ readOnly: true }}
+            />
 
-          {/* Success or error messages */}
-          {isProfileUpdated && (
-            <div style={styles.successMessage}>
-              Profile updated successfully!
-            </div>
-          )}
-          {error && <div style={styles.errorMessage}>{error}</div>}
+            {/* Success or error messages */}
+            {error && (
+              <Alert severity="error" sx={{ marginBottom: 2, backgroundColor: '#f8d7da', color: '#dc3545' }}>
+                {error}
+              </Alert>
+            )}
+            {isProfileUpdated && !error && (
+              <Alert severity="success" sx={{ marginBottom: 2, backgroundColor: '#d4edda', color: '#28a745' }}>
+                Profile updated successfully!
+              </Alert>
+            )}
 
-          {/* Submit button */}
-          <div style={styles.submitContainer}>
-            <button type="submit" style={styles.submitButton}>Update Profile</button>
-          </div>
-        </div>
+            {/* Submit Button */}
+            <SubmitButton
+              type="submit"
+              variant="contained"
+              fullWidth
+            >
+              Update Profile
+            </SubmitButton>
+          </Grid>
+        </Grid>
       </form>
-    </div>
+
+      {/* Snackbar for success */}
+      <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          Profile updated successfully!
+        </Alert>
+      </Snackbar>
+    </ProfileContainer>
   );
 };
 
-const styles = {
-  container: {
-    maxWidth: '800px',
-    margin: '40px auto',
-    padding: '20px',
-    backgroundColor: '#f8f9fa',
-    borderRadius: '8px',
+// Styled Components
+const ProfileContainer = styled(Box)({
+  maxWidth: '800px',
+  margin: '40px auto',
+  padding: '3rem',
+  backgroundColor: '#f8f9fa',
+  borderRadius: '8px',
+});
+
+const ProfileHeader = styled(Typography)({
+  color: '#E73927',
+});
+
+const StyledTextField = styled(TextField)({
+  marginBottom: '1.5rem',
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: '#ccc',
+    },
+    '&:hover fieldset': {
+      borderColor: '#E73927',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: '#E73927',
+    },
   },
-  headerRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '1.5rem',
+});
+
+const SubmitButton = styled(Button)({
+  backgroundColor: '#E73927',
+  '&:hover': {
+    backgroundColor: '#d32f2f',
   },
-  formTitle: {
-    textAlign: 'center',
-    fontSize: '24px',
-    fontWeight: 'bold',
-    marginBottom: '20px',
-  },
-  errorMessage: {
-    color: '#dc3545',
-    backgroundColor: '#f8d7da',
-    padding: '10px',
-    borderRadius: '4px',
-    marginBottom: '20px',
-    fontSize: '14px',
-  },
-  successMessage: {
-    color: '#28a745',
-    backgroundColor: '#d4edda',
-    padding: '10px',
-    borderRadius: '4px',
-    marginTop: '20px',
-    fontSize: '14px',
-  },
-  card: {
-    backgroundColor: '#fff',
-    border: '1px solid #ddd',
-    borderRadius: '8px',
-    padding: '20px',
-  },
-  cardBody: {
-    padding: '20px',
-  },
-  formGroup: {
-    marginBottom: '20px',
-  },
-  formInput: {
-    width: '100%',
-    padding: '10px',
-    fontSize: '16px',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    marginBottom: '10px',
-  },
-  textarea: {
-    width: '100%',
-    height: '100px',
-    padding: '10px',
-    fontSize: '16px',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    marginBottom: '20px',
-  },
-  avatarContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    marginBottom: '20px',
-  },
-  avatarImage: {
-    width: '120px',
-    height: '120px',
-    borderRadius: '50%',
-    marginBottom: '10px',
-  },
-  genderContainer: {
-    marginBottom: '20px',
-  },
-  radioLabel: {
-    marginRight: '10px',
-  },
-  label: {
-    fontSize: '16px',
-    fontWeight: 'bold',
-    marginBottom: '5px',
-    display: 'block',
-  },
-  submitContainer: {
-    marginTop: '20px',
-  },
-  submitButton: {
-    width: '100%',
-    padding: '12px',
-    backgroundColor: '#E73927',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '18px',
-    cursor: 'pointer',
-  },
-};
+});
 
 export default ProfilePage;

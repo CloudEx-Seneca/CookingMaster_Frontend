@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { BlobServiceClient, AnonymousCredential } from '@azure/storage-blob';
+import { AddPhotoAlternate } from '@mui/icons-material'; // MUI Icon for upload
+import { IconButton, Snackbar, Alert } from '@mui/material'; // MUI components for icon and Snackbar
+import { styled } from '@mui/system'; // MUI styled API for custom styling
 
 // Interface for AvatarUpload props
 interface AvatarUploadProps {
@@ -11,6 +14,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ avatarUrl, onAvatarUrlChang
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);  // Success message state
+  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);  // Snackbar visibility
 
   // Hardcoded container name
   const containerName = 'avatars'; // Replace with your actual container name
@@ -64,6 +68,8 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ avatarUrl, onAvatarUrlChang
 
       setIsUploading(false);
       setUploadSuccess('File uploaded successfully!');  // Set success message after upload
+      setOpenSnackbar(true);  // Show Snackbar with success message
+
     } catch (error: any) {
       setUploadError('Failed to upload image. Please try again.');
       console.error('Error uploading image:', error);
@@ -71,56 +77,97 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ avatarUrl, onAvatarUrlChang
     }
   };
 
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false); // Close the Snackbar
+  };
+
   return (
-    <div style={styles.avatarContainer}>
-      <label htmlFor="avatar" style={styles.label}>Avatar Upload</label>
+    <AvatarContainer>
+      <Label htmlFor="avatar">Avatar Upload</Label>
+      {/* Upload icon triggers the file input */}
+      <IconButton
+        color="primary"
+        aria-label="upload-avatar"
+        onClick={() => document.getElementById('avatar')?.click()} // Directly trigger file input
+        style={{ marginBottom: '10px' }}
+      >
+        <AddPhotoAlternate size={30} /> {/* MUI Upload Icon */}
+      </IconButton>
+      
+      {/* Hidden file input */}
       <input
         id="avatar"
         type="file"
         accept="image/*"
         onChange={(e) => uploadImage(e.target.files ? e.target.files[0] : null)}
-        style={styles.fileInput}
+        style={{ display: 'none' }}
       />
+      
       {isUploading && <p>Uploading...</p>}
-      {uploadError && <p style={styles.errorText}>{uploadError}</p>}
-      {uploadSuccess && <p style={styles.successText}>{uploadSuccess}</p>} {/* Success message */}
-      <div style={styles.imagePreviewContainer}>
-        <img src={avatarUrl || '/chstock2.ico'} alt="Default" style={styles.avatarImage} />
-      </div>
-    </div>
+      
+      {/* Display the success message with styling outside the Snackbar */}
+      {uploadSuccess && <StyledAlert severity="success">{uploadSuccess}</StyledAlert>}
+      
+      {uploadError && <ErrorText>{uploadError}</ErrorText>}
+      
+      <ImagePreviewContainer>
+        <AvatarImage src={avatarUrl || '/chstock2.ico'} alt="Default" />
+      </ImagePreviewContainer>
+
+      {/* Success Snackbar */}
+      <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+        <StyledAlert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          {uploadSuccess}
+        </StyledAlert>
+      </Snackbar>
+    </AvatarContainer>
   );
 };
 
-const styles = {
-  avatarContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    marginBottom: '20px',
-  },
-  label: {
-    fontSize: '16px',
-    fontWeight: 'bold',
-    marginBottom: '10px',
-  },
-  fileInput: {
-    padding: '10px',
-    marginBottom: '10px',
-  },
-  avatarImage: {
-    width: '120px',
-    height: '120px',
-    borderRadius: '50%',
-  },
-  errorText: {
-    color: 'red',
-  },
-  successText: {
-    color: 'green',  // Green color for success message
-  },
-  imagePreviewContainer: {
-    marginTop: '10px',
-  },
-};
+// Styled components using MUI's styled API
+const AvatarContainer = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  marginBottom: '20px',
+  backgroundColor: '#f8f9fa', // Light background for consistency
+  padding: '20px',
+  borderRadius: '8px',
+  border: '1px solid #ccc',
+});
+
+const Label = styled('label')({
+  fontSize: '16px',
+  fontWeight: 'bold',
+  marginBottom: '10px',
+  color: '#E73927', // Red color for label to match theme
+});
+
+const ErrorText = styled('p')({
+  color: '#dc3545', // Red color for error message
+  fontWeight: 'bold',
+  marginTop: '10px',
+});
+
+const ImagePreviewContainer = styled('div')({
+  marginTop: '10px',
+});
+
+const AvatarImage = styled('img')({
+  width: '120px',
+  height: '120px',
+  borderRadius: '50%',
+  border: '3px solid #E73927', // Red border for avatar to match theme
+});
+
+// Custom styled Alert for success inside the Snackbar
+const StyledAlert = styled(Alert)(() => ({
+  backgroundColor: '#d4edda',  // Light green background for success
+  color: '#28a745',  // Green text color
+  fontWeight: 'bold',
+  borderRadius: '5px',
+  border: '1px solid #28a745',  // Green border to match the success color
+  padding: '8px 16px',  // Padding for better visual spacing
+}));
 
 export default AvatarUpload;
