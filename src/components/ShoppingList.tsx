@@ -1,26 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import ShoppingListItem from './ShoppingListItem.tsx';
 import { TextField, IconButton, Typography, Card, CardContent, Snackbar, Alert, Grid, Button } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { styled } from '@mui/system';
+import { getApiBaseUrlShop } from '../helpers/GetApiBaseUrl.tsx';
 
 const ShoppingList: React.FC = () => {
   const [items, setItems] = useState<string[]>([]);
   const [newItem, setNewItem] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [successMessage, setSuccessMessage] = useState<string>(''); // State for success message
+  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false); // State for Snackbar open/close
+  const apiUrl = getApiBaseUrlShop();
+  const uid = localStorage.getItem('userID'); // Replace with dynamic user ID if needed
 
-  const addItem = (item: string) => {
+  // Fetch the shopping list when the component mounts
+  useEffect(() => {
+    fetchShoppingList();
+  }, []);
+
+  // Fetch shopping list from backend
+  const fetchShoppingList = async () => {
+    try {
+      const response = await axios.get(`${getApiBaseUrlShop()}/shoppinglist/v1/get_list/${uid}`);
+      setItems(response.data); // Set the shopping list items from the API
+    } catch (err) {
+      console.error('Error fetching shopping list:', err);
+      setError('Failed to load shopping list.');
+    }
+  };
+
+  // Add an item to the shopping list
+  const addItem = async (item: string) => {
     if (item.trim()) {
-      setItems([...items, item]);
-      setNewItem('');
-      setError('');
+      try {
+        await axios.post(`${getApiBaseUrlShop()}/shoppinglist/v1/add_item`, {
+          user_id: uid,
+          ingredients: [item], // Send the new item as an array
+        });
+        setNewItem(''); // Clear the input field
+        fetchShoppingList(); // Refresh the shopping list after adding the item
+        setError(''); // Clear any previous errors
+        setSuccessMessage('Item added successfully!'); // Set the success message
+        setOpenSnackbar(true); // Show the Snackbar
+      } catch (err) {
+        console.error('Error adding item:', err);
+        setError('Failed to add item.');
+      }
     } else {
       setError('Item name cannot be empty!');
     }
   };
 
-  const removeItem = (item: string) => {
-    setItems(items.filter(i => i !== item));
+  // Remove an item from the shopping list
+  const removeItem = async (item: string) => {
+    try {
+      await axios.post(`${apiUrl}/shoppinglist/v1/remove_item`, {
+        user_id: uid,
+        ingredients: [item], // Send the item to be removed as an array
+      });
+      fetchShoppingList(); // Refresh the shopping list after removing the item
+      setSuccessMessage('Item removed successfully!'); // Set the success message
+      setOpenSnackbar(true); // Show the Snackbar
+    } catch (err) {
+      console.error('Error removing item:', err);
+      setError('Failed to remove item.');
+    }
+  };
+
+  // Handle Snackbar close event
+  const handleSnackbarClose = () => {
+    setOpenSnackbar(false);
   };
 
   return (
@@ -33,6 +84,12 @@ const ShoppingList: React.FC = () => {
         <ErrorMessage open={true} autoHideDuration={6000}>
           <Alert severity="error">{error}</Alert>
         </ErrorMessage>
+      )}
+
+      {successMessage && (
+        <SuccessMessage>
+          <Alert severity="success">{successMessage}</Alert>
+        </SuccessMessage>
       )}
 
       <Card sx={cardStyle}>
@@ -68,6 +125,17 @@ const ShoppingList: React.FC = () => {
           ))}
         </ItemList>
       )}
+
+      {/* Snackbar for success messages */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000} // Snackbar will auto-hide after 3 seconds
+        onClose={handleSnackbarClose}
+      >
+        <Alert severity="success" sx={{ width: '100%' }}>
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };
@@ -127,6 +195,10 @@ const AddButton = styled(IconButton)({
 });
 
 const ErrorMessage = styled(Snackbar)({
+  marginBottom: '1rem',
+});
+
+const SuccessMessage = styled('div')({
   marginBottom: '1rem',
 });
 
