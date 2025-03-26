@@ -81,7 +81,7 @@ const Logo = styled('img')({
   marginBottom: '20px',
 });
 
-const SignUp: React.FC = () => {
+const Register: React.FC = () => {
   const [formData, setFormData] = useState<RegistrationFormData>({
     email: '',
     password: '',
@@ -224,4 +224,4 @@ const SignUp: React.FC = () => {
   );
 };
 
-export default SignUp;
+export default Register;
