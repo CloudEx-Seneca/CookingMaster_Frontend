@@ -204,7 +204,7 @@ const SignUp: React.FC = () => {
               A place to share and try out new recipes!
             </Typography>
             <Typography variant="body2" paragraph>
-              Sign up to explore thousands of delicious dishes.
+              Register to explore thousands of delicious dishes.
             </Typography>
           </WelcomeTextContainer>
         </Grid>

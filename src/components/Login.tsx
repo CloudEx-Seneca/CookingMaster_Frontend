@@ -23,7 +23,7 @@ const BackgroundContainer = styled('div')({
 const Card = styled('div')({
   backgroundColor: 'rgba(255, 255, 255, 0.9)', // Semi-transparent white background for the form
   borderRadius: '8px',
-  padding: '20px', // Adjusted padding to be similar to SignUp
+  padding: '20px', // Adjusted padding to be similar to Register
 });
 
 const CardTitle = styled(Typography)({
@@ -61,7 +61,7 @@ const BtnSecondary = styled(Button)({
 const WelcomeTextContainer = styled('div')({
   color: 'white',
   textAlign: 'center',
-  padding: '40px', // Similar padding as in SignUp
+  padding: '40px', // Similar padding as in Register
   backgroundColor: 'rgba(0, 0, 0, 0.6)',
   borderRadius: '8px',
 });
@@ -85,7 +85,7 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const [loginBtnHover, setLoginBtnHover] = useState(false);
-  const [signUpBtnHover, setSignUpBtnHover] = useState(false);
+  const [registerBtnHover, setRegisterBtnHover] = useState(false);
 
   const error = useSelector((state: RootState) => state.auth.error);
   const dispatch = useDispatch();
@@ -139,8 +139,8 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleSignUpRedirect = () => {
-    navigate('/signup');
+  const handleRegisterRedirect = () => {
+    navigate('/register');
   };
 
   const handleSnackbarClose = () => {
@@ -182,11 +182,11 @@ const Login: React.FC = () => {
                 </BtnPrimary>
                 <BtnSecondary
                   type="button"
-                  onClick={handleSignUpRedirect}
-                  onMouseEnter={() => setSignUpBtnHover(true)}
-                  onMouseLeave={() => setSignUpBtnHover(false)}
+                  onClick={handleRegisterRedirect}
+                  onMouseEnter={() => setRegisterBtnHover(true)}
+                  onMouseLeave={() => setRegisterBtnHover(false)}
                 >
-                  Sign Up
+                  Register
                 </BtnSecondary>
               </div>
             </form>

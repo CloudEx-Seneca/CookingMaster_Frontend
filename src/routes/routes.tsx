@@ -7,7 +7,7 @@ import WithoutNav from './WithoutNav.tsx';
 import Login from '../components/Login.tsx';
 import RecipeList from '../components/RecipeList.tsx';
 import RecipeForm from '../components/RecipeForm.tsx';
-import SignUp from '../components/SignUp.tsx';
+import Register from '../components/Register.tsx';
 import ShoppingList from '../components/ShoppingList.tsx';
 import Profile from '../components/Profile.tsx';
 import RecipeDetail from '../components/RecipeDetail.tsx';
@@ -30,7 +30,7 @@ export const withoutNavRoutes: JSX.Element[] = [
     <Route element={<WithoutNav />}>
         <Route path="/login" element={<Login />} key="login" />,
         <Route path="/" element={<Login />} key="login-alt" />,
-        <Route path="/signup" element={<SignUp />} key="signup" />
+        <Route path="/register" element={<Register />} key="register" />
         <Route path="/verify" element={<EmailVerified />} />
     </Route>
 ];
