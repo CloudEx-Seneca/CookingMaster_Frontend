@@ -4,7 +4,9 @@ import axios from 'axios';
 import { Recipe } from '../types/Recipe';
 import { getApiBaseUrlRec } from '../helpers/GetApiBaseUrl.tsx';
 import { styled } from '@mui/system';
-import { Button, Typography, Chip } from '@mui/material';
+import { Button, Typography, Chip, IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const RecipeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -58,7 +60,27 @@ const RecipeDetail: React.FC = () => {
     <Container>
       <HeaderRow>
         <Title>{recipe.name}</Title>
-        <BackButton to="/recipes">Back to Recipes</BackButton>
+        <ActionButtonsContainer>
+          <BackButton to="/recipes">Back to Recipe List</BackButton>
+          {uid === recipe.user_id && (
+            <>
+              <IconButton component={Link} to={`/recipes/edit/${recipe.id}`} aria-label="Edit Recipe">
+                <EditIcon style={{ fontSize: 28, color: '#FF7A47' }} />
+              </IconButton>
+              {!isDeleting ? (
+                <IconButton onClick={() => setIsDeleting(true)} aria-label="Delete Recipe">
+                  <DeleteIcon style={{ fontSize: 28, color: '#F44336' }} />
+                </IconButton>
+              ) : (
+                <ConfirmationContainer>
+                  <ConfirmationText>Are you sure?</ConfirmationText>
+                  <ConfirmButton onClick={handleDelete}>Yes</ConfirmButton>
+                  <CancelButton onClick={() => setIsDeleting(false)}>No</CancelButton>
+                </ConfirmationContainer>
+              )}
+            </>
+          )}
+        </ActionButtonsContainer>
       </HeaderRow>
       <Author>By: {recipe.author}</Author>
       <ImageWrapper>
@@ -74,21 +96,6 @@ const RecipeDetail: React.FC = () => {
 
       <SectionTitle>Description:</SectionTitle>
       <Instructions>{recipe.description}</Instructions>
-
-      {uid === recipe.user_id && (
-        <ButtonContainer>
-          <EditButton to={`/recipes/edit/${recipe.id}`}>Edit Recipe</EditButton>
-          {!isDeleting ? (
-            <DeleteButton onClick={() => setIsDeleting(true)}>Delete Recipe</DeleteButton>
-          ) : (
-            <ConfirmationContainer>
-              <ConfirmationText>Are you sure?</ConfirmationText>
-              <ConfirmButton onClick={handleDelete}>Yes</ConfirmButton>
-              <CancelButton onClick={() => setIsDeleting(false)}>No</CancelButton>
-            </ConfirmationContainer>
-          )}
-        </ButtonContainer>
-      )}
     </Container>
   );
 };
@@ -116,6 +123,12 @@ const Title = styled(Typography)({
   fontWeight: 'bold',
   color: '#E73927',
   marginBottom: '0.5rem',
+});
+
+const ActionButtonsContainer = styled('div')({
+  display: 'flex',
+  gap: '1rem',
+  alignItems: 'center',
 });
 
 const BackButton = styled(Link)({
@@ -171,30 +184,6 @@ const Instructions = styled('p')({
   fontSize: '1rem',
   color: '#333',
   marginBottom: '1.5rem',
-});
-
-const ButtonContainer = styled('div')({
-  marginTop: '1.5rem',
-  display: 'flex',
-  justifyContent: 'space-between',
-});
-
-const EditButton = styled(Link)({
-  padding: '0.5rem 1rem',
-  backgroundColor: '#FF7A47',
-  color: 'white',
-  borderRadius: '4px',
-  textDecoration: 'none',
-  fontSize: '1rem',
-});
-
-const DeleteButton = styled(Button)({
-  padding: '0.5rem 1rem',
-  backgroundColor: '#F44336',
-  color: 'white',
-  borderRadius: '4px',
-  cursor: 'pointer',
-  fontSize: '1rem',
 });
 
 const ConfirmationContainer = styled('div')({
