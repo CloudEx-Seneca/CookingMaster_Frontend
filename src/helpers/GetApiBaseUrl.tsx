@@ -5,6 +5,7 @@ declare global {
     env?: {
       API_URL?: string;
       RECIPE_API_URL?: string;
+      SHOPLIST_API_URL?: string;
     };
   }
 }
@@ -30,3 +31,12 @@ const getApiUrlRec = (): string => {
 
 export const getApiBaseUrlRec = (): string => getApiUrlRec();
 
+const getApiUrlShop = (): string => {
+  if (!window.env || !window.env.SHOPLIST_API_URL) {
+    console.warn("env.js not loaded yet, retrying...");
+    return 'http://localhost:5000';  // Fallback
+  }
+  return window.env.SHOPLIST_API_URL;
+};
+
+export const getApiBaseUrlShop = (): string => getApiUrlShop();

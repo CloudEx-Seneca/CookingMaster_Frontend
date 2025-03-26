@@ -4,12 +4,95 @@ import { Recipe } from '../types/Recipe';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { getApiBaseUrlRec } from '../helpers/GetApiBaseUrl.tsx';
 import RecipeImgUpload from './RecipeImgUpload.tsx';
+import { TextField, Button, Typography, Grid, Card, CardContent, Snackbar, Alert } from '@mui/material';
+import { styled } from '@mui/system';
 
-interface EditRecipeFormProps {
-}
+interface EditRecipeFormProps {}
 
-const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ }) => {
-  const { id } = useParams<{ id: string }>(); // Get the id parameter from the URL
+const Container = styled('div')({
+  maxWidth: '800px',
+  margin: '40px auto',
+  padding: '20px',
+  backgroundColor: '#f8f9fa',
+  borderRadius: '8px',
+  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+});
+
+const HeaderRow = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '20px',
+});
+
+const FormTitle = styled(Typography)({
+  fontSize: '2rem',
+  fontWeight: 'bold',
+  color: '#E73927',
+});
+
+const StyledLink = styled(Link)({
+  textDecoration: 'none',
+});
+
+const BackButton = styled(Button)({
+  padding: '0.5rem 1rem',
+  textTransform: 'none',
+  backgroundColor: '#E73927',
+  '&:hover': {
+    backgroundColor: '#FFBB33',
+  },
+});
+
+const ErrorMessage = styled(Snackbar)({
+  marginBottom: '1rem',
+});
+
+const SuccessMessage = styled(Snackbar)({
+  marginBottom: '1rem',
+});
+
+const RecipeCard = styled(Card)({
+  backgroundColor: 'white',
+  borderRadius: '8px',
+  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+});
+
+const RecipeCardContent = styled(CardContent)({
+  padding: '20px',
+});
+
+const FormGroup = styled('div')({
+  marginBottom: '20px',
+});
+
+const IngredientButton = styled(Button)({
+  padding: '0.5rem 1rem',
+  backgroundColor: '#E73927',
+  '&:hover': {
+    backgroundColor: '#FFBB33',
+  },
+});
+
+const DeleteButton = styled(Button)({
+  padding: '0.5rem 1rem',
+  backgroundColor: '#dc3545',
+  '&:hover': {
+    backgroundColor: '#FF6F61',
+  },
+});
+
+const UpdateButton = styled(Button)({
+  width: '100%',
+  padding: '1rem',
+  backgroundColor: '#E73927',
+  '&:hover': {
+    backgroundColor: '#FFBB33',
+  },
+});
+
+const EditRecipeForm: React.FC<EditRecipeFormProps> = ({}) => {
+  const { id } = useParams<{ id: string }>();
   const [name, setName] = useState('');
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [description, setDescription] = useState('');
@@ -17,10 +100,9 @@ const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ }) => {
   const [error, setError] = useState<string>('');
   const [successMessage, setSuccessMessage] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [existingRecipe, setExistingRecipe] = useState<Recipe | null>(null); // New state for the recipe data
-  const navigate = useNavigate(); // Initialize useNavigate for navigation
+  const [existingRecipe, setExistingRecipe] = useState<Recipe | null>(null);
+  const navigate = useNavigate();
 
-  // Fetch the recipe data when the component mounts
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
@@ -35,37 +117,27 @@ const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ }) => {
 
         const response = await axios.get(`${apiUrl}/recipe/v2/detail/${id}`);
         if (response.status === 200) {
-          const recipeData: Recipe = response.data.data; // Assuming the response contains the recipe object
-          
+          const recipeData: Recipe = response.data.data;
+
           if (parseInt(uid, 10) !== recipeData.user_id) {
             navigate(`/recipes/${recipeData.id}`);
           }
           setExistingRecipe(recipeData);
-
-          // Populate the form fields with the fetched recipe data
           setName(recipeData.name);
-
-          // Handle ingredients: if they are objects, extract 'name' field
-          const ingredients = recipeData.ingredients.map((ingredient: any) =>
-            typeof ingredient === 'object' && ingredient.name ? ingredient.name : ingredient
-          );
-          setIngredients(ingredients);
-
+          setIngredients(recipeData.ingredients.map((ingredient: any) => ingredient.name || ingredient));
           setDescription(recipeData.description);
           setImage(recipeData.image);
         } else {
           setError('Recipe not found.');
         }
       } catch (err) {
-        console.error('Error fetching recipe:', err);
         setError('Failed to fetch recipe data.');
       }
     };
 
     fetchRecipe();
-  }, [id]); // Fetch the recipe again if the `id` changes
+  }, [id]);
 
-  // Handle the update recipe functionality
   const handleUpdateRecipe = async () => {
     if (!name.trim() || ingredients.some((ingredient) => ingredient.trim() === '') || !description.trim()) {
       setSuccessMessage('');
@@ -73,16 +145,16 @@ const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ }) => {
       return;
     }
 
-    if(!image.trim()) {
+    if (!image.trim()) {
       setSuccessMessage('');
       setError('Please upload an image');
       return;
     }
 
     const updatedRecipe: Recipe = {
-      id: existingRecipe ? existingRecipe.id : '', // Ensure the ID is passed for the update
+      id: existingRecipe ? existingRecipe.id : '',
       name,
-      ingredients: [...ingredients], // Copy the ingredients array
+      ingredients: [...ingredients],
       description,
       image,
     };
@@ -98,10 +170,10 @@ const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ }) => {
 
       const apiUrl = getApiBaseUrlRec();
       const response = await axios.post(
-        `${apiUrl}/recipe/v2/update`, // Use PUT request to update
-        { 
-            ...updatedRecipe,
-            recipe_id: parseInt(id, 10)
+        `${apiUrl}/recipe/v2/update`,
+        {
+          ...updatedRecipe,
+          recipe_id: parseInt(id, 10),
         },
         {
           headers: {
@@ -113,19 +185,17 @@ const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ }) => {
       if (response.status === 200 || response.data.msg === 'success') {
         setSuccessMessage('Recipe updated successfully!');
         setError('');
-        navigate(`/recipes/${id}`)
+        navigate(`/recipes/${id}`);
       } else {
         setError('Failed to update recipe. Please try again later.');
       }
     } catch (err) {
-      console.error('Error:', err);
       setError('Failed to update recipe. Please try again later.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Handle ingredient changes
   const handleIngredientChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const newIngredients = [...ingredients];
     newIngredients[index] = e.target.value;
@@ -141,227 +211,124 @@ const EditRecipeForm: React.FC<EditRecipeFormProps> = ({ }) => {
     setIngredients(newIngredients);
   };
 
-  const resetForm = () => {
-    setName('');
-    setIngredients([]);
-    setDescription('');
-    setImage('');
-  };
-
-  const styles = {
-    container: {
-      maxWidth: '800px',
-      margin: '40px auto',
-      padding: '20px',
-      backgroundColor: '#f8f9fa',
-      borderRadius: '8px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    },
-    formTitle: {
-      textAlign: 'center',
-      fontSize: '24px',
-      fontWeight: 'bold',
-      marginBottom: '20px',
-      color: '#E73927',
-    },
-    errorMessage: {
-      color: '#dc3545',
-      backgroundColor: '#f8d7da',
-      padding: '10px',
-      borderRadius: '4px',
-      marginBottom: '20px',
-      fontSize: '14px',
-    },
-    successMessage: {
-      color: '#28a745',
-      backgroundColor: '#d4edda',
-      padding: '10px',
-      borderRadius: '4px',
-      marginBottom: '20px',
-      fontSize: '16px',
-      fontWeight: 'bold',
-    },
-    card: {
-      backgroundColor: '#fff',
-      border: '1px solid #ddd',
-      borderRadius: '8px',
-      padding: '20px',
-    },
-    cardBody: {
-      padding: '20px',
-    },
-    formGroup: {
-      marginBottom: '20px',
-    },
-    formLabel: {
-      fontWeight: 600,
-      marginBottom: '5px',
-      display: 'block',
-    },
-    formInput: {
-      width: '100%',
-      padding: '10px',
-      fontSize: '16px',
-      border: '1px solid #ccc',
-      borderRadius: '4px',
-      marginBottom: '10px',
-    },
-    inputGroup: {
-      marginBottom: '10px',
-      display: 'flex',
-      alignItems: 'center',
-    },
-    addIngredientBtn: {
-      padding: '10px 20px',
-      backgroundColor: '#E73927',
-      color: 'white',
-      border: 'none',
-      borderRadius: '4px',
-      fontSize: '16px',
-      cursor: 'pointer',
-      transition: 'background-color 0.3s ease',
-    },
-    addIngredientBtnHover: {
-      backgroundColor: '#FFBB33', // Hover color
-    },
-    addRecipeBtn: {
-      width: '100%',
-      padding: '12px',
-      backgroundColor: '#E73927',
-      color: 'white',
-      border: 'none',
-      borderRadius: '4px',
-      fontSize: '18px',
-      cursor: 'pointer',
-      transition: 'background-color 0.3s ease',
-    },
-    addRecipeBtnHover: {
-      backgroundColor: '#FFBB33', // Hover color
-    },
-    addButton: {
-      padding: '0.5rem 1rem',
-      backgroundColor: '#E73927',
-      color: 'white',
-      border: 'none',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      textDecoration: 'none',
-      fontSize: '1rem',
-      transition: 'background-color 0.3s ease',
-    },
-    addButtonHover: {
-      backgroundColor: '#FFBB33', // Hover color
-    },
-    headerRow: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: '1.5rem',
-    },
-  };
-
   return (
-    <div style={styles.container}>
-      <div style={styles.headerRow}>
-        <h3 style={styles.formTitle}>Edit Recipe</h3>
-        <Link
-          to="/recipes"
-          style={styles.addButton}
-          onMouseEnter={(e) => (e.target.style.backgroundColor = styles.addButtonHover.backgroundColor)}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = styles.addButton.backgroundColor)}
-        >
-          Back to Recipes
-        </Link>
-      </div>
+    <Container>
+      <HeaderRow>
+        <FormTitle>Edit Recipe</FormTitle>
+        <StyledLink to={`/recipes/${id}`}>
+          <BackButton variant="contained" color="error">
+            Back to Recipe
+          </BackButton>
+        </StyledLink>
+      </HeaderRow>
 
-      {error && <div style={styles.errorMessage}>{error}</div>}
-      {successMessage && <div style={styles.successMessage}>{successMessage}</div>}
+      {error && (
+        <ErrorMessage open={true} autoHideDuration={6000}>
+          <Alert severity="error">{error}</Alert>
+        </ErrorMessage>
+      )}
 
-      <div style={styles.card}>
-        <div style={styles.cardBody}>
-          {/* Recipe Name */}
-          <div style={styles.formGroup}>
-            <RecipeImgUpload
-              image={image} // Pass the image state
-              onRecipeImgUrlChange={(url) => setImage(url)} // Handle image URL change
-            />
-            <label htmlFor="Name" style={styles.formLabel}>Recipe Name</label>
-            <input
-              id="Name"
-              type="text"
-              style={styles.formInput}
-              placeholder="Enter the name of the recipe here"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
+      {successMessage && (
+        <SuccessMessage open={true} autoHideDuration={6000}>
+          <Alert severity="success">{successMessage}</Alert>
+        </SuccessMessage>
+      )}
 
-          {/* Ingredients Section */}
-          <div style={styles.formGroup}>
-            <label style={styles.formLabel}>Ingredients</label>
-            {ingredients.map((ingredient, index) => (
-              <div key={index} style={styles.inputGroup}>
-                <input
-                  type="text"
-                  style={styles.formInput}
-                  placeholder={`Ingredient #${index + 1}`}
-                  value={ingredient}  // Use 'ingredient' directly since it's now a string
+      <RecipeCard>
+        <RecipeCardContent>
+          <RecipeImgUpload image={image} onRecipeImgUrlChange={(url) => setImage(url)} />
+
+          <TextField
+            label="Recipe Name"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            sx={formInputStyle}
+          />
+
+          <Typography variant="h6" color="textPrimary" gutterBottom>
+            Ingredients
+          </Typography>
+          {ingredients.map((ingredient, index) => (
+            <Grid container spacing={2} alignItems="center" key={index}>
+              <Grid item xs={10}>
+                <TextField
+                  label={`Ingredient #${index + 1}`}
+                  variant="outlined"
+                  fullWidth
+                  value={ingredient}
                   onChange={(e) => handleIngredientChange(e, index)}
+                  sx={formInputStyle}
                 />
-                <button
-                  type="button"
-                  style={{
-                    ...styles.addIngredientBtn,
-                    backgroundColor: '#dc3545',
-                    marginLeft: '10px',
-                  }}
-                  onClick={() => handleDeleteIngredient(index)}
-                  onMouseEnter={(e) => (e.target.style.backgroundColor = styles.addIngredientBtnHover.backgroundColor)}
-                  onMouseLeave={(e) => (e.target.style.backgroundColor = styles.addIngredientBtn.backgroundColor)}
-                >
+              </Grid>
+              <Grid item xs={2}>
+                <DeleteButton variant="contained" fullWidth onClick={() => handleDeleteIngredient(index)}>
                   Delete
-                </button>
-              </div>
-            ))}
-            <button
-              type="button"
-              style={styles.addIngredientBtn}
-              onClick={handleAddIngredientField}
-              onMouseEnter={(e) => (e.target.style.backgroundColor = styles.addIngredientBtnHover.backgroundColor)}
-              onMouseLeave={(e) => (e.target.style.backgroundColor = styles.addIngredientBtn.backgroundColor)}
-            >
-              Add Ingredient
-            </button>
-          </div>
+                </DeleteButton>
+              </Grid>
+            </Grid>
+          ))}
+          <IngredientButton variant="contained" color="primary" onClick={handleAddIngredientField} sx={addIngredientButtonStyle}>
+            Add Ingredient
+          </IngredientButton>
 
-          {/* Description Section */}
-          <div style={styles.formGroup}>
-            <label htmlFor="Description" style={styles.formLabel}>Description</label>
-            <textarea
-              id="Description"
-              style={styles.formInput}
-              rows={4}
-              placeholder="Enter your cooking preparation instructions"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
+          <TextField
+            label="Description"
+            variant="outlined"
+            fullWidth
+            multiline
+            rows={4}
+            margin="normal"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            sx={formInputStyle}
+          />
 
-          {/* Update Recipe Button */}
-          <button
-            type="button"
-            style={styles.addRecipeBtn}
+          <UpdateButton
+            variant="contained"
+            color="primary"
+            fullWidth
             onClick={handleUpdateRecipe}
             disabled={isSubmitting}
-            onMouseEnter={(e) => (e.target.style.backgroundColor = styles.addRecipeBtnHover.backgroundColor)}
-            onMouseLeave={(e) => (e.target.style.backgroundColor = styles.addRecipeBtn.backgroundColor)}
+            sx={addRecipeButtonStyle}
           >
             {isSubmitting ? 'Submitting...' : 'Update Recipe'}
-          </button>
-        </div>
-      </div>
-    </div>
+          </UpdateButton>
+        </RecipeCardContent>
+      </RecipeCard>
+    </Container>
   );
+};
+
+// Styled components for consistent design
+const formInputStyle = {
+  width: '100%',
+  padding: '10px',
+  fontSize: '16px',
+  borderColor: '#ccc',
+  borderRadius: '4px',
+  marginBottom: '10px',
+};
+
+const addIngredientButtonStyle = {
+  backgroundColor: '#E73927',
+  color: 'white',
+  marginTop: '10px',
+  '&:hover': {
+    backgroundColor: '#FFBB33',
+  },
+};
+
+const addRecipeButtonStyle = {
+  padding: '12px',
+  backgroundColor: '#E73927',
+  color: 'white',
+  fontSize: '18px',
+  '&:hover': {
+    backgroundColor: '#FFBB33',
+  },
 };
 
 export default EditRecipeForm;

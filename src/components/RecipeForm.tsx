@@ -4,6 +4,9 @@ import { Recipe } from '../types/Recipe';
 import { Link } from 'react-router-dom';
 import { getApiBaseUrlRec } from '../helpers/GetApiBaseUrl.tsx';
 import RecipeImgUpload from './RecipeImgUpload.tsx';
+import { Button, TextField, Box, Typography, IconButton, InputAdornment, CircularProgress, Snackbar, Alert } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { styled } from '@mui/system';
 
 interface RecipeFormProps {
   onAddRecipe: (recipe: Recipe) => void;
@@ -13,21 +16,27 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
   const [name, setName] = useState('');
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [description, setDescription] = useState('');
-  const [image, setImage] = useState('');  // State for image URL
-  const [error, setError] = useState<string>('');
-  const [successMessage, setSuccessMessage] = useState<string>(''); 
+  const [image, setImage] = useState(''); // State for image URL
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+
+  const [successMessageVisible, setSuccessMessageVisible] = useState(false);
 
   const handleAddRecipe = async () => {
     if (!name.trim() || ingredients.some(ingredient => ingredient.trim() === '') || !description.trim()) {
-      setSuccessMessage('');
-      setError('Please fill in all fields');
+      setSnackbarMessage('Please fill in all fields');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
       return;
     }
 
-    if(!image.trim()) {
-      setSuccessMessage('');
-      setError('Please upload an image');
+    if (!image.trim()) {
+      setSnackbarMessage('Please upload an image');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
       return;
     }
 
@@ -43,7 +52,9 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
 
       const token = localStorage.getItem('authToken');
       if (!token) {
-        setError('Authentication token is missing.');
+        setSnackbarMessage('Authentication token is missing.');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
         return;
       }
 
@@ -59,15 +70,21 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
       );
 
       if (response.status === 200 || response.code === 200 || response.data.msg === "success") {
-        setSuccessMessage('Recipe added successfully!');
+        setSnackbarMessage('Recipe added successfully!');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
         resetForm();
-        setError('');
+        setSuccessMessageVisible(true);
       } else {
-        setError('Failed to add recipe. Please try again later.');
+        setSnackbarMessage('Failed to add recipe. Please try again later.');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
       }
     } catch (err) {
       console.error('Error:', err);
-      setError('Failed to add recipe. Please try again later.');
+      setSnackbarMessage('Failed to add recipe. Please try again later.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -95,220 +112,213 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ onAddRecipe }) => {
     setImage('');  // Reset the image URL after form submission
   };
 
-  const styles = {
-    container: {
-      maxWidth: '800px',
-      margin: '40px auto',
-      padding: '20px',
-      backgroundColor: '#f8f9fa',
-      borderRadius: '8px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    },
-    formTitle: {
-      textAlign: 'center',
-      fontSize: '24px',
-      fontWeight: 'bold',
-      marginBottom: '20px',
-      color: '#E73927',
-    },
-    errorMessage: {
-      color: '#dc3545',
-      backgroundColor: '#f8d7da',
-      padding: '10px',
-      borderRadius: '4px',
-      marginBottom: '20px',
-      fontSize: '14px',
-    },
-    successMessage: {  
-      color: '#28a745',
-      backgroundColor: '#d4edda',
-      padding: '10px',
-      borderRadius: '4px',
-      marginBottom: '20px',
-      fontSize: '16px',
-      fontWeight: 'bold',
-    },
-    card: {
-      backgroundColor: '#fff',
-      border: '1px solid #ddd',
-      borderRadius: '8px',
-      padding: '20px',
-    },
-    cardBody: {
-      padding: '20px',
-    },
-    formGroup: {
-      marginBottom: '20px',
-    },
-    formLabel: {
-      fontWeight: 600,
-      marginBottom: '5px',
-      display: 'block',
-    },
-    formInput: {
-      width: '100%',
-      padding: '10px',
-      fontSize: '16px',
-      border: '1px solid #ccc',
-      borderRadius: '4px',
-      marginBottom: '10px',
-    },
-    inputGroup: {
-      marginBottom: '10px',
-      display: 'flex',
-      alignItems: 'center',
-    },
-    addIngredientBtn: {
-      padding: '10px 20px',
-      backgroundColor: '#E73927',
-      color: 'white',
-      border: 'none',
-      borderRadius: '4px',
-      fontSize: '16px',
-      cursor: 'pointer',
-      transition: 'background-color 0.3s ease',
-    },
-    addIngredientBtnHover: {
-      backgroundColor: '#FFBB33', // Hover color
-    },
-    addRecipeBtn: {
-      width: '100%',
-      padding: '12px',
-      backgroundColor: '#E73927',
-      color: 'white',
-      border: 'none',
-      borderRadius: '4px',
-      fontSize: '18px',
-      cursor: 'pointer',
-      transition: 'background-color 0.3s ease',
-    },
-    addRecipeBtnHover: {
-      backgroundColor: '#FFBB33', // Hover color
-    },
-    addButton: {
-      padding: '0.5rem 1rem',
-      backgroundColor: '#E73927',
-      color: 'white',
-      border: 'none',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      textDecoration: 'none',
-      fontSize: '1rem',
-      transition: 'background-color 0.3s ease',
-    },
-    addButtonHover: {
-      backgroundColor: '#FFBB33', // Hover color
-    },
-    headerRow: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: '1.5rem',
-    },
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.headerRow}>
-        <h3 style={styles.formTitle}>Create a New Recipe</h3>
-        <Link
-          to="/recipes"
-          style={styles.addButton}
-          onMouseEnter={(e) => e.target.style.backgroundColor = styles.addButtonHover.backgroundColor}
-          onMouseLeave={(e) => e.target.style.backgroundColor = styles.addButton.backgroundColor}
-        >
+    <Container>
+      <HeaderRow>
+        <Title>Create a New Recipe</Title>
+        <Link to="/recipes" style={backButtonStyle}>
           Back to Recipes
         </Link>
-      </div>
+      </HeaderRow>
 
-      {error && <div style={styles.errorMessage}>{error}</div>}
-      {successMessage && <div style={styles.successMessage}>{successMessage}</div>}
-
-      <div style={styles.card}>
-        <div style={styles.cardBody}>
+      <Card>
+        <CardBody>
           {/* Recipe Name */}
-          <div style={styles.formGroup}>
+          <FormGroup>
             <RecipeImgUpload
               image={image}  // Pass the image state
               onRecipeImgUrlChange={(url) => setImage(url)}  // Handle image URL change
             />
-            <label htmlFor="Name" style={styles.formLabel}>Recipe Name</label>
-            <input
-              id="Name"
-              type="text"
-              style={styles.formInput}
-              placeholder="Enter the name of the recipe here"
+            <TextField
+              label="Recipe Name"
+              variant="outlined"
+              fullWidth
               value={name}
               onChange={(e) => setName(e.target.value)}
+              sx={formInputStyle}
             />
-          </div>
+          </FormGroup>
 
           {/* Ingredients Section */}
-          <div style={styles.formGroup}>
-            <label style={styles.formLabel}>Ingredients</label>
+          <FormGroup>
+            <Label>Ingredients</Label>
             {ingredients.map((ingredient, index) => (
-              <div key={index} style={styles.inputGroup}>
-                <input
-                  type="text"
-                  style={styles.formInput}
-                  placeholder={`Ingredient #${index + 1}`}
+              <IngredientInputGroup key={index}>
+                <TextField
+                  label={`Ingredient #${index + 1}`}
+                  variant="outlined"
                   value={ingredient}
                   onChange={(e) => handleIngredientChange(e, index)}
+                  fullWidth
+                  sx={formInputStyle}
                 />
-                <button
-                  type="button"
-                  style={{
-                    ...styles.addIngredientBtn,
-                    backgroundColor: '#dc3545',
-                    marginLeft: '10px',
-                  }}
+                <IconButton
                   onClick={() => handleDeleteIngredient(index)}
-                  onMouseEnter={(e) => e.target.style.backgroundColor = styles.addIngredientBtnHover.backgroundColor}
-                  onMouseLeave={(e) => e.target.style.backgroundColor = styles.addIngredientBtn.backgroundColor}
+                  sx={deleteButtonStyle}
                 >
-                  Delete
-                </button>
-              </div>
+                  <DeleteIcon />
+                </IconButton>
+              </IngredientInputGroup>
             ))}
-            <button
-              type="button"
-              style={styles.addIngredientBtn}
+            <Button
+              variant="contained"
+              color="primary"
               onClick={handleAddIngredientField}
-              onMouseEnter={(e) => e.target.style.backgroundColor = styles.addIngredientBtnHover.backgroundColor}
-              onMouseLeave={(e) => e.target.style.backgroundColor = styles.addIngredientBtn.backgroundColor}
+              sx={addIngredientButtonStyle}
             >
               Add Ingredient
-            </button>
-          </div>
+            </Button>
+          </FormGroup>
 
           {/* Description Section */}
-          <div style={styles.formGroup}>
-            <label htmlFor="Description" style={styles.formLabel}>Description</label>
-            <textarea
-              id="Description"
-              style={styles.formInput}
+          <FormGroup>
+            <TextField
+              label="Description"
+              variant="outlined"
+              multiline
               rows={4}
-              placeholder="Enter your cooking preparation instructions"
+              fullWidth
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              sx={formInputStyle}
             />
-          </div>
+          </FormGroup>
+
+          {/* Success Message Display */}
+          {successMessageVisible && (
+            <Alert sx={{ marginBottom: '20px' }}>
+              Recipe added successfully!
+            </Alert>
+          )}
 
           {/* Add Recipe Button */}
-          <button
-            type="button"
-            style={styles.addRecipeBtn}
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
             onClick={handleAddRecipe}
             disabled={isSubmitting}
-            onMouseEnter={(e) => e.target.style.backgroundColor = styles.addRecipeBtnHover.backgroundColor}
-            onMouseLeave={(e) => e.target.style.backgroundColor = styles.addRecipeBtn.backgroundColor}
+            sx={addRecipeButtonStyle}
           >
-            {isSubmitting ? 'Submitting...' : 'Add Recipe'}
-          </button>
-        </div>
-      </div>
-    </div>
+            {isSubmitting ? <CircularProgress size={24} /> : 'Add Recipe'}
+          </Button>
+        </CardBody>
+      </Card>
+
+      {/* Snackbar for Success/Error Messages */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert 
+          onClose={handleCloseSnackbar} 
+          severity={snackbarSeverity} 
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </Container>
   );
+};
+
+// Styled components using @mui/system
+
+const Container = styled(Box)({
+  maxWidth: '800px',
+  margin: '40px auto',
+  padding: '20px',
+  backgroundColor: '#f8f9fa',
+  borderRadius: '8px',
+  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+});
+
+const HeaderRow = styled(Box)({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '1.5rem',
+});
+
+const Title = styled(Typography)({
+  fontWeight: 'bold',
+  color: '#E73927',
+});
+
+const backButtonStyle = {
+  padding: '0.5rem 1rem',
+  backgroundColor: '#E73927',
+  color: 'white',
+  borderRadius: '4px',
+  textDecoration: 'none',
+  '&:hover': {
+    backgroundColor: '#FFBB33',
+  },
+};
+
+const Card = styled(Box)({
+  backgroundColor: '#fff',
+  border: '1px solid #ddd',
+  borderRadius: '8px',
+  padding: '20px',
+});
+
+const CardBody = styled(Box)({
+  padding: '20px',
+});
+
+const FormGroup = styled(Box)({
+  marginBottom: '20px',
+});
+
+const Label = styled(Typography)({
+  fontWeight: 600,
+  marginBottom: '5px',
+  display: 'block',
+});
+
+const IngredientInputGroup = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  marginBottom: '10px',
+});
+
+const deleteButtonStyle = {
+  marginLeft: '10px',
+  color: '#dc3545',
+};
+
+const addIngredientButtonStyle = {
+  backgroundColor: '#E73927',
+  color: 'white',
+  marginTop: '10px',
+  '&:hover': {
+    backgroundColor: '#FFBB33',
+  },
+};
+
+const addRecipeButtonStyle = {
+  padding: '12px',
+  backgroundColor: '#E73927',
+  color: 'white',
+  fontSize: '18px',
+  '&:hover': {
+    backgroundColor: '#FFBB33',
+  },
+};
+
+const formInputStyle = {
+  width: '100%',
+  padding: '10px',
+  fontSize: '16px',
+  borderColor: '#ccc',
+  borderRadius: '4px',
+  marginBottom: '10px',
 };
 
 export default RecipeForm;

@@ -5,6 +5,79 @@ import { loginSuccess, loginFailure } from '../store/authSlice.tsx';
 import { RootState } from '../store/store.tsx';
 import { useNavigate } from 'react-router-dom';
 import { getApiBaseUrl } from '../helpers/GetApiBaseUrl.tsx';
+import { TextField, Button, Grid, Typography, Snackbar, Alert } from '@mui/material';
+import { styled } from '@mui/system';
+
+// Styled components using @mui/system's styled API
+const BackgroundContainer = styled('div')({
+  height: '100vh',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundImage: 'url(/img/FoodBackground.jpg)', // Background image URL
+  backgroundPosition: 'right center',
+  backgroundSize: 'cover',
+  backgroundRepeat: 'no-repeat',
+});
+
+const Card = styled('div')({
+  backgroundColor: 'rgba(255, 255, 255, 0.9)', // Semi-transparent white background for the form
+  borderRadius: '8px',
+  padding: '20px', // Adjusted padding to be similar to Register
+});
+
+const CardTitle = styled(Typography)({
+  color: '#E73927', // Red color
+  fontWeight: 'bold',
+  textAlign: 'center',
+});
+
+const FormInput = styled(TextField)({
+  fontFamily: "'Poppins', sans-serif",
+  marginBottom: '16px',
+  width: '100%',
+});
+
+const BtnPrimary = styled(Button)({
+  backgroundColor: '#E73927',
+  color: 'white',
+  fontWeight: 'bold',
+  fontFamily: "'Poppins', sans-serif",
+  width: '100%',
+  '&:hover': {
+    backgroundColor: '#FFBB33',
+  },
+});
+
+const BtnSecondary = styled(Button)({
+  color: '#6c757d', // Default grey color
+  fontFamily: "'Poppins', sans-serif",
+  width: '100%',
+  '&:hover': {
+    color: '#FFBB33', // Hover effect for Login button
+  },
+});
+
+const WelcomeTextContainer = styled('div')({
+  color: 'white',
+  textAlign: 'center',
+  padding: '40px', // Similar padding as in Register
+  backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  borderRadius: '8px',
+});
+
+const WelcomeTitle = styled(Typography)({
+  fontFamily: "'Poppins', sans-serif",
+  fontSize: '36px',
+  fontWeight: 'bold',
+  textShadow: '3px 3px 6px rgba(0, 0, 0, 0.5)',
+});
+
+const Logo = styled('img')({
+  width: '100px',
+  height: '100px',
+  marginBottom: '20px',
+});
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -12,11 +85,15 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const [loginBtnHover, setLoginBtnHover] = useState(false);
-  const [signUpBtnHover, setSignUpBtnHover] = useState(false);
+  const [registerBtnHover, setRegisterBtnHover] = useState(false);
 
   const error = useSelector((state: RootState) => state.auth.error);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('error');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,211 +119,107 @@ const Login: React.FC = () => {
         return;
       }
 
+      setSnackbarMessage('Login Successful!');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
+
       navigate('/recipes');
     } catch (err) {
       setLoading(false);
 
       if (err.response) {
         dispatch(loginFailure(err.response.data.msg || 'Login failed'));
+        setSnackbarMessage(err.response.data.msg || 'Login failed');
       } else {
         dispatch(loginFailure('Network error. Please try again later.'));
+        setSnackbarMessage('Network error. Please try again later.');
       }
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     }
   };
 
-  const handleSignUpRedirect = () => {
-    navigate('/signup');
+  const handleRegisterRedirect = () => {
+    navigate('/register');
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
-    <div style={styles.backgroundContainer}>
-      <div style={styles.loginContainer}>
+    <BackgroundContainer>
+      <Grid container spacing={2} justifyContent="center">
         {/* Left Column - Login Form */}
-        <div style={styles.formContainer}>
-          <div style={styles.card}>
-            <div style={styles.cardHeader}>
-              <h4 style={styles.cardHeaderText}>Login</h4>
-            </div>
-            <div style={styles.cardBody}>
-              <form onSubmit={handleLogin}>
-                <div style={styles.formGroup}>
-                  <label htmlFor="email" style={styles.label}>Email</label>
-                  <input
-                    type="email"
-                    id="email"
-                    style={styles.input}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div style={{ ...styles.formGroup, marginTop: '15px' }}>
-                  <label htmlFor="password" style={styles.label}>Password</label>
-                  <input
-                    type="password"
-                    id="password"
-                    style={styles.input}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-                {error && <p style={styles.error}>{error}</p>}
-                <div style={styles.buttonContainer}>
-                  <button
-                    type="submit"
-                    style={loginBtnHover ? { ...styles.btn, backgroundColor: '#FFBB33', color: 'white' } : styles.btn}
-                    disabled={loading}
-                    onMouseEnter={() => setLoginBtnHover(true)}
-                    onMouseLeave={() => setLoginBtnHover(false)}
-                  >
-                    {loading ? 'Logging in...' : 'Login'}
-                  </button>
-                  <button
-                    type="button"
-                    style={signUpBtnHover ? { ...styles.btn, backgroundColor: '#FFBB33', color: 'white' } : { ...styles.btn, backgroundColor: '#6c757d' }}
-                    onClick={handleSignUpRedirect}
-                    onMouseEnter={() => setSignUpBtnHover(true)}
-                    onMouseLeave={() => setSignUpBtnHover(false)}
-                  >
-                    Sign Up
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-        <div style={styles.welcomeContainer}>
-          <div style={styles.welcomeText}>
-            <img src="/chstock4.ico" alt="Logo" style={styles.logo} />
-            <h1 style={styles.welcomeTitle}>Welcome to Cooking Master</h1>
-            <p style={styles.welcomeDescription}>A place to share and try out new recipes!</p>
-            <p style={styles.welcomeSubDescription}>Sign in to explore thousands of delicious dishes.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+        <Grid item xs={12} sm={6} md={4}>
+          <Card>
+            <CardTitle variant="h4">Login</CardTitle>
+            <form onSubmit={handleLogin}>
+              <FormInput
+                label="Email"
+                variant="outlined"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <FormInput
+                label="Password"
+                variant="outlined"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              {error && <Typography color="error" variant="body2" align="center">{error}</Typography>}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '20px' }}>
+                <BtnPrimary
+                  type="submit"
+                  disabled={loading}
+                  onMouseEnter={() => setLoginBtnHover(true)}
+                  onMouseLeave={() => setLoginBtnHover(false)}
+                >
+                  {loading ? 'Logging in...' : 'Login'}
+                </BtnPrimary>
+                <BtnSecondary
+                  type="button"
+                  onClick={handleRegisterRedirect}
+                  onMouseEnter={() => setRegisterBtnHover(true)}
+                  onMouseLeave={() => setRegisterBtnHover(false)}
+                >
+                  Register
+                </BtnSecondary>
+              </div>
+            </form>
+          </Card>
+        </Grid>
 
-const styles = {
-  backgroundContainer: {
-    backgroundImage: 'url(/img/FoodBackground.jpg)',
-    backgroundPosition: 'right center',
-    backgroundSize: 'cover',
-    backgroundRepeat: 'no-repeat',
-    height: '100vh',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loginContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    width: '80%',
-    maxWidth: '1200px',
-  },
-  formContainer: {
-    width: '35%',
-  },
-  card: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: '8px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-  },
-  cardHeader: {
-    backgroundColor: '#E73927',
-    color: 'white',
-    padding: '15px',
-    textAlign: 'center',
-    borderRadius: '8px 8px 0 0',
-  },
-  cardHeaderText: {
-    fontFamily: "'Poppins', sans-serif", // Font family matching the navbar
-    fontWeight: 'bold',
-    fontSize: '24px',
-  },
-  cardBody: {
-    padding: '20px',
-  },
-  formGroup: {
-    marginBottom: '15px',
-  },
-  label: {
-    fontSize: '14px',
-    marginBottom: '5px',
-    display: 'block',
-    fontFamily: "'Poppins', sans-serif", // Consistent font family
-    fontWeight: '500',
-  },
-  input: {
-    width: '100%',
-    padding: '10px',
-    fontSize: '14px',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    transition: 'border-color 0.3s ease',
-    fontFamily: "'Poppins', sans-serif", // Font family for input fields
-  },
-  inputFocus: {
-    borderColor: '#E73927',
-    outline: 'none',
-  },
-  error: {
-    color: 'red',
-    fontSize: '12px',
-    marginTop: '5px',
-  },
-  buttonContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginTop: '20px',
-  },
-  btn: {
-    padding: '10px 20px',
-    fontSize: '14px',
-    border: 'none',
-    borderRadius: '4px',
-    backgroundColor: '#E73927',
-    color: 'white',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    fontFamily: "'Poppins', sans-serif", // Font family for buttons
-    fontWeight: '600',
-  },
-  welcomeContainer: {
-    width: '55%',
-    padding: '20px',
-  },
-  welcomeText: {
-    color: 'white',
-    textAlign: 'center',
-    padding: '40px',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    borderRadius: '8px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
-  },
-  welcomeTitle: {
-    fontSize: '36px',
-    fontWeight: 'bold',
-    fontFamily: "'Poppins', sans-serif", // Consistent font family
-    textShadow: '3px 3px 6px rgba(0, 0, 0, 0.5)',
-  },
-  welcomeDescription: {
-    fontSize: '18px',
-    marginTop: '20px',
-    fontFamily: "'Poppins', sans-serif", // Consistent font family
-  },
-  welcomeSubDescription: {
-    fontSize: '16px',
-    marginTop: '20px',
-    fontFamily: "'Poppins', sans-serif", // Consistent font family
-  },
-  logo: {
-    width: '100px', // Adjust the size as needed
-    height: '100px',
-    marginBottom: '20px', // Adds space between the logo and the title
-  },
+        {/* Right Column */}
+        <Grid item xs={12} sm={6} md={4}>
+          <WelcomeTextContainer>
+            <Logo src="/chstock4.ico" alt="Logo" />
+            <WelcomeTitle variant="h3">Welcome to Cooking Master</WelcomeTitle>
+            <Typography variant="body1" paragraph>
+              A place to share and try out new recipes!
+            </Typography>
+            <Typography variant="body2" paragraph>
+              Sign in to explore thousands of delicious dishes.
+            </Typography>
+          </WelcomeTextContainer>
+        </Grid>
+      </Grid>
+
+      {/* Snackbar for displaying messages */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </BackgroundContainer>
+  );
 };
 
 export default Login;

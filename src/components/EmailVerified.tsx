@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button, Typography, Box, Container } from '@mui/material';
+import { styled } from '@mui/system';
 
 const EmailVerified: React.FC = () => {
   const [buttonHover, setButtonHover] = useState(false); // To handle hover effect
@@ -8,7 +10,7 @@ const EmailVerified: React.FC = () => {
   useEffect(() => {
     // Redirect after 4 seconds (4000 milliseconds)
     const timer = setTimeout(() => {
-      navigate("/login"); // Redirects to the Login route
+      navigate('/login'); // Redirects to the Login route
     }, 4000);
 
     // Cleanup timer on component unmount
@@ -17,84 +19,91 @@ const EmailVerified: React.FC = () => {
 
   // Function to handle manual redirection
   const handleRedirectNow = () => {
-    navigate("/login");
+    navigate('/login');
   };
 
   return (
-    <div style={styles.backgroundContainer}>
-      <div style={styles.container}>
-        <div style={styles.welcomeText}>
-          <h1 style={styles.welcomeTitle}>Welcome to Cooking Master!</h1>
-          <h2 style={styles.welcomeDescription}>Your email has been verified</h2>
-          <p style={styles.welcomeSubDescription}>
+    <BackgroundContainer>
+      <StyledContainer>
+        <WelcomeText>
+          <WelcomeTitle>Welcome to Cooking Master!</WelcomeTitle>
+          <WelcomeDescription>Your email has been verified</WelcomeDescription>
+          <WelcomeSubDescription>
             You will be redirected to the login page shortly...
-          </p>
-          <button
-            style={buttonHover ? { ...styles.redirectButton, backgroundColor: '#FFBB33', color: 'white' } : styles.redirectButton}
+          </WelcomeSubDescription>
+          <RedirectButton
             onClick={handleRedirectNow}
             onMouseEnter={() => setButtonHover(true)}
             onMouseLeave={() => setButtonHover(false)}
+            hover={buttonHover}
           >
             Redirect Now
-          </button>
-        </div>
-      </div>
-    </div>
+          </RedirectButton>
+        </WelcomeText>
+      </StyledContainer>
+    </BackgroundContainer>
   );
 };
 
-const styles = {
-  backgroundContainer: {
-    backgroundImage: 'url(/img/FoodBackground.jpg)', // Keep consistent background
-    backgroundPosition: 'right center',
-    backgroundSize: 'cover',
-    backgroundRepeat: 'no-repeat',
-    height: '100vh',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+// Styled components
+const BackgroundContainer = styled(Box)({
+  backgroundImage: 'url(/img/FoodBackground.jpg)', // Keep consistent background
+  backgroundPosition: 'right center',
+  backgroundSize: 'cover',
+  backgroundRepeat: 'no-repeat',
+  height: '100vh',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+});
+
+const StyledContainer = styled(Container)({
+  maxWidth: '50%',
+  padding: '20px',
+});
+
+const WelcomeText = styled(Box)({
+  backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  padding: '40px',
+  borderRadius: '8px',
+  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
+  textAlign: 'center',
+});
+
+const WelcomeTitle = styled(Typography)({
+  color: 'white',
+  fontWeight: 'bold',
+  fontFamily: "'Poppins', sans-serif",
+  textShadow: '3px 3px 6px rgba(0, 0, 0, 0.5)',
+  fontSize: '36px',
+});
+
+const WelcomeDescription = styled(Typography)({
+  color: 'white',
+  marginTop: '20px',
+  fontFamily: "'Poppins', sans-serif",
+  fontSize: '18px',
+});
+
+const WelcomeSubDescription = styled(Typography)({
+  color: 'white',
+  marginTop: '20px',
+  fontFamily: "'Poppins', sans-serif",
+  fontSize: '16px',
+});
+
+const RedirectButton = styled(Button)<{ hover: boolean }>(({ hover }) => ({
+  marginTop: '20px',
+  padding: '10px 20px',
+  backgroundColor: hover ? '#FFBB33' : '#E73927',
+  color: 'white',
+  borderRadius: '4px',
+  fontWeight: '600',
+  fontSize: '14px',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    backgroundColor: '#FFBB33',
   },
-  container: {
-    width: '50%',
-    padding: '20px',
-  },
-  welcomeText: {
-    color: 'white',
-    textAlign: 'center',
-    padding: '40px',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    borderRadius: '8px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
-  },
-  welcomeTitle: {
-    fontSize: '36px',
-    fontWeight: 'bold',
-    fontFamily: "'Poppins', sans-serif",
-    textShadow: '3px 3px 6px rgba(0, 0, 0, 0.5)',
-  },
-  welcomeDescription: {
-    fontSize: '18px',
-    marginTop: '20px',
-    fontFamily: "'Poppins', sans-serif",
-  },
-  welcomeSubDescription: {
-    fontSize: '16px',
-    marginTop: '20px',
-    fontFamily: "'Poppins', sans-serif",
-  },
-  redirectButton: {
-    marginTop: '20px',
-    padding: '10px 20px',
-    fontSize: '14px',
-    border: 'none',
-    borderRadius: '4px',
-    backgroundColor: '#E73927',
-    color: 'white',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    fontFamily: "'Poppins', sans-serif",
-    fontWeight: '600',
-  },
-};
+}));
 
 export default EmailVerified;
