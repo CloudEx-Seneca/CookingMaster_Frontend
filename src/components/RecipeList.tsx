@@ -101,6 +101,13 @@ const RecipeList: React.FC = () => {
     setIngredientsList((prevList) => prevList.filter((ing) => ing !== ingredient));
   };
 
+  const handleResetFilters = () => {
+    setTitleSearch('');
+    setAuthorSearch('');
+    setIngredientSearch('');
+    setIngredientsList([]);
+  };
+
   return (
     <Container>
       <HeaderRow>
@@ -128,7 +135,12 @@ const RecipeList: React.FC = () => {
           value={ingredientSearch}
           onChange={handleIngredientSearchChange}
         />
-        <StyledButton onClick={handleAddIngredient}>Add Ingredient Filter</StyledButton>
+        
+        {/* Added Add Ingredient and Reset buttons in the same row */}
+        <ButtonRow>
+          <StyledButton onClick={handleAddIngredient}>Add Ingredient Filter</StyledButton>
+          <ResetButton onClick={handleResetFilters}>Reset</ResetButton>
+        </ButtonRow>
 
         <IngredientList>
           {ingredientsList.map((ingredient, index) => (
@@ -200,9 +212,30 @@ const StyledButton = styled(Button)({
   padding: '0.5rem 1rem',
   borderRadius: '4px',
   fontSize: '1rem',
+  width: '100%',
   '&:hover': {
     backgroundColor: '#c43022',
   },
+});
+
+const ResetButton = styled(Button)(`
+  background-color: #6c757d;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 120px; /* Keeping the size of reset button small */
+  margin-left: 10px;
+  &:hover {
+    background-color: #5a6268;
+  }
+`);
+
+const ButtonRow = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between', // Spacing out the buttons
+  gap: '1rem',
+  marginTop: '1rem',
 });
 
 const AddRecipeButton = styled('div')({
@@ -219,11 +252,10 @@ const AddRecipeButton = styled('div')({
   },
 });
 
-const AddCircleOutlineIconStyled = styled(AddCircleOutlineIcon)({
-  fontSize: '40px', // Reduced size
-  color: 'white', // Ensuring the color is white
-});
-
+const AddCircleOutlineIconStyled = styled(AddCircleOutlineIcon)(`
+  font-size: 40px; // Reduced size
+  color: white;
+`);
 
 const IngredientList = styled('div')({
   display: 'flex',
