@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { BlobServiceClient, AnonymousCredential } from '@azure/storage-blob';
+import { Snackbar, Alert, CircularProgress, TextField, Box } from '@mui/material';
+import { styled } from '@mui/system';
 
 interface RecipeImgUploadProps {
   image: string;
@@ -10,6 +12,9 @@ const RecipeImgUpload: React.FC<RecipeImgUploadProps> = ({ image, onRecipeImgUrl
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);  // Success message state
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
   // Hardcoded container name
   const containerName = 'recipes'; // Replace with your actual container name
@@ -62,64 +67,77 @@ const RecipeImgUpload: React.FC<RecipeImgUploadProps> = ({ image, onRecipeImgUrl
       onRecipeImgUrlChange(uploadedUrl);
 
       setIsUploading(false);
-      setUploadSuccess('File uploaded successfully!');  // Set success message after upload
+      setUploadSuccess('File uploaded successfully!');
+      setSnackbarMessage('File uploaded successfully!');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);  // Open the success Snackbar
     } catch (error: any) {
       setUploadError('Failed to upload image. Please try again.');
       console.error('Error uploading image:', error);
       setIsUploading(false);
+      setSnackbarMessage('Failed to upload image. Please try again.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);  // Open the error Snackbar
     }
   };
 
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+
   return (
-    <div style={styles.imageContainer}>
-      <label htmlFor="image" style={styles.label}>Upload Image</label>
-      <input
+    <Container>
+      <ImageUploadField
         id="image"
         type="file"
-        accept="image/*"
+        inputProps={{ accept: 'image/*' }}
         onChange={(e) => uploadImage(e.target.files ? e.target.files[0] : null)}
-        style={styles.fileInput}
+        fullWidth
+        variant="outlined"
       />
-      {isUploading && <p>Uploading...</p>}
-      {uploadError && <p style={styles.errorText}>{uploadError}</p>}
-      {uploadSuccess && <p style={styles.successText}>{uploadSuccess}</p>} {/* Success message */}
-      <div style={styles.imagePreviewContainer}>
-        <img src={image || '/chstock2.ico'} alt="Default" style={styles.imageImage} />
-      </div>
-    </div>
+      {isUploading && <CircularProgress />}
+      {uploadError && <Alert severity="error">{uploadError}</Alert>}
+      {uploadSuccess && <Alert severity="success">{uploadSuccess}</Alert>}
+      <ImagePreview>
+        <img src={image || '/chstock2.ico'} alt="Default" />
+      </ImagePreview>
+
+      {/* Snackbar for Success/Error Messages */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert 
+          onClose={handleCloseSnackbar} 
+          severity={snackbarSeverity} 
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </Container>
   );
 };
 
-const styles = {
-  imageContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    marginBottom: '20px',
-  },
-  label: {
-    fontSize: '16px',
-    fontWeight: 'bold',
-    marginBottom: '10px',
-  },
-  fileInput: {
-    padding: '10px',
-    marginBottom: '10px',
-  },
-  imageImage: {
-    width: '500px',
+const Container = styled(Box)({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  marginBottom: '20px',
+});
+
+const ImageUploadField = styled(TextField)({
+  marginBottom: '16px',
+});
+
+const ImagePreview = styled(Box)({
+  marginTop: '16px',
+  img: {
+    width: '400px',
     height: 'auto',
     borderRadius: '5%',
   },
-  errorText: {
-    color: 'red',
-  },
-  successText: {
-    color: 'green',  // Green color for success message
-  },
-  imagePreviewContainer: {
-    marginTop: '10px',
-  },
-};
+});
 
 export default RecipeImgUpload;
