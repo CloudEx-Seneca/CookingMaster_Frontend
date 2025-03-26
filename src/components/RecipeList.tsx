@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 import RecipeCard from './RecipeCard.tsx';
 import axios from 'axios';
 import { getApiBaseUrlRec } from '../helpers/GetApiBaseUrl.tsx';
+import { styled } from '@mui/system';
+import { Button, TextField, Grid, Typography, Chip } from '@mui/material';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 const RecipeList: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -14,9 +17,9 @@ const RecipeList: React.FC = () => {
   const [ingredientsList, setIngredientsList] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [hoveredCard, setHoveredCard] = useState(null);
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
-  const handleMouseEnter = (id) => {
+  const handleMouseEnter = (id: number) => {
     setHoveredCard(id);
   };
 
@@ -24,64 +27,9 @@ const RecipeList: React.FC = () => {
     setHoveredCard(null);
   };
 
-  /* Simulated data
-  const initialRecipes: Recipe[] = [
-    {
-      id: 1,
-      name: 'Spaghetti Carbonara',
-      ingredients: ['Spaghetti', 'Eggs', 'Parmesan', 'Bacon', 'Garlic'],
-      description: 'Boil pasta. Cook bacon. Mix eggs and cheese...',
-      image: '/img/carbonara.jpeg',
-      author: 'Chef John',
-    },
-    {
-      id: 2,
-      name: 'Vegetable Stir Fry',
-      ingredients: ['Carrots', 'Broccoli', 'Peppers', 'Soy Sauce'],
-      description: 'Stir-fry veggies and soy sauce until tender...',
-      image: '/img/vegstirfry.jfif',
-      author: 'Chef Jane',
-    },
-    {
-      id: 3,
-      name: 'Chicken Curry',
-      ingredients: ['Chicken', 'Curry Powder', 'Coconut Milk', 'Onions'],
-      description: 'Cook chicken, add curry powder and coconut milk...',
-      image: '/img/chkcurry.jpg',
-      author: 'Chef Tim',
-    },
-    {
-      id: 4,
-      name: 'Grilled Cheese Sandwich',
-      ingredients: ['Bread', 'Cheese', 'Butter'],
-      description: 'Butter bread, add cheese, and grill...',
-      image: '/img/grilledcheese.jpg',
-      author: 'Chef Anna',
-    },
-    {
-      id: 5,
-      name: 'Caesar Salad',
-      ingredients: ['Lettuce', 'Caesar Dressing', 'Croutons', 'Parmesan'],
-      description: 'Toss lettuce with Caesar dressing and add toppings...',
-      image: '/img/caesarsalad.jpg',
-      author: 'Chef Sarah',
-    },
-    {
-      id: 6,
-      name: 'Tacos',
-      ingredients: ['Taco Shells', 'Ground Beef', 'Lettuce', 'Cheese', 'Salsa'],
-      description: 'Cook beef, assemble tacos with toppings...',
-      image: '/img/taco.jfif',
-      author: 'Chef Mark',
-    },
-  ];
-  */
-
   useEffect(() => {
-    // Simulating an API call with axios
     const fetchAdditionalData = async () => {
       try {
-        // Replace with actual API endpoint
         const token = localStorage.getItem('authToken');
         if (!token) {
           setError('Authentication token is missing.');
@@ -99,11 +47,8 @@ const RecipeList: React.FC = () => {
         );
   
         const fetchedRecipes = response.data.data;
-
-        // Append fetched data to the initial simulated data
-        setRecipes([...fetchedRecipes]);
-        setFilteredRecipes([...fetchedRecipes]);
-
+        setRecipes(fetchedRecipes);
+        setFilteredRecipes(fetchedRecipes);
         setLoading(false);
       } catch (err) {
         setError('Error fetching recipes');
@@ -111,11 +56,9 @@ const RecipeList: React.FC = () => {
       }
     };
 
-    // Fetch additional data from the API after setting initial data
     fetchAdditionalData();
   }, []);
 
-  // Filtering recipes based on title and ingredients
   useEffect(() => {
     const filterRecipes = () => {
       const filtered = recipes.filter((recipe) => {
@@ -133,7 +76,7 @@ const RecipeList: React.FC = () => {
     if (recipes.length > 0) {
       filterRecipes();
     }
-  }, [titleSearch, authorSearch, ingredientsList, recipes]); // This ensures filter is applied when data changes
+  }, [titleSearch, authorSearch, ingredientsList, recipes]);
 
   const handleTitleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitleSearch(event.target.value);
@@ -158,150 +101,143 @@ const RecipeList: React.FC = () => {
     setIngredientsList((prevList) => prevList.filter((ing) => ing !== ingredient));
   };
 
-  const styles = {
-    container: {
-      maxWidth: '1200px',
-      margin: '0 auto',
-      padding: '2rem 1rem',
-    },
-    grid: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(5, 1fr)',
-      gap: '1.5rem',
-    },
-    cardWrapper: {
-      display: 'flex',
-      justifyContent: 'center',
-      transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth animation
-    },
-    cardHover: {
-      transform: 'scale(1.05)', // Slightly enlarges the card
-      boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', // Adds a subtle shadow
-    },
-    linkStyle: {
-      textDecoration: 'none',
-    },
-    headerRow: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: '1.5rem',
-    },
-    searchColumn: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '0.75rem',
-      marginBottom: '1.5rem',
-    },
-    searchInput: {
-      padding: '0.5rem',
-      marginBottom: '0.5rem',
-      width: '100%',
-      fontSize: '1rem',
-      border: '1px solid #ccc',
-      borderRadius: '4px',
-    },
-    ingredientList: {
-      display: 'flex',
-      flexWrap: 'wrap',
-      gap: '0.25rem',
-    },
-    ingredientTag: {
-      backgroundColor: '#f1f1f1',
-      padding: '0.3rem 0.6rem',
-      borderRadius: '12px',
-      fontSize: '0.9rem',
-      display: 'flex',
-      alignItems: 'center',
-    },
-    removeButton: {
-      marginLeft: '0.5rem',
-      cursor: 'pointer',
-      color: 'red',
-    },
-    addButton: {
-      padding: '0.5rem 1rem',
-      backgroundColor: '#E73927',
-      color: 'white',
-      border: 'none',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      textDecoration: 'none',
-      fontSize: '1rem',
-    },
-  };
-  
   return (
-    <div style={styles.container}>
-      <div style={styles.headerRow}>
-        <h3>Search for Recipe</h3>
-        <Link to="/recipes/add" style={styles.addButton}>
-          Add New Recipe
+    <Container>
+      <HeaderRow>
+        <Typography variant="h5">Search for Recipe</Typography>
+        <Link to="/recipes/add" style={{ textDecoration: 'none' }}>
+          <AddRecipeButton>
+            <AddCircleOutlineIconStyled />
+          </AddRecipeButton>
         </Link>
-      </div>
+      </HeaderRow>
 
-      <div style={styles.searchColumn}>
-        <input
-          type="text"
-          placeholder="Search by recipe name..."
+      <SearchColumn>
+        <StyledTextField
+          label="Search by recipe name..."
           value={titleSearch}
           onChange={handleTitleSearchChange}
-          style={styles.searchInput}
         />
-
-        <input
-          type="text"
-          placeholder="Search by author..."
+        <StyledTextField
+          label="Search by author..."
           value={authorSearch}
           onChange={handleAuthorSearchChange}
-          style={styles.searchInput}
         />
-
-        <input
-          type="text"
-          placeholder="Add ingredient filter..."
+        <StyledTextField
+          label="Add ingredient filter..."
           value={ingredientSearch}
           onChange={handleIngredientSearchChange}
-          style={styles.searchInput}
         />
-        <button onClick={handleAddIngredient} style={styles.searchInput}>
-          Add Ingredient Filter
-        </button>
+        <StyledButton onClick={handleAddIngredient}>Add Ingredient Filter</StyledButton>
 
-        <div style={styles.ingredientList}>
+        <IngredientList>
           {ingredientsList.map((ingredient, index) => (
-            <div key={index} style={styles.ingredientTag}>
-              {ingredient}
-              <span
-                style={styles.removeButton}
-                onClick={() => handleRemoveIngredient(ingredient)}
-              >
-                ×
-              </span>
-            </div>
+            <IngredientChip key={index} label={ingredient} onDelete={() => handleRemoveIngredient(ingredient)} />
           ))}
-        </div>
-      </div>
+        </IngredientList>
+      </SearchColumn>
 
-      <div style={styles.grid}>
+      <Grid container spacing={3}>
         {filteredRecipes.map((recipe) => (
-          <div
-            key={recipe.id}
-            style={{
-              ...styles.cardWrapper,
-              ...(hoveredCard === recipe.id ? styles.cardHover : {}),
-            }}
-            onMouseEnter={() => handleMouseEnter(recipe.id)}
-            onMouseLeave={handleMouseLeave}
-          >
-            <Link to={`/recipes/${recipe.id}`} style={styles.linkStyle}>
-              <RecipeCard recipe={recipe} />
-            </Link>
-          </div>
+          <Grid item xs={12} sm={6} md={4} lg={3} key={recipe.id}>
+            <CardWrapper
+              onMouseEnter={() => handleMouseEnter(recipe.id)}
+              onMouseLeave={handleMouseLeave}
+              style={{
+                transform: hoveredCard === recipe.id ? 'scale(1.05)' : 'scale(1)',
+                boxShadow: hoveredCard === recipe.id ? '0px 4px 12px rgba(0, 0, 0, 0.1)' : 'none',
+              }}
+            >
+              <Link to={`/recipes/${recipe.id}`} style={{ textDecoration: 'none' }}>
+                <RecipeCard recipe={recipe} />
+              </Link>
+            </CardWrapper>
+          </Grid>
         ))}
-      </div>
-    </div>
+      </Grid>
+    </Container>
   );
 };
+
+// Styled components using MUI's styled API
+const Container = styled('div')({
+  maxWidth: '1200px',
+  margin: '0 auto',
+  padding: '2rem 1rem',
+});
+
+const HeaderRow = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '1.5rem',
+});
+
+const SearchColumn = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1rem',
+  marginBottom: '2rem',
+});
+
+const StyledTextField = styled(TextField)({
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: '#ccc', // Light border color
+    },
+    '&:hover fieldset': {
+      borderColor: '#E73927', // Red border color on hover
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: '#E73927', // Focused border color
+    },
+  },
+});
+
+const StyledButton = styled(Button)({
+  backgroundColor: '#E73927',
+  color: 'white',
+  padding: '0.5rem 1rem',
+  borderRadius: '4px',
+  fontSize: '1rem',
+  '&:hover': {
+    backgroundColor: '#c43022',
+  },
+});
+
+const AddRecipeButton = styled('div')({
+  backgroundColor: '#E73927',
+  padding: '0.8rem',
+  borderRadius: '50%',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  cursor: 'pointer',
+  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+  '&:hover': {
+    backgroundColor: '#c43022',
+  },
+});
+
+const AddCircleOutlineIconStyled = styled(AddCircleOutlineIcon)({
+  fontSize: '40px', // Reduced size
+  color: 'white', // Ensuring the color is white
+});
+
+
+const IngredientList = styled('div')({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '0.5rem',
+});
+
+const IngredientChip = styled(Chip)({
+  backgroundColor: '#f1f1f1',
+  fontSize: '0.9rem',
+});
+
+const CardWrapper = styled('div')({
+  transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth animation
+});
 
 export default RecipeList;
