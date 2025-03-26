@@ -8,7 +8,6 @@ import Login from '../components/Login.tsx';
 import RecipeList from '../components/RecipeList.tsx';
 import RecipeForm from '../components/RecipeForm.tsx';
 import SignUp from '../components/SignUp.tsx';
-import PasswordReset from '../components/PasswordReset.tsx';
 import ShoppingList from '../components/ShoppingList.tsx';
 import Profile from '../components/Profile.tsx';
 import RecipeDetail from '../components/RecipeDetail.tsx';
@@ -21,7 +20,6 @@ export const withNavRoutes: JSX.Element[] = [
         <Route path="/recipes/:id" element={<RecipeDetail />} />
         <Route path="/recipes/add" element={<RecipeForm />} key="recipe-add" />,  
         <Route path="/recipes/edit/:id" element={<EditRecipeForm />} key="recipe-edit" />,
-        <Route path="/reset-password" element={<PasswordReset />} key="reset-password" />,
         <Route path="/shoppinglist" element={<ShoppingList />} key="shoppinglist" />,
         <Route path="/profile" element={<Profile />} key="profile" />
        

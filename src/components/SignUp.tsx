@@ -24,7 +24,7 @@ const BackgroundContainer = styled('div')({
 });
 
 const Card = styled('div')({
-  backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent white background for the form
+  backgroundColor: 'rgba(255, 255, 255, 0.9)', // Semi-transparent white background for the form
   borderRadius: '8px',
   padding: '20px',
 });
